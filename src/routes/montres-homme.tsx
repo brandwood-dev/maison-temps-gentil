@@ -21,7 +21,12 @@ export const Route = createFileRoute("/montres-homme")({
     ],
     links: [{ rel: "canonical", href: CANONICAL }],
   }),
-  component: () => (
+  component: MontresHommePage,
+});
+
+function MontresHommePage() {
+  const query = Route.useSearch();
+  return (
     <CatalogPage
       basePath="/montres-homme"
       title="Montres Homme"
@@ -33,6 +38,7 @@ export const Route = createFileRoute("/montres-homme")({
       ]}
       products={PRODUCTS}
       fixedCategory="men"
+      query={query}
     />
-  ),
-});
+  );
+}

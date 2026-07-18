@@ -1,15 +1,10 @@
 import { useMemo, useState } from "react";
-import { useNavigate, useSearch } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 
 import type { Product, ProductCategory } from "@/types/product";
 import type { CatalogQuery } from "@/types/catalog";
 import { useNow } from "@/lib/now-store";
-import {
-  catalogQueryToSearch,
-  getCatalogResult,
-  hasActiveFilters,
-  parseCatalogSearch,
-} from "@/lib/catalog";
+import { catalogQueryToSearch, getCatalogResult, hasActiveFilters } from "@/lib/catalog";
 
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -29,6 +24,7 @@ type Props = {
   intro?: string;
   crumbs: Crumb[];
   products: Product[];
+  query: CatalogQuery;
   fixedCategory?: ProductCategory;
   fixedCollection?: string;
 };
@@ -39,15 +35,13 @@ export function CatalogPage({
   intro,
   crumbs,
   products,
+  query,
   fixedCategory,
   fixedCollection,
 }: Props) {
-  const rawSearch = useSearch({ strict: false }) as Record<string, unknown>;
   const navigate = useNavigate();
   const nowTs = useNow();
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  const query = useMemo<CatalogQuery>(() => parseCatalogSearch(rawSearch), [rawSearch]);
 
   const result = useMemo(
     () =>
@@ -70,7 +64,6 @@ export function CatalogPage({
 
   const applyPatch = (patch: Partial<CatalogQuery>) => {
     const merged: CatalogQuery = { ...query, ...patch };
-    // Any filter change (except explicit page change) resets to page 1.
     if (!("page" in patch)) merged.page = 1;
     navigate({
       to: basePath,
@@ -78,8 +71,12 @@ export function CatalogPage({
     });
   };
 
+  // Reset filters but preserve the current sort — sort is not a filter.
   const resetFilters = () => {
-    navigate({ to: basePath, search: {} });
+    navigate({
+      to: basePath,
+      search: catalogQueryToSearch({ sort: query.sort, page: 1 }),
+    });
   };
 
   const showNoResults = !isCategoryEmpty && result.totalItems === 0;

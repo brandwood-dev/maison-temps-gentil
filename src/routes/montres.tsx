@@ -25,6 +25,7 @@ export const Route = createFileRoute("/montres")({
 });
 
 function MontresPage() {
+  const query = Route.useSearch();
   return (
     <CatalogPage
       basePath="/montres"
@@ -32,6 +33,7 @@ function MontresPage() {
       intro="Découvrez l’intégralité de notre sélection, toutes catégories confondues."
       crumbs={[{ label: "Accueil", href: "/" }, { label: "Montres" }]}
       products={PRODUCTS}
+      query={query}
     />
   );
 }
