@@ -48,7 +48,7 @@ export function SiteHeader({ cartCount = 0 }: { cartCount?: number }) {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-[color:var(--color-border)] bg-[color:var(--color-background)]/95 backdrop-blur supports-[backdrop-filter]:bg-[color:var(--color-background)]/80">
       {/* Mobile + tablette (< lg) */}
-      <div className="container-page grid h-14 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 xl:hidden">
+      <div className="container-page grid h-14 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 lg:hidden">
         <button
           type="button"
           onClick={() => setMenuOpen(true)}
