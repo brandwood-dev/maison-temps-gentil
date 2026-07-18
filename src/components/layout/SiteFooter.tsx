@@ -143,11 +143,11 @@ export function SiteFooter() {
                 type="email"
                 required
                 placeholder="Votre e-mail"
-                className="h-11 min-w-0 flex-1 rounded-[var(--radius-md)] border border-white/15 bg-white/5 px-3 text-sm text-white placeholder:text-white/40 focus:border-[color:var(--color-gold)] focus:outline-none"
+                className="h-12 min-w-0 flex-1 rounded-[var(--radius-md)] border border-white/15 bg-white/5 px-4 py-3 text-sm leading-normal text-white placeholder:text-white/40 focus:border-[color:var(--color-gold)] focus:outline-none"
               />
               <button
                 type="submit"
-                className="inline-flex h-11 items-center justify-center rounded-[var(--radius-md)] bg-[color:var(--color-gold)] px-4 text-sm font-semibold text-[color:var(--color-gold-foreground)] hover:brightness-95"
+                className="inline-flex h-12 items-center justify-center rounded-[var(--radius-md)] bg-[color:var(--color-gold)] px-5 text-sm font-semibold text-[color:var(--color-gold-foreground)] hover:brightness-95"
               >
                 S’inscrire
               </button>

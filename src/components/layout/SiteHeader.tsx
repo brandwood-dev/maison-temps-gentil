@@ -46,9 +46,10 @@ export function SiteHeader({ cartCount = 0 }: { cartCount?: number }) {
   const [searchOpen, setSearchOpen] = useState(false);
 
   return (
+    <>
     <header className="sticky top-0 z-40 w-full border-b border-[color:var(--color-border)] bg-[color:var(--color-background)]/95 backdrop-blur supports-[backdrop-filter]:bg-[color:var(--color-background)]/80">
       {/* Mobile + tablette (< lg) */}
-      <div className="container-page grid h-14 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 xl:hidden">
+      <div className="container-page grid h-14 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 lg:hidden">
         <button
           type="button"
           onClick={() => setMenuOpen(true)}
@@ -76,13 +77,13 @@ export function SiteHeader({ cartCount = 0 }: { cartCount?: number }) {
       </div>
 
       {/* Desktop (≥ lg) */}
-      <div className="container-page hidden xl:block">
+      <div className="container-page hidden lg:block">
         <div className="flex h-16 items-center justify-between gap-4">
           <a href="/" aria-label="La Maison des Montres — Accueil" className="inline-flex shrink-0">
             <Logo variant="dark" height={36} priority />
           </a>
           <nav aria-label="Navigation principale" className="min-w-0 flex-1">
-            <ul className="flex items-center justify-center gap-4 xl:gap-7">
+            <ul className="flex items-center justify-center gap-3 lg:gap-5 xl:gap-7">
               {NAV_LINKS.map((l) => (
                 <li key={l.href}>
                   <a
@@ -113,10 +114,10 @@ export function SiteHeader({ cartCount = 0 }: { cartCount?: number }) {
           </div>
         </div>
       </div>
-
-      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
-      <SearchPanel open={searchOpen} onClose={() => setSearchOpen(false)} />
     </header>
+    <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+    <SearchPanel open={searchOpen} onClose={() => setSearchOpen(false)} />
+    </>
   );
 }
 
