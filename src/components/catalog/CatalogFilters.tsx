@@ -1,0 +1,281 @@
+import { useEffect, useId, useState } from "react";
+import type { CatalogQuery, CatalogResult } from "@/types/catalog";
+import { millimesToDinars, dinarsToMillimes } from "@/lib/catalog";
+
+type Props = {
+  /** Unique prefix to avoid duplicate ids between desktop sidebar and mobile Sheet. */
+  idPrefix: string;
+  query: CatalogQuery;
+  availableFilters: CatalogResult["availableFilters"];
+  onChange: (patch: Partial<CatalogQuery>) => void;
+};
+
+export function CatalogFilters({ idPrefix, query, availableFilters, onChange }: Props) {
+  return (
+    <div className="flex flex-col gap-6">
+      <PromoFilter idPrefix={idPrefix} value={query.promotionOnly} onChange={onChange} />
+      {availableFilters.brands.length > 0 ? (
+        <BrandsFilter
+          idPrefix={idPrefix}
+          selected={query.brands}
+          options={availableFilters.brands}
+          onChange={onChange}
+        />
+      ) : null}
+      {availableFilters.dialColors.length > 0 ? (
+        <ColorsFilter
+          idPrefix={idPrefix}
+          selected={query.dialColors}
+          options={availableFilters.dialColors}
+          onChange={onChange}
+        />
+      ) : null}
+      {availableFilters.priceRange ? (
+        <PriceFilter
+          idPrefix={idPrefix}
+          minMillimes={query.minPriceMillimes}
+          maxMillimes={query.maxPriceMillimes}
+          range={availableFilters.priceRange}
+          onChange={onChange}
+        />
+      ) : null}
+    </div>
+  );
+}
+
+function Group({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <fieldset className="border-t border-[color:var(--color-border)] pt-4 first:border-t-0 first:pt-0">
+      <legend className="mb-3 text-sm font-semibold text-[color:var(--color-foreground)]">
+        {title}
+      </legend>
+      {children}
+    </fieldset>
+  );
+}
+
+function PromoFilter({
+  idPrefix,
+  value,
+  onChange,
+}: {
+  idPrefix: string;
+  value: boolean;
+  onChange: (patch: Partial<CatalogQuery>) => void;
+}) {
+  const id = `${idPrefix}-promo`;
+  return (
+    <Group title="Offres">
+      <div className="flex min-h-11 items-center gap-2">
+        <input
+          id={id}
+          type="checkbox"
+          checked={value}
+          onChange={(e) => onChange({ promotionOnly: e.target.checked, page: 1 })}
+          className="h-4 w-4 rounded border-[color:var(--color-border-strong)] accent-[color:var(--color-foreground)]"
+        />
+        <label htmlFor={id} className="text-sm text-[color:var(--color-foreground)]">
+          En promotion uniquement
+        </label>
+      </div>
+    </Group>
+  );
+}
+
+function BrandsFilter({
+  idPrefix,
+  selected,
+  options,
+  onChange,
+}: {
+  idPrefix: string;
+  selected: string[];
+  options: { value: string; label: string; count: number }[];
+  onChange: (patch: Partial<CatalogQuery>) => void;
+}) {
+  const toggle = (val: string) => {
+    const next = selected.includes(val) ? selected.filter((v) => v !== val) : [...selected, val];
+    onChange({ brands: next, page: 1 });
+  };
+  return (
+    <Group title="Marques">
+      <ul className="flex flex-col gap-1">
+        {options.map((o) => {
+          const id = `${idPrefix}-brand-${o.value.replace(/\s+/g, "-").toLowerCase()}`;
+          const checked = selected.includes(o.value);
+          return (
+            <li key={o.value}>
+              <div className="flex min-h-11 items-center gap-2">
+                <input
+                  id={id}
+                  type="checkbox"
+                  checked={checked}
+                  onChange={() => toggle(o.value)}
+                  className="h-4 w-4 rounded border-[color:var(--color-border-strong)] accent-[color:var(--color-foreground)]"
+                />
+                <label
+                  htmlFor={id}
+                  className="flex-1 text-sm text-[color:var(--color-foreground)]"
+                >
+                  {o.label}
+                </label>
+                <span
+                  className="text-xs text-[color:var(--color-muted-foreground)]"
+                  aria-label={`${o.count} produit${o.count > 1 ? "s" : ""}`}
+                >
+                  ({o.count})
+                </span>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </Group>
+  );
+}
+
+function ColorsFilter({
+  idPrefix,
+  selected,
+  options,
+  onChange,
+}: {
+  idPrefix: string;
+  selected: string[];
+  options: { value: string; label: string; count: number }[];
+  onChange: (patch: Partial<CatalogQuery>) => void;
+}) {
+  const toggle = (val: string) => {
+    const next = selected.includes(val) ? selected.filter((v) => v !== val) : [...selected, val];
+    onChange({ dialColors: next, page: 1 });
+  };
+  return (
+    <Group title="Couleur du cadran">
+      <ul className="flex flex-col gap-1">
+        {options.map((o) => {
+          const id = `${idPrefix}-color-${o.value.replace(/\s+/g, "-").toLowerCase()}`;
+          const checked = selected.includes(o.value);
+          return (
+            <li key={o.value}>
+              <div className="flex min-h-11 items-center gap-2">
+                <input
+                  id={id}
+                  type="checkbox"
+                  checked={checked}
+                  onChange={() => toggle(o.value)}
+                  className="h-4 w-4 rounded border-[color:var(--color-border-strong)] accent-[color:var(--color-foreground)]"
+                />
+                <label
+                  htmlFor={id}
+                  className="flex-1 text-sm text-[color:var(--color-foreground)]"
+                >
+                  {o.label}
+                </label>
+                <span
+                  className="text-xs text-[color:var(--color-muted-foreground)]"
+                  aria-label={`${o.count} produit${o.count > 1 ? "s" : ""}`}
+                >
+                  ({o.count})
+                </span>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </Group>
+  );
+}
+
+function PriceFilter({
+  idPrefix,
+  minMillimes,
+  maxMillimes,
+  range,
+  onChange,
+}: {
+  idPrefix: string;
+  minMillimes: number | undefined;
+  maxMillimes: number | undefined;
+  range: { minMillimes: number; maxMillimes: number };
+  onChange: (patch: Partial<CatalogQuery>) => void;
+}) {
+  const minId = useId();
+  const maxId = useId();
+  const [minDt, setMinDt] = useState(millimesToDinars(minMillimes));
+  const [maxDt, setMaxDt] = useState(millimesToDinars(maxMillimes));
+
+  // Keep local inputs in sync when URL changes externally (browser nav, chip removal…).
+  useEffect(() => {
+    setMinDt(millimesToDinars(minMillimes));
+  }, [minMillimes]);
+  useEffect(() => {
+    setMaxDt(millimesToDinars(maxMillimes));
+  }, [maxMillimes]);
+
+  const apply = () => {
+    onChange({
+      minPriceMillimes: dinarsToMillimes(minDt),
+      maxPriceMillimes: dinarsToMillimes(maxDt),
+      page: 1,
+    });
+  };
+
+  const hint = `Disponible entre ${Math.round(range.minMillimes / 1000)} DT et ${Math.round(range.maxMillimes / 1000)} DT`;
+
+  return (
+    <Group title="Prix (DT)">
+      <p className="mb-2 text-xs text-[color:var(--color-muted-foreground)]">{hint}</p>
+      <div className="flex items-end gap-2">
+        <div className="flex-1">
+          <label
+            htmlFor={`${idPrefix}-${minId}`}
+            className="mb-1 block text-xs font-medium text-[color:var(--color-muted-foreground)]"
+          >
+            Prix minimum
+          </label>
+          <input
+            id={`${idPrefix}-${minId}`}
+            type="number"
+            inputMode="numeric"
+            min={0}
+            step={10}
+            value={minDt}
+            onChange={(e) => setMinDt(e.target.value)}
+            onBlur={apply}
+            onKeyDown={(e) => e.key === "Enter" && apply()}
+            placeholder="0"
+            className="h-11 w-full rounded-[var(--radius-md)] border border-[color:var(--color-border-strong)] bg-[color:var(--color-background)] px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-gold)]"
+          />
+        </div>
+        <div className="flex-1">
+          <label
+            htmlFor={`${idPrefix}-${maxId}`}
+            className="mb-1 block text-xs font-medium text-[color:var(--color-muted-foreground)]"
+          >
+            Prix maximum
+          </label>
+          <input
+            id={`${idPrefix}-${maxId}`}
+            type="number"
+            inputMode="numeric"
+            min={0}
+            step={10}
+            value={maxDt}
+            onChange={(e) => setMaxDt(e.target.value)}
+            onBlur={apply}
+            onKeyDown={(e) => e.key === "Enter" && apply()}
+            placeholder="—"
+            className="h-11 w-full rounded-[var(--radius-md)] border border-[color:var(--color-border-strong)] bg-[color:var(--color-background)] px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-gold)]"
+          />
+        </div>
+      </div>
+      <button
+        type="button"
+        onClick={apply}
+        className="mt-3 inline-flex h-9 items-center rounded-[var(--radius-md)] border border-[color:var(--color-border-strong)] bg-[color:var(--color-background)] px-3 text-xs font-semibold text-[color:var(--color-foreground)] hover:bg-[color:var(--color-surface-cream)]"
+      >
+        Appliquer
+      </button>
+    </Group>
+  );
+}
