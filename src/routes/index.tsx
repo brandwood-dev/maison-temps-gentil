@@ -77,13 +77,15 @@ function Hero() {
 }
 
 function FeaturedProducts() {
+  const { addItem } = useCart();
+  const handleAddToCart = (p: Product, quantity: number) => addItem(p.id, quantity);
   return (
     <section className="container-page py-12 md:py-16">
       <div className="mb-6 max-w-2xl md:mb-8">
         <p className="eyebrow">Sélection</p>
         <h2 className="t-h1 mt-2">Nos montres</h2>
       </div>
-      <ProductGrid products={PRODUCTS} />
+      <ProductGrid products={PRODUCTS} onAddToCart={handleAddToCart} />
     </section>
   );
 }
