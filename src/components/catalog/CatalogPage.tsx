@@ -91,74 +91,85 @@ export function CatalogPage({
   }, [query]);
 
   return (
-    <>
-      <CatalogHeader crumbs={crumbs} title={title} intro={intro} totalItems={result.totalItems} />
+    <div className="min-h-screen bg-[color:var(--color-background)]">
+      <AnnouncementBar />
+      <SiteHeader cartCount={0} />
 
-      <div className="container-page py-6 md:py-8">
-        {isCategoryEmpty ? (
-          <CatalogEmptyState variant={{ kind: "empty-category" }} />
-        ) : (
-          <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10">
-            {/* Desktop filters column */}
-            <aside className="hidden lg:block">
-              <h2 className="mb-4 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--color-muted-foreground)]">
-                Filtres
-              </h2>
-              <CatalogFilters
-                idPrefix="desk"
-                query={query}
-                availableFilters={result.availableFilters}
-                onChange={applyPatch}
-              />
-              {filtersActive ? (
-                <button
-                  type="button"
-                  onClick={resetFilters}
-                  className="mt-5 text-xs font-semibold text-[color:var(--color-muted-foreground)] underline underline-offset-4 hover:text-[color:var(--color-foreground)]"
-                >
-                  Réinitialiser
-                </button>
-              ) : null}
-            </aside>
+      <main id="content">
+        <CatalogHeader
+          crumbs={crumbs}
+          title={title}
+          intro={intro}
+          totalItems={result.totalItems}
+        />
 
-            <div className="min-w-0">
-              <CatalogToolbar
-                totalItems={result.totalItems}
-                sort={query.sort}
-                onSortChange={(s) => applyPatch({ sort: s })}
-                onOpenMobileFilters={() => setMobileOpen(true)}
-                activeFilterCount={activeFilterCount}
-              />
+        <div className="container-page py-6 md:py-8">
+          {isCategoryEmpty ? (
+            <CatalogEmptyState variant={{ kind: "empty-category" }} />
+          ) : (
+            <div className="flex flex-col gap-6 lg:grid lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10">
+              <aside className="hidden lg:block">
+                <h2 className="mb-4 text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--color-muted-foreground)]">
+                  Filtres
+                </h2>
+                <CatalogFilters
+                  idPrefix="desk"
+                  query={query}
+                  availableFilters={result.availableFilters}
+                  onChange={applyPatch}
+                />
+                {filtersActive ? (
+                  <button
+                    type="button"
+                    onClick={resetFilters}
+                    className="mt-5 text-xs font-semibold text-[color:var(--color-muted-foreground)] underline underline-offset-4 hover:text-[color:var(--color-foreground)]"
+                  >
+                    Réinitialiser
+                  </button>
+                ) : null}
+              </aside>
 
-              <CatalogActiveFilters
-                query={query}
-                onChange={applyPatch}
-                onReset={resetFilters}
-              />
+              <div className="min-w-0">
+                <CatalogToolbar
+                  totalItems={result.totalItems}
+                  sort={query.sort}
+                  onSortChange={(s) => applyPatch({ sort: s })}
+                  onOpenMobileFilters={() => setMobileOpen(true)}
+                  activeFilterCount={activeFilterCount}
+                />
 
-              {showNoResults ? (
-                <div className="pt-4">
-                  <CatalogEmptyState variant={{ kind: "no-results", onReset: resetFilters }} />
-                </div>
-              ) : (
-                <>
-                  {/* Grid alignment: `justify-start` keeps 3-card rows anchored left
-                      instead of stretching each card to fill 4 columns. */}
+                <CatalogActiveFilters
+                  query={query}
+                  onChange={applyPatch}
+                  onReset={resetFilters}
+                />
+
+                {showNoResults ? (
                   <div className="pt-4">
-                    <ProductGrid products={result.items} />
+                    <CatalogEmptyState
+                      variant={{ kind: "no-results", onReset: resetFilters }}
+                    />
                   </div>
-                  <CatalogPagination
-                    page={result.page}
-                    totalPages={result.totalPages}
-                    basePath={basePath}
-                    baseSearch={baseSearchForPagination}
-                  />
-                </>
-              )}
+                ) : (
+                  <>
+                    <div className="pt-4">
+                      <ProductGrid products={result.items} />
+                    </div>
+                    <CatalogPagination
+                      page={result.page}
+                      totalPages={result.totalPages}
+                      basePath={basePath}
+                      baseSearch={baseSearchForPagination}
+                    />
+                  </>
+                )}
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </main>
+
+      <SiteFooter />
 
       <CatalogMobileFilters
         open={mobileOpen}
@@ -169,9 +180,7 @@ export function CatalogPage({
         onChange={applyPatch}
         onReset={resetFilters}
       />
-    </>
+    </div>
   );
 }
 
-// Prevent unused-var lint on the intentional key discard above.
-void DEFAULT_CATALOG_QUERY;
