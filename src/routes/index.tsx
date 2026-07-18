@@ -16,7 +16,7 @@ function HomePage() {
   return (
     <div className="min-h-screen bg-[color:var(--color-background)]">
       <AnnouncementBar />
-      <SiteHeader cartCount={0} />
+      <SiteHeader />
 
       <main id="content">
         <Hero />
