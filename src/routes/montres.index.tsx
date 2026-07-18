@@ -8,7 +8,7 @@ const TITLE = "Montres | La Maison des Montres";
 const DESC =
   "Toute la sélection de montres La Maison des Montres : homme, femme, enfant, couple, connectées et coffrets cadeaux.";
 
-export const Route = createFileRoute("/montres")({
+export const Route = createFileRoute("/montres/")({
   validateSearch: (raw) => parseCatalogSearch(raw as Record<string, unknown>),
   head: () => ({
     meta: [
