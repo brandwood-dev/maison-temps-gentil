@@ -12,7 +12,7 @@ export function ProductGrid({ products, className, onAddToCart }: Props) {
   return (
     <ul
       className={cn(
-        "grid list-none grid-cols-1 gap-3 [@media(min-width:380px)]:grid-cols-2 md:grid-cols-3 md:gap-5 lg:grid-cols-4",
+        "grid list-none grid-cols-1 gap-3 xs:grid-cols-2 md:grid-cols-3 md:gap-5 lg:grid-cols-4",
         className,
       )}
     >
