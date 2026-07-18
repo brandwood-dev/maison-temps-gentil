@@ -5,6 +5,8 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { TrustStrip } from "@/components/layout/TrustStrip";
 import { LmmButton } from "@/components/brand/LmmButton";
+import { ProductGrid } from "@/components/product/ProductGrid";
+import { PRODUCTS } from "@/fixtures/products";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -19,6 +21,7 @@ function HomePage() {
       <main id="content">
         <Hero />
         <TrustStrip />
+        <FeaturedProducts />
         <SystemPreview />
       </main>
 
@@ -67,6 +70,18 @@ function Hero() {
           </div>
         </div>
       </div>
+    </section>
+  );
+}
+
+function FeaturedProducts() {
+  return (
+    <section className="container-page py-12 md:py-16">
+      <div className="mb-6 max-w-2xl md:mb-8">
+        <p className="eyebrow">Sélection</p>
+        <h2 className="t-h1 mt-2">Nos montres</h2>
+      </div>
+      <ProductGrid products={PRODUCTS} />
     </section>
   );
 }
