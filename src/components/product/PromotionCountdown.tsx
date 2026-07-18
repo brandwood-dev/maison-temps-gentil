@@ -35,12 +35,7 @@ function pad(n: number) {
   return n.toString().padStart(2, "0");
 }
 
-export function PromotionCountdown({
-  endsAt,
-  className,
-  onExpire,
-  variant = "compact",
-}: Props) {
+export function PromotionCountdown({ endsAt, className, onExpire, variant = "compact" }: Props) {
   const [hydrated, setHydrated] = useState(false);
   const [remaining, setRemaining] = useState<Remaining>(() => getRemainingTime(endsAt));
 
@@ -61,10 +56,7 @@ export function PromotionCountdown({
   if (!hydrated) {
     return (
       <p
-        className={cn(
-          "text-xs text-[color:var(--color-muted-foreground)] tabular-nums",
-          className,
-        )}
+        className={cn("text-xs text-[color:var(--color-muted-foreground)] tabular-nums", className)}
       >
         Offre à durée limitée
       </p>
@@ -79,12 +71,7 @@ export function PromotionCountdown({
       : `Offre valable encore ${remaining.days}j ${pad(remaining.hours)}h ${pad(remaining.minutes)}m`;
 
   return (
-    <p
-      className={cn(
-        "text-xs text-[color:var(--color-muted-foreground)] tabular-nums",
-        className,
-      )}
-    >
+    <p className={cn("text-xs text-[color:var(--color-muted-foreground)] tabular-nums", className)}>
       {label}
     </p>
   );

@@ -10,11 +10,7 @@ function readStorage(): string[] {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw) as unknown;
-    if (
-      parsed &&
-      typeof parsed === "object" &&
-      Array.isArray((parsed as StoredShape).ids)
-    ) {
+    if (parsed && typeof parsed === "object" && Array.isArray((parsed as StoredShape).ids)) {
       return (parsed as StoredShape).ids.filter((x) => typeof x === "string");
     }
     return [];

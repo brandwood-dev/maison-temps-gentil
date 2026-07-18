@@ -86,7 +86,6 @@ function FeaturedProducts() {
   );
 }
 
-
 function SystemPreview() {
   return (
     <section className="container-page py-14 md:py-20">

@@ -39,7 +39,9 @@ export function getSavingsMillimes(product: Product, now: Date = new Date()): nu
 export function getDiscountPercent(product: Product, now: Date = new Date()): number {
   if (!isPromotionActive(product.promotion, now)) return 0;
   const p = product.promotion!;
-  return Math.round(((p.regularPriceMillimes - p.salePriceMillimes) / p.regularPriceMillimes) * 100);
+  return Math.round(
+    ((p.regularPriceMillimes - p.salePriceMillimes) / p.regularPriceMillimes) * 100,
+  );
 }
 
 export type Remaining = {
