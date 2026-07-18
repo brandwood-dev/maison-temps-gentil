@@ -9,38 +9,176 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as MontresHommeRouteImport } from './routes/montres-homme'
+import { Route as MontresFemmeRouteImport } from './routes/montres-femme'
+import { Route as MontresEnfantRouteImport } from './routes/montres-enfant'
+import { Route as MontresCoupleRouteImport } from './routes/montres-couple'
+import { Route as MontresConnecteesRouteImport } from './routes/montres-connectees'
+import { Route as MontresRouteImport } from './routes/montres'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CollectionsCoffretsCadeauxRouteImport } from './routes/collections.coffrets-cadeaux'
 
+const MontresHommeRoute = MontresHommeRouteImport.update({
+  id: '/montres-homme',
+  path: '/montres-homme',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MontresFemmeRoute = MontresFemmeRouteImport.update({
+  id: '/montres-femme',
+  path: '/montres-femme',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MontresEnfantRoute = MontresEnfantRouteImport.update({
+  id: '/montres-enfant',
+  path: '/montres-enfant',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MontresCoupleRoute = MontresCoupleRouteImport.update({
+  id: '/montres-couple',
+  path: '/montres-couple',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MontresConnecteesRoute = MontresConnecteesRouteImport.update({
+  id: '/montres-connectees',
+  path: '/montres-connectees',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MontresRoute = MontresRouteImport.update({
+  id: '/montres',
+  path: '/montres',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CollectionsCoffretsCadeauxRoute =
+  CollectionsCoffretsCadeauxRouteImport.update({
+    id: '/collections/coffrets-cadeaux',
+    path: '/collections/coffrets-cadeaux',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/montres': typeof MontresRoute
+  '/montres-connectees': typeof MontresConnecteesRoute
+  '/montres-couple': typeof MontresCoupleRoute
+  '/montres-enfant': typeof MontresEnfantRoute
+  '/montres-femme': typeof MontresFemmeRoute
+  '/montres-homme': typeof MontresHommeRoute
+  '/collections/coffrets-cadeaux': typeof CollectionsCoffretsCadeauxRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/montres': typeof MontresRoute
+  '/montres-connectees': typeof MontresConnecteesRoute
+  '/montres-couple': typeof MontresCoupleRoute
+  '/montres-enfant': typeof MontresEnfantRoute
+  '/montres-femme': typeof MontresFemmeRoute
+  '/montres-homme': typeof MontresHommeRoute
+  '/collections/coffrets-cadeaux': typeof CollectionsCoffretsCadeauxRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/montres': typeof MontresRoute
+  '/montres-connectees': typeof MontresConnecteesRoute
+  '/montres-couple': typeof MontresCoupleRoute
+  '/montres-enfant': typeof MontresEnfantRoute
+  '/montres-femme': typeof MontresFemmeRoute
+  '/montres-homme': typeof MontresHommeRoute
+  '/collections/coffrets-cadeaux': typeof CollectionsCoffretsCadeauxRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/montres'
+    | '/montres-connectees'
+    | '/montres-couple'
+    | '/montres-enfant'
+    | '/montres-femme'
+    | '/montres-homme'
+    | '/collections/coffrets-cadeaux'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/montres'
+    | '/montres-connectees'
+    | '/montres-couple'
+    | '/montres-enfant'
+    | '/montres-femme'
+    | '/montres-homme'
+    | '/collections/coffrets-cadeaux'
+  id:
+    | '__root__'
+    | '/'
+    | '/montres'
+    | '/montres-connectees'
+    | '/montres-couple'
+    | '/montres-enfant'
+    | '/montres-femme'
+    | '/montres-homme'
+    | '/collections/coffrets-cadeaux'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  MontresRoute: typeof MontresRoute
+  MontresConnecteesRoute: typeof MontresConnecteesRoute
+  MontresCoupleRoute: typeof MontresCoupleRoute
+  MontresEnfantRoute: typeof MontresEnfantRoute
+  MontresFemmeRoute: typeof MontresFemmeRoute
+  MontresHommeRoute: typeof MontresHommeRoute
+  CollectionsCoffretsCadeauxRoute: typeof CollectionsCoffretsCadeauxRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/montres-homme': {
+      id: '/montres-homme'
+      path: '/montres-homme'
+      fullPath: '/montres-homme'
+      preLoaderRoute: typeof MontresHommeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/montres-femme': {
+      id: '/montres-femme'
+      path: '/montres-femme'
+      fullPath: '/montres-femme'
+      preLoaderRoute: typeof MontresFemmeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/montres-enfant': {
+      id: '/montres-enfant'
+      path: '/montres-enfant'
+      fullPath: '/montres-enfant'
+      preLoaderRoute: typeof MontresEnfantRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/montres-couple': {
+      id: '/montres-couple'
+      path: '/montres-couple'
+      fullPath: '/montres-couple'
+      preLoaderRoute: typeof MontresCoupleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/montres-connectees': {
+      id: '/montres-connectees'
+      path: '/montres-connectees'
+      fullPath: '/montres-connectees'
+      preLoaderRoute: typeof MontresConnecteesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/montres': {
+      id: '/montres'
+      path: '/montres'
+      fullPath: '/montres'
+      preLoaderRoute: typeof MontresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +186,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/collections/coffrets-cadeaux': {
+      id: '/collections/coffrets-cadeaux'
+      path: '/collections/coffrets-cadeaux'
+      fullPath: '/collections/coffrets-cadeaux'
+      preLoaderRoute: typeof CollectionsCoffretsCadeauxRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  MontresRoute: MontresRoute,
+  MontresConnecteesRoute: MontresConnecteesRoute,
+  MontresCoupleRoute: MontresCoupleRoute,
+  MontresEnfantRoute: MontresEnfantRoute,
+  MontresFemmeRoute: MontresFemmeRoute,
+  MontresHommeRoute: MontresHommeRoute,
+  CollectionsCoffretsCadeauxRoute: CollectionsCoffretsCadeauxRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
