@@ -185,15 +185,13 @@ export function ProductCard({
 
   return (
     <article
-      data-debug-now={nowTs}
-      data-debug-active={String(promoActive)}
-      data-debug-endsat={product.promotion?.endsAt ?? ""}
       className={cn(
         "group flex flex-col rounded-[var(--radius-md)] border border-[color:var(--color-border)] bg-[color:var(--color-background)]",
         unavailable && "opacity-90",
         className,
       )}
     >
+
 
       {href && !unavailable ? (
         <a href={href} className="block" aria-label={product.name}>
