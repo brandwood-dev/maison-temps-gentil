@@ -82,7 +82,7 @@ export function SiteHeader({ cartCount = 0 }: { cartCount?: number }) {
             <Logo variant="dark" height={36} priority />
           </a>
           <nav aria-label="Navigation principale" className="min-w-0 flex-1">
-            <ul className="flex items-center justify-center gap-4 xl:gap-7">
+            <ul className="flex items-center justify-center gap-3 lg:gap-5 xl:gap-7">
               {NAV_LINKS.map((l) => (
                 <li key={l.href}>
                   <a
