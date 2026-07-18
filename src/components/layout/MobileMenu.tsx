@@ -1,54 +1,24 @@
-import { useEffect, useRef } from "react";
-import { X } from "lucide-react";
+import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Logo } from "@/components/brand/Logo";
 import { NAV_LINKS, SECONDARY_LINKS } from "@/config/nav";
 
 type Props = { open: boolean; onClose: () => void };
 
 export function MobileMenu({ open, onClose }: Props) {
-  const closeBtnRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", onKey);
-    closeBtnRef.current?.focus();
-    return () => {
-      document.body.style.overflow = prevOverflow;
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [open, onClose]);
-
   return (
-    <div
-      aria-hidden={!open}
-      className={`fixed inset-0 z-50 lg:hidden ${open ? "pointer-events-auto" : "pointer-events-none"}`}
-    >
-      <div
-        onClick={onClose}
-        className={`absolute inset-0 bg-black/40 transition-opacity duration-200 ${open ? "opacity-100" : "opacity-0"}`}
-      />
-      <aside
-        role="dialog"
-        aria-modal="true"
+    <Sheet open={open} onOpenChange={(v) => !v && onClose()}>
+      <SheetContent
+        side="left"
         aria-label="Menu principal"
-        className={`absolute inset-y-0 left-0 flex w-[86%] max-w-sm flex-col bg-[color:var(--color-background)] shadow-[var(--shadow-soft)] transition-transform duration-200 ${open ? "translate-x-0" : "-translate-x-full"}`}
+        className="flex w-[86%] max-w-sm flex-col gap-0 border-r-0 bg-[color:var(--color-background)] p-0 shadow-[var(--shadow-soft)]"
       >
-        <div className="flex h-14 items-center justify-between border-b border-[color:var(--color-border)] px-4">
+        <div className="sr-only">
+          <SheetTitle>Menu principal</SheetTitle>
+          <SheetDescription>Navigation par catégories de La Maison des Montres</SheetDescription>
+        </div>
+
+        <div className="flex h-14 items-center border-b border-[color:var(--color-border)] px-4">
           <Logo variant="dark" height={26} />
-          <button
-            ref={closeBtnRef}
-            type="button"
-            onClick={onClose}
-            aria-label="Fermer le menu"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-[var(--radius-md)] hover:bg-[color:var(--color-surface-cream)]"
-          >
-            <X className="h-5 w-5" strokeWidth={1.75} />
-          </button>
         </div>
 
         <nav aria-label="Catégories" className="flex-1 overflow-y-auto px-2 py-3">
@@ -80,7 +50,7 @@ export function MobileMenu({ open, onClose }: Props) {
             ))}
           </ul>
         </nav>
-      </aside>
-    </div>
+      </SheetContent>
+    </Sheet>
   );
 }

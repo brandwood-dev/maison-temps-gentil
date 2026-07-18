@@ -53,18 +53,18 @@
 }
 
 :root {
-  --background: #FEFFFF;
+  --background: #feffff;
   --foreground: #1c1b1b;
-  --surface: #FEFFFF;
+  --surface: #feffff;
   --surface-cream: #f4f3ed;
 
-  --card: #FEFFFF;
+  --card: #feffff;
   --card-foreground: #1c1b1b;
-  --popover: #FEFFFF;
+  --popover: #feffff;
   --popover-foreground: #1c1b1b;
 
   --primary: #1c1b1b;
-  --primary-foreground: #FEFFFF;
+  --primary-foreground: #feffff;
 
   --secondary: #f4f3ed;
   --secondary-foreground: #1c1b1b;
@@ -79,7 +79,7 @@
   --gold-foreground: #1c1b1b;
 
   --destructive: #b3261e;
-  --destructive-foreground: #FEFFFF;
+  --destructive-foreground: #feffff;
   --success: #2f7a4d;
   --warning: #b7791f;
   --info: #1f6feb;
@@ -109,7 +109,12 @@
     font-feature-settings: "ss01", "cv11";
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-sans);
     font-weight: 600;
     letter-spacing: -0.01em;
@@ -123,7 +128,9 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
+    *,
+    *::before,
+    *::after {
       animation-duration: 0.001ms !important;
       transition-duration: 0.001ms !important;
     }

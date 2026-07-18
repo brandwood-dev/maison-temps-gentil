@@ -1,43 +1,14 @@
 import { ChevronDown, Facebook, Instagram } from "lucide-react";
 import { useState } from "react";
 import { Logo } from "@/components/brand/Logo";
+import { FOOTER_SHOP_LINKS, FOOTER_HELP_LINKS, FOOTER_INFO_LINKS } from "@/config/nav";
 
-type Col = { title: string; links: { label: string; href: string }[] };
+type Col = { title: string; links: readonly { readonly label: string; readonly href: string }[] };
 
 const COLS: Col[] = [
-  {
-    title: "Boutique",
-    links: [
-      { label: "Homme", href: "/homme" },
-      { label: "Femme", href: "/femme" },
-      { label: "Enfant", href: "/enfant" },
-      { label: "Couple", href: "/couple" },
-      { label: "Montres connectées", href: "/connectees" },
-      { label: "Coffrets cadeaux", href: "/coffrets" },
-      { label: "Promotions", href: "/promotions" },
-      { label: "Marques", href: "/marques" },
-    ],
-  },
-  {
-    title: "Aide",
-    links: [
-      { label: "Suivre ma commande", href: "/suivi" },
-      { label: "Livraison et retours", href: "/livraison" },
-      { label: "Garantie", href: "/garantie" },
-      { label: "FAQ", href: "/faq" },
-      { label: "Contact", href: "/contact" },
-    ],
-  },
-  {
-    title: "Informations",
-    links: [
-      { label: "À propos", href: "/a-propos" },
-      { label: "Conditions générales de vente", href: "/cgv" },
-      { label: "Politique de confidentialité", href: "/confidentialite" },
-      { label: "Politique de cookies", href: "/cookies" },
-      { label: "Mentions légales", href: "/mentions-legales" },
-    ],
-  },
+  { title: "Boutique", links: FOOTER_SHOP_LINKS },
+  { title: "Aide", links: FOOTER_HELP_LINKS },
+  { title: "Informations", links: FOOTER_INFO_LINKS },
 ];
 
 function LinkList({ links }: { links: Col["links"] }) {
@@ -73,7 +44,11 @@ function MobileCol({ col }: { col: Col }) {
           aria-hidden
         />
       </button>
-      {open && <div className="pb-4"><LinkList links={col.links} /></div>}
+      {open && (
+        <div className="pb-4">
+          <LinkList links={col.links} />
+        </div>
+      )}
     </div>
   );
 }
@@ -86,8 +61,8 @@ export function SiteFooter() {
           <div>
             <Logo variant="light" height={36} />
             <p className="mt-4 max-w-xs text-sm text-white/70">
-              La Maison des Montres — une sélection soignée pour chaque style et chaque
-              occasion. Livraison partout en Tunisie.
+              La Maison des Montres — une sélection soignée pour chaque style et chaque occasion.
+              Livraison partout en Tunisie.
             </p>
             <div className="mt-5 flex items-center gap-2">
               <span className="sr-only">Réseaux sociaux</span>
@@ -153,8 +128,8 @@ export function SiteFooter() {
               </button>
             </form>
             <p className="mt-2 text-[11px] leading-relaxed text-white/50">
-              En vous inscrivant, vous acceptez de recevoir nos communications. Vous
-              pouvez vous désinscrire à tout moment.
+              En vous inscrivant, vous acceptez de recevoir nos communications. Vous pouvez vous
+              désinscrire à tout moment.
             </p>
           </div>
         </div>
