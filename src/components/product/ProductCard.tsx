@@ -160,15 +160,15 @@ export function ProductCard({
 
   const ViewAction =
     viewEnabled && href ? (
-      <a
-        href={href}
+      <Link
+        to={href}
         aria-label={`${viewLabelLong} ${product.name}`}
         className={cn(viewBaseClasses, viewEnabledClasses)}
       >
         <span className="sm:hidden">{viewLabelShort}</span>
         <span className="hidden sm:inline">{viewLabelLong}</span>
         <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden />
-      </a>
+      </Link>
     ) : (
       <span
         role="link"
