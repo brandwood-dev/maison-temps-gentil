@@ -147,7 +147,7 @@ export function SiteFooter() {
               />
               <button
                 type="submit"
-                className="inline-flex h-11 items-center justify-center rounded-[var(--radius-md)] bg-[color:var(--color-gold)] px-4 text-sm font-semibold text-[color:var(--color-gold-foreground)] hover:brightness-95"
+                className="inline-flex h-12 items-center justify-center rounded-[var(--radius-md)] bg-[color:var(--color-gold)] px-5 text-sm font-semibold text-[color:var(--color-gold-foreground)] hover:brightness-95"
               >
                 S’inscrire
               </button>
