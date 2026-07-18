@@ -5,7 +5,7 @@ import { ProductCard } from "./ProductCard";
 type Props = {
   products: Product[];
   className?: string;
-  onAddToCart?: (product: Product) => void;
+  onAddToCart?: (product: Product, quantity: number) => void;
   /**
    * Override the default per-product link. Return `null` or `undefined` to
    * render the card without a link. When omitted, cards link to

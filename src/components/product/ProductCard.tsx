@@ -199,9 +199,18 @@ export function ProductCard({
         <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-[color:var(--color-muted-foreground)]">
           {product.brand}
         </p>
-        <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-[color:var(--color-foreground)]">
-          {product.name}
-        </h3>
+        {href && !unavailable ? (
+          <Link
+            to={href}
+            className="line-clamp-2 text-sm font-semibold leading-snug text-[color:var(--color-foreground)] hover:text-[color:var(--color-gold)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-gold)]"
+          >
+            <h3 className="line-clamp-2">{product.name}</h3>
+          </Link>
+        ) : (
+          <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-[color:var(--color-foreground)]">
+            {product.name}
+          </h3>
+        )}
 
         <div className="mt-1">
           <ProductPrice product={product} mode="compact" />
@@ -225,7 +234,7 @@ export function ProductCard({
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              if (cartEnabled && onAddToCart) onAddToCart(product);
+              if (cartEnabled && onAddToCart) onAddToCart(product, 1);
             }}
             disabled={!cartEnabled}
             aria-label={cartLabel}
