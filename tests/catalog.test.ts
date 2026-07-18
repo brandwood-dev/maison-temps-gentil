@@ -323,10 +323,7 @@ console.log("\n== static guard on CatalogPage.tsx ==");
     !/as\s+Record<string,\s*unknown>/.test(src),
     "CatalogPage.tsx must not cast as Record<string, unknown>",
   );
-  assert(
-    !/as\s+CatalogQuery\b/.test(src),
-    "CatalogPage.tsx must not cast as CatalogQuery",
-  );
+  assert(!/as\s+CatalogQuery\b/.test(src), "CatalogPage.tsx must not cast as CatalogQuery");
   assert(
     /\bquery\s*:\s*CatalogQuery\b/.test(src),
     "CatalogPage.tsx must declare prop `query: CatalogQuery`",
@@ -335,4 +332,3 @@ console.log("\n== static guard on CatalogPage.tsx ==");
 
 console.log(`\n${passed} passed, ${failed} failed\n`);
 if (failed > 0) process.exit(1);
-
