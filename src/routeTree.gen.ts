@@ -55,9 +55,9 @@ const MontresIndexRoute = MontresIndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const MontresSlugRoute = MontresSlugRouteImport.update({
-  id: '/montres/$slug',
-  path: '/montres/$slug',
-  getParentRoute: () => rootRouteImport,
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => MontresRoute,
 } as any)
 const CollectionsCoffretsCadeauxRoute =
   CollectionsCoffretsCadeauxRouteImport.update({
@@ -144,7 +144,6 @@ export interface RootRouteChildren {
   MontresFemmeRoute: typeof MontresFemmeRoute
   MontresHommeRoute: typeof MontresHommeRoute
   CollectionsCoffretsCadeauxRoute: typeof CollectionsCoffretsCadeauxRoute
-  MontresSlugRoute: typeof MontresSlugRoute
   MontresIndexRoute: typeof MontresIndexRoute
 }
 
@@ -201,10 +200,10 @@ declare module '@tanstack/react-router' {
     }
     '/montres/$slug': {
       id: '/montres/$slug'
-      path: '/montres/$slug'
+      path: '/$slug'
       fullPath: '/montres/$slug'
       preLoaderRoute: typeof MontresSlugRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof MontresRoute
     }
     '/collections/coffrets-cadeaux': {
       id: '/collections/coffrets-cadeaux'
@@ -224,9 +223,18 @@ const rootRouteChildren: RootRouteChildren = {
   MontresFemmeRoute: MontresFemmeRoute,
   MontresHommeRoute: MontresHommeRoute,
   CollectionsCoffretsCadeauxRoute: CollectionsCoffretsCadeauxRoute,
-  MontresSlugRoute: MontresSlugRoute,
   MontresIndexRoute: MontresIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
