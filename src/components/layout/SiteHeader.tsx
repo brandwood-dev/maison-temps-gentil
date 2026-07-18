@@ -114,10 +114,10 @@ export function SiteHeader({ cartCount = 0 }: { cartCount?: number }) {
           </div>
         </div>
       </div>
-
-      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
-      <SearchPanel open={searchOpen} onClose={() => setSearchOpen(false)} />
     </header>
+    <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
+    <SearchPanel open={searchOpen} onClose={() => setSearchOpen(false)} />
+    </>
   );
 }
 
