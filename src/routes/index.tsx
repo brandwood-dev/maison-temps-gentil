@@ -74,6 +74,19 @@ function Hero() {
   );
 }
 
+function FeaturedProducts() {
+  return (
+    <section className="container-page py-12 md:py-16">
+      <div className="mb-6 max-w-2xl md:mb-8">
+        <p className="eyebrow">Sélection</p>
+        <h2 className="t-h1 mt-2">Nos montres</h2>
+      </div>
+      <ProductGrid products={PRODUCTS} />
+    </section>
+  );
+}
+
+
 function SystemPreview() {
   return (
     <section className="container-page py-14 md:py-20">
