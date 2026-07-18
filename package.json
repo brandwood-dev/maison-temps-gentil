@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "test:catalog": "tsx tests/catalog.test.ts"
+    "test:catalog": "tsx tests/catalog.test.ts",
+    "test:product": "tsx tests/product.test.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

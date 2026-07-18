@@ -12,6 +12,15 @@ export function getProductBySlug(products: Product[], slug: string): Product | n
 }
 
 /**
+ * Public-facing resolver: same as `getProductBySlug` but rejects `hidden`
+ * products. Used by the product detail route so hidden products always 404.
+ */
+export function getPublicProductBySlug(products: Product[], slug: string): Product | null {
+  const product = getProductBySlug(products, slug);
+  return product?.availability === "hidden" ? null : product;
+}
+
+/**
  * Related products, prioritising the same category, then completing with
  * other available products. Excludes the current product and any `hidden`
  * product. No duplicates, no mutation of inputs.

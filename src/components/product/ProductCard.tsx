@@ -6,6 +6,7 @@ import type { Product } from "@/types/product";
 import { isPromotionActive } from "@/lib/product-pricing";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useNow } from "@/lib/now-store";
+import { getProductBadges } from "@/lib/product-badges";
 import { ProductPrice } from "./ProductPrice";
 import { PromotionCountdown } from "./PromotionCountdown";
 
@@ -14,7 +15,7 @@ type Props = {
   /** Optional link to the future product page. Omit until product pages exist. */
   href?: string;
   /** Optional add-to-cart callback. Omit until cart is implemented. */
-  onAddToCart?: (product: Product) => void;
+  onAddToCart?: (product: Product, quantity: number) => void;
   /** Prioritize main image loading (LCP). Only the first card in a grid should set this. */
   imagePriority?: boolean;
   className?: string;
@@ -55,12 +56,7 @@ export function ProductCard({
     ? `Produit indisponible : ${product.name}`
     : `Ajouter ${product.name} au panier`;
 
-  const badges: { key: string; label: string; tone: "promo" | "best" | "new" }[] = [];
-  if (promoActive) badges.push({ key: "promo", label: "Promo", tone: "promo" });
-  if (product.isBestSeller) badges.push({ key: "best", label: "Meilleure vente", tone: "best" });
-  if (product.isNew && badges.length < 2)
-    badges.push({ key: "new", label: "Nouveauté", tone: "new" });
-  const visibleBadges = badges.slice(0, 2);
+  const visibleBadges = getProductBadges(product, nowTs);
 
   const mainLoading = imagePriority ? "eager" : "lazy";
   const mainFetchPriority: "high" | "auto" = imagePriority ? "high" : "auto";
@@ -110,7 +106,7 @@ export function ProductCard({
         <ul className="absolute left-2 top-2 flex flex-col items-start gap-1">
           {visibleBadges.map((b) => (
             <li
-              key={b.key}
+              key={b.id}
               className={cn(
                 "rounded-[var(--radius-sm)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
                 b.tone === "promo" &&
@@ -202,9 +198,18 @@ export function ProductCard({
         <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-[color:var(--color-muted-foreground)]">
           {product.brand}
         </p>
-        <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-[color:var(--color-foreground)]">
-          {product.name}
-        </h3>
+        {href && !unavailable ? (
+          <Link
+            to={href}
+            className="line-clamp-2 text-sm font-semibold leading-snug text-[color:var(--color-foreground)] hover:text-[color:var(--color-gold)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-gold)]"
+          >
+            <h3 className="line-clamp-2">{product.name}</h3>
+          </Link>
+        ) : (
+          <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-[color:var(--color-foreground)]">
+            {product.name}
+          </h3>
+        )}
 
         <div className="mt-1">
           <ProductPrice product={product} mode="compact" />
@@ -228,7 +233,7 @@ export function ProductCard({
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              if (cartEnabled && onAddToCart) onAddToCart(product);
+              if (cartEnabled && onAddToCart) onAddToCart(product, 1);
             }}
             disabled={!cartEnabled}
             aria-label={cartLabel}

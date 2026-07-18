@@ -2,14 +2,13 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 
 import { ProductDetailPage } from "@/components/product-detail/ProductDetailPage";
 import { PRODUCTS } from "@/fixtures/products";
-import { formatPriceTND, isPromotionActive } from "@/lib/product-pricing";
-import { getProductBySlug } from "@/lib/products";
+import { getPublicProductBySlug } from "@/lib/products";
 
 const SITE = "https://maison-temps-gentil.lovable.app";
 
 export const Route = createFileRoute("/montres/$slug")({
   loader: ({ params }) => {
-    const product = getProductBySlug(PRODUCTS, params.slug);
+    const product = getPublicProductBySlug(PRODUCTS, params.slug);
     if (!product) throw notFound();
     return { product };
   },
@@ -24,36 +23,27 @@ export const Route = createFileRoute("/montres/$slug")({
     }
     const { product } = loaderData;
     const canonical = `${SITE}/montres/${params.slug}`;
-    const promoActive = isPromotionActive(product.promotion, new Date());
-    const price =
-      promoActive && product.promotion
-        ? product.promotion.salePriceMillimes
-        : product.regularPriceMillimes;
 
     const title = `${product.name} — ${product.brand} | La Maison des Montres`;
-    const description =
-      product.shortDescription ||
-      `${product.name} — ${product.brand}. Découvrez ce modèle sur La Maison des Montres, au prix de ${formatPriceTND(price)}.`;
+
+    // Description: real short description, or a purely factual composition.
+    // No price, no promise, no commercial phrasing.
+    const factualDescription = product.shortDescription
+      ? product.shortDescription
+      : `${product.name} — ${product.brand} (réf. ${product.reference}).`;
 
     const primaryImage = product.images.find((i) => i.position === 1) ?? product.images[0];
 
     const meta: Array<Record<string, string>> = [
       { title },
-      { name: "description", content: description },
+      { name: "description", content: factualDescription },
       { property: "og:title", content: title },
-      { property: "og:description", content: description },
+      { property: "og:description", content: factualDescription },
       { property: "og:url", content: canonical },
       { property: "og:type", content: "product" },
-      { property: "product:brand", content: product.brand },
-      { property: "product:price:amount", content: (price / 1000).toFixed(3) },
-      { property: "product:price:currency", content: "TND" },
-      {
-        property: "product:availability",
-        content: product.availability === "available" ? "in stock" : "out of stock",
-      },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: title },
-      { name: "twitter:description", content: description },
+      { name: "twitter:description", content: factualDescription },
     ];
     if (primaryImage) {
       meta.push({ property: "og:image", content: primaryImage.url });
