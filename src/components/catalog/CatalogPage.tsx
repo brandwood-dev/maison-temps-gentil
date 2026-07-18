@@ -96,12 +96,7 @@ export function CatalogPage({
       <SiteHeader cartCount={0} />
 
       <main id="content">
-        <CatalogHeader
-          crumbs={crumbs}
-          title={title}
-          intro={intro}
-          totalItems={result.totalItems}
-        />
+        <CatalogHeader crumbs={crumbs} title={title} intro={intro} totalItems={result.totalItems} />
 
         <div className="container-page py-6 md:py-8">
           {isCategoryEmpty ? (
@@ -138,17 +133,11 @@ export function CatalogPage({
                   activeFilterCount={activeFilterCount}
                 />
 
-                <CatalogActiveFilters
-                  query={query}
-                  onChange={applyPatch}
-                  onReset={resetFilters}
-                />
+                <CatalogActiveFilters query={query} onChange={applyPatch} onReset={resetFilters} />
 
                 {showNoResults ? (
                   <div className="pt-4">
-                    <CatalogEmptyState
-                      variant={{ kind: "no-results", onReset: resetFilters }}
-                    />
+                    <CatalogEmptyState variant={{ kind: "no-results", onReset: resetFilters }} />
                   </div>
                 ) : (
                   <>
@@ -183,4 +172,3 @@ export function CatalogPage({
     </div>
   );
 }
-

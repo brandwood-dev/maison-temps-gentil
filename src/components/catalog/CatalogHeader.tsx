@@ -40,9 +40,7 @@ export function CatalogHeader({ crumbs, title, intro, totalItems }: Props) {
                       {c.label}
                     </span>
                   )}
-                  {!isLast ? (
-                    <ChevronRight className="h-3 w-3 opacity-60" aria-hidden />
-                  ) : null}
+                  {!isLast ? <ChevronRight className="h-3 w-3 opacity-60" aria-hidden /> : null}
                 </li>
               );
             })}

@@ -113,10 +113,7 @@ function BrandsFilter({
                   onChange={() => toggle(o.value)}
                   className="h-4 w-4 rounded border-[color:var(--color-border-strong)] accent-[color:var(--color-foreground)]"
                 />
-                <label
-                  htmlFor={id}
-                  className="flex-1 text-sm text-[color:var(--color-foreground)]"
-                >
+                <label htmlFor={id} className="flex-1 text-sm text-[color:var(--color-foreground)]">
                   {o.label}
                 </label>
                 <span
@@ -165,10 +162,7 @@ function ColorsFilter({
                   onChange={() => toggle(o.value)}
                   className="h-4 w-4 rounded border-[color:var(--color-border-strong)] accent-[color:var(--color-foreground)]"
                 />
-                <label
-                  htmlFor={id}
-                  className="flex-1 text-sm text-[color:var(--color-foreground)]"
-                >
+                <label htmlFor={id} className="flex-1 text-sm text-[color:var(--color-foreground)]">
                   {o.label}
                 </label>
                 <span
