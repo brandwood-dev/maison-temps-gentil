@@ -1,68 +1,169 @@
-# Plan final — Fiches produit `/montres/$slug`
+# Corrections fiches produit — écarts commit b608b4f
 
-## Contraintes horloge (unique)
+Périmètre strict : corriger les 10 points listés. Zéro backend, zéro panier fonctionnel, zéro fixture modifiée, zéro dépendance ajoutée.
 
-- Aucun `NowProvider`, `initialNow` ou `Date.now()` dans `src/routes/montres.$slug.tsx`.
-- L'unique `NowProvider` reste celui de `src/routes/__root.tsx`.
-- `ProductPrice`, `PromotionCountdown` et `ProductStructuredData` consomment tous `useNow()` → SSR et hydratation cohérents, expiration promo simultanée sur prix visible **et** JSON-LD.
+## 1. Loader `montres.$slug.tsx` — rejeter `hidden` via helper pur
 
-## Fichiers créés
+Ajouter dans `src/lib/products.ts` :
+```ts
+export function getPublicProductBySlug(
+  products: Product[],
+  slug: string,
+): Product | null {
+  const product = getProductBySlug(products, slug);
+  return product?.availability === "hidden" ? null : product;
+}
+```
 
-- `src/lib/products.ts` :
-  - `getProductBySlug(products, slug): Product | null` — exact match, non mutant, expose aussi `hidden` (filtrage public dans le loader).
-  - `getRelatedProducts(products, current, limit = 4): Product[]` — exclut courant + `hidden`, priorité même catégorie, dédup, non mutant.
-  - `formatSpecifications(product)` — paires `{ label, value }` FR, valeurs vides/nulles omises, ordre spécifié, diamètre suffixé `mm` uniquement si numérique.
-  - `getCategoryRoute(category)` — map vers routes catalogue réelles.
-  - `formatSchemaPriceTND(millimes: number): string` → `(millimes / 1000).toFixed(3)` (point décimal, jamais d'arrondi au dinar).
-- `src/routes/montres.$slug.tsx` :
-  - `loader` résout depuis fixtures ; `throw notFound()` si absent ou `hidden`.
-  - `head()` : title, description (`shortDescription`), OG title/description/image (première image), `og:type=product`, canonical `https://maison-temps-gentil.lovable.app/montres/{slug}`.
-  - `notFoundComponent` réutilise la vraie 404 FR.
-  - **N'importe ni `NowProvider` ni `Date.now`**.
-- `src/components/product-detail/`
-  - `ProductDetailPage.tsx` — orchestrateur (breadcrumb + 2 colonnes ≥ lg, ordre mobile spécifié).
-  - `ProductBreadcrumb.tsx` — Accueil › Montres › catégorie (lien) › nom (aria-current).
-  - `ProductGallery.tsx` — image principale + miniatures + Dialog Radix plein écran ("Agrandir l'image de …"), `aria-current` sur miniature active, fallback "Image indisponible", masque miniatures si 1 seule image.
-  - `ProductSummary.tsx` — marque, H1, référence, courte description, ≤ 2 badges (mêmes priorités que la carte).
-  - `ProductPurchasePanel.tsx` — `ProductPrice` mode `detailed`, `PromotionCountdown`, disponibilité, favori (`useFavorites`), sélecteur quantité (min 1, ±, 44 px, libellés incluant nom produit).
-    - Bouton "Ajouter au panier" :
-      - **sans `onAddToCart`** → désactivé + texte "Fonction d'achat en cours de connexion".
-      - **avec `onAddToCart` + `available`** → activé, un seul appel `onAddToCart(product, quantity)`.
-      - **produit `unavailable`** → toujours désactivé.
-      - Aucune notification, persistance, ni compteur panier.
-    - Contrat : `onAddToCart?: (product: Product, quantity: number) => void`.
-  - `ProductSpecifications.tsx` — `<dl>` accessible via `formatSpecifications`.
-  - `ProductReassurance.tsx` — paiement livraison, livraison Tunisie 2-3 j, confirmation téléphone ; garantie conditionnelle à `warrantyMonths` ; coffret conditionnel à `giftBoxIncluded`.
-  - `RelatedProducts.tsx` — `getRelatedProducts` + `ProductGrid`/`ProductCard`, rendu conditionnel.
-  - `ProductStructuredData.tsx` — client component :
-    - lit `useNow()` pour choisir prix promo (si réellement active) ou prix normal.
-    - `price` via `formatSchemaPriceTND` (jamais arrondi au dinar).
-    - `priceCurrency: "TND"`, availability dérivée de `product.availability`, `sku` = `reference`, brand, image, description, url canonique.
-    - `priceValidUntil` uniquement si promo active.
-    - Aucun avis, note, livraison gratuite, stock numérique.
+Loader :
+```ts
+const product = getPublicProductBySlug(PRODUCTS, params.slug);
+if (!product) throw notFound();
+```
 
-## Fichiers modifiés
+Tests unitaires (dans `tests/product.test.ts`) sur `getPublicProductBySlug` :
+- produit visible → renvoyé
+- slug inconnu → `null`
+- produit `hidden` → `null`
+- pas de mutation
 
-- `src/components/product/ProductGrid.tsx` — **injecte par défaut** `href={`/montres/${product.slug}`}` sur chaque `ProductCard`. Aucune duplication d'URL dans l'accueil, `CatalogPage`, `RelatedProducts`.
-- `src/components/product/ProductCard.tsx` — si `href` commence par `/`, utilise `Link` TanStack au lieu de `<a>` (favori conserve `stopPropagation`, panier reste `disabled`).
-- `package.json` — script `test:product` → `tsx tests/product.test.ts`.
+Aucun test statique fragile sur le contenu du loader pour ce point.
 
-## Tests (`tests/product.test.ts`)
+## 2. Purger `head()` de toute logique temporelle
 
-- `getProductBySlug` : trouvé / inexistant / hidden (fonction pure).
-- `getRelatedProducts` : exclusion courant, exclusion `hidden`, priorité catégorie, limite, dédup, non-mutation.
-- `formatSpecifications` : valeurs nulles omises, ordre, formatage diamètre.
-- `formatSchemaPriceTND` : `450000 → "450.000"`, `450500 → "450.500"`, séparateur point.
-- Garde statique : `src/routes/montres.$slug.tsx` ne contient ni `NowProvider` ni `Date.now` ; un seul `<NowProvider` dans `src/`.
+Réécriture de `head()` dans `src/routes/montres.$slug.tsx` :
+- `title` = `{name} — {brand} | La Maison des Montres`
+- `description` = `shortDescription` si présent, sinon composition factuelle `{name} — {brand} (réf. {reference})`, sans prix ni argument commercial ; omise si aucune valeur factuelle utilisable
+- `og:title`, `og:description`, `og:type=product`, `og:url`, `og:image` (+ alt), `twitter:card`, `twitter:title`, `twitter:description`, `twitter:image`
+- `canonical` (leaf uniquement)
 
-## Playwright (375/430/768/1024/1280/1440)
+Supprimés : `product:price:amount`, `product:price:currency`, `product:availability`, `isPromotionActive`, tout `new Date()`.
 
-3 routes réelles (CK, Tissot, Swatch) : SSR H1/marque/référence/prix, changement miniature, Dialog open/close + focus restore, favori sync avec carte accueil, countdown actif, **expiration promo simultanée** (badge, barré, %, économies, countdown, `price` du JSON-LD) via horloge virtuelle, bouton panier `disabled`, coffret Tissot+Swatch / absent CK, specs nulles masquées, related sans doublon, navigation via `Link` TanStack (pas de full reload), slug inconnu → 404 FR, zéro warning React, zéro overflow horizontal.
+Garde statique ajoutée dans `tests/product.test.ts` : `src/routes/montres.$slug.tsx` ne contient ni `NowProvider`, ni `Date.now`, ni `new Date(`. Cette garde reste utile car elle vise l'absence d'horloge, pas la présence d'une ligne métier.
 
-## Validation
+Le prix reste dans `ProductStructuredData` via `useNow()` (inchangé).
 
-`bun install --frozen-lockfile` → `npm run lint` → `npm run test:catalog` → `npm run test:product` → `npm run build` → Playwright → rapport final complet.
+## 3. `ProductReassurance` — supprimer toute promesse non validée
 
-## Périmètre exclu
+Nouveau composant `src/components/product-detail/ProductReassurance.tsx` monté par `ProductPurchasePanel`. Contenu autorisé, dans l'ordre :
+1. « Paiement à la livraison »
+2. « Livraison partout en Tunisie » + « Délai estimé : 2 à 3 jours »
+3. « Confirmation de la commande par téléphone »
+4. « Garantie {warrantyMonths} mois » — uniquement si `warrantyMonths > 0`
+5. « Coffret cadeau inclus » — uniquement si `giftBoxIncluded === true`
 
-Pas de backend, Supabase, DB, auth, checkout, paiement, avis, panier fonctionnel, notification, produit/attribut inventé, variante, stock numérique, nouvelle dépendance, modification des 3 fixtures, ni de package-lock.json.
+Suppression complète des mentions : « Retour sous 14 jours », « Satisfait ou remboursé », « 100 % authentiques », « Emballage soigné offert », « Garantie officielle » (fallback), « jours ouvrés ». Ligne masquée si donnée absente.
+
+## 4. Sélecteur de quantité + bouton panier conforme
+
+Nouveau `src/components/product-detail/ProductPurchasePanel.tsx` (extrait de `ProductSummary`) :
+- `useState<number>(1)`, min = 1, pas de max
+- Bouton `−` 44×44, `aria-label="Diminuer la quantité de {name}"`, désactivé à 1
+- Valeur numérique avec `aria-live="polite"` + `aria-label="Quantité pour {name}"`
+- Bouton `+` 44×44, `aria-label="Augmenter la quantité de {name}"`
+- Contrat exact : `onAddToCart?: (product: Product, quantity: number) => void`
+- Bouton « Ajouter au panier » :
+  - callback absent → désactivé, texte « Fonction d'achat en cours de connexion »
+  - `available` + callback → activé, un unique appel `onAddToCart(product, quantity)`
+  - `unavailable` ou `hidden` → désactivé
+  - aucune notif, persistance ni compteur panier
+- Favori (`useFavorites`) et `ProductPrice` + `PromotionCountdown` regroupés ici
+
+## 5. Badges dans le résumé — priorité partagée
+
+Nouveau helper pur `src/lib/product-badges.ts` :
+```ts
+export function getProductBadges(product, nowTs): Array<{ id, label, tone }>
+```
+Ordre de priorité (max 2) : `promotion active` → `bestseller` → `new`. Consommé par :
+- `ProductCard.tsx` (remplace la logique inline)
+- `ProductSummary.tsx` (nouveau rendu badges)
+
+Le badge promo utilise `useNow()` → disparaît en même temps que prix barré, %, économies, countdown et prix promo JSON-LD.
+
+## 6. Galerie — Dialog Radix agrandissement
+
+Étendre `ProductGallery.tsx` avec le `Dialog` shadcn/Radix existant :
+- Image principale enveloppée d'un `<button>` déclencheur + bouton loupe dédié 44×44 en overlay
+- `DialogTitle` visuellement caché : « Agrandir l'image de {name} »
+- Contenu : image active en `object-contain`, fond neutre
+- Bouton fermer 44×44, focus trap Radix natif, `Esc` ferme, focus restauré au déclencheur
+- Fallback « Image indisponible » conservé
+- Aucune nouvelle dépendance
+
+## 7. Nom cliquable dans `ProductCard`
+
+Ajouter un `<Link to={href}>` autour du `<h3>` du nom lorsque `href` commence par `/`. Contraintes :
+- image reste dans son propre `Link` séparé (pas de lien imbriqué — le nom est hors du lien image)
+- favori et panier restent des `<button>` frères, `stopPropagation` conservé
+- pas de reload (Link TanStack)
+
+## 8. Tests produit réels
+
+Créer `tests/product.test.ts` (tsx runner, style catalogue). Cas :
+- `getProductBySlug` : trouvé / inconnu / hidden retourné tel quel (helper brut)
+- **`getPublicProductBySlug`** : visible OK, inconnu `null`, hidden `null`, pas de mutation
+- `getRelatedProducts` : exclusion courant, exclusion `hidden`, priorité même catégorie, limite, dédup, non-mutation (freeze input)
+- `formatSpecifications` : valeurs nulles/vides omises, ordre attendu, diamètre `NN mm` uniquement si numérique
+- `formatSchemaPriceTND(450000) === "450.000"`, `formatSchemaPriceTND(450500) === "450.500"`
+- Garde statique route dynamique : pas de `NowProvider`, `Date.now`, `new Date(` dans `src/routes/montres.$slug.tsx`
+- Garde statique globale : exactement une occurrence de `<NowProvider` dans `src/` (root)
+- Garde statique contrat : `onAddToCart?: (product: Product, quantity: number) => void` présent dans `ProductPurchasePanel.tsx`
+
+Ajouter dans `package.json` :
+```json
+"test:product": "tsx tests/product.test.ts"
+```
+
+## 9. Playwright — 3 fiches + slug inconnu + produit hidden
+
+Scénarios sur CK, Tissot, Swatch aux largeurs 375/430/768/1024/1280/1440 :
+- SSR H1 / marque / référence / prix visible
+- Changement miniature (aria-current)
+- Dialog open/close via bouton loupe + `Esc`, focus restauré
+- Quantité initiale = 1, `−` désactivé à 1, `+` incrémente
+- Bouton panier désactivé (site public sans callback) + texte « Fonction d'achat en cours de connexion »
+- Favori synchronisé avec la carte d'accueil
+- Badges : max 2, ordre correct
+- Expiration promo simultanée (horloge virtuelle) : badge, prix barré, %, économies, countdown, `price` JSON-LD
+- Coffret présent Tissot + Swatch, absent CK
+- Aucune chaîne interdite : « 14 jours », « Satisfait », « 100 % authentiques », « Emballage soigné », « Garantie officielle » (hors valeur dynamique), « jours ouvrés »
+- Navigation carte via image, nom, bouton « Voir le produit » (pas de full reload)
+- Produit `hidden` (slug d'une fixture hidden si disponible, sinon vérifier via un slug hidden monté en test unitaire) → 404 FR ; slug inconnu → 404 FR
+- Aucun overflow horizontal aux 6 largeurs
+- Zéro warning React (console clean)
+
+## 10. Validation finale
+
+Séquence exécutée :
+```
+bun install --frozen-lockfile
+npm run lint
+npm run test:catalog
+npm run test:product
+npm run build
+python3 /tmp/browser/pdp/run.py
+```
+
+Rapport final incluant :
+- Sorties exactes de chaque commande
+- **Deux compteurs séparés** : `test:catalog` (N) et `test:product` (M) — plus jamais « 42/42 » pour valider les fiches
+- Liste exacte des fichiers modifiés / créés
+
+## Fichiers touchés
+
+Créés :
+- `src/components/product-detail/ProductPurchasePanel.tsx`
+- `src/components/product-detail/ProductReassurance.tsx`
+- `src/lib/product-badges.ts`
+- `tests/product.test.ts`
+
+Modifiés :
+- `src/lib/products.ts` (ajout `getPublicProductBySlug`)
+- `src/routes/montres.$slug.tsx` (loader via helper, head sans horloge)
+- `src/components/product-detail/ProductSummary.tsx` (badges + délégation panneau achat + reassurance)
+- `src/components/product-detail/ProductGallery.tsx` (Dialog zoom)
+- `src/components/product/ProductCard.tsx` (nom cliquable, badges via helper)
+- `package.json` (script `test:product`)
+
+Aucune fixture, dépendance, backend, panier fonctionnel, checkout, compte, avis ni engagement commercial ajouté.
