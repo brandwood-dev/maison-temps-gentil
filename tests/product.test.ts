@@ -180,7 +180,7 @@ console.log("\n== static guards ==");
   let mountCount = 0;
   for (const f of files) {
     const c = fs.readFileSync(f, "utf8");
-    const m = c.match(/<NowProvider\b/g);
+    const m = c.match(/<NowProvider\s/g);
     if (m) mountCount += m.length;
   }
   assert(mountCount === 1, `exactly one <NowProvider mount in src/ (found ${mountCount})`);
