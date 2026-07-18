@@ -55,13 +55,7 @@ export function createNowStore(initialNow: number): NowStore {
 
 const NowContext = createContext<NowStore | null>(null);
 
-export function NowProvider({
-  initialNow,
-  children,
-}: {
-  initialNow: number;
-  children: ReactNode;
-}) {
+export function NowProvider({ initialNow, children }: { initialNow: number; children: ReactNode }) {
   const storeRef = useRef<NowStore | null>(null);
   if (storeRef.current === null) {
     storeRef.current = createNowStore(initialNow);

@@ -190,7 +190,6 @@ export function ProductCard({
       )}
     >
       {href && !unavailable ? (
-
         <a href={href} className="block" aria-label={product.name}>
           {Media}
         </a>
