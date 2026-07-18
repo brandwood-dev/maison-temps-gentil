@@ -6,9 +6,17 @@ type Props = {
   products: Product[];
   className?: string;
   onAddToCart?: (product: Product) => void;
+  /**
+   * Override the default per-product link. Return `null` or `undefined` to
+   * render the card without a link. When omitted, cards link to
+   * `/montres/{slug}` (the product detail page).
+   */
+  getHref?: (product: Product) => string | null | undefined;
 };
 
-export function ProductGrid({ products, className, onAddToCart }: Props) {
+const defaultHref = (p: Product) => `/montres/${p.slug}`;
+
+export function ProductGrid({ products, className, onAddToCart, getHref = defaultHref }: Props) {
   return (
     <ul
       className={cn(
@@ -16,16 +24,20 @@ export function ProductGrid({ products, className, onAddToCart }: Props) {
         className,
       )}
     >
-      {products.map((p, i) => (
-        <li key={p.id} className="flex">
-          <ProductCard
-            product={p}
-            onAddToCart={onAddToCart}
-            imagePriority={i === 0}
-            className="w-full"
-          />
-        </li>
-      ))}
+      {products.map((p, i) => {
+        const href = getHref(p) ?? undefined;
+        return (
+          <li key={p.id} className="flex">
+            <ProductCard
+              product={p}
+              href={href}
+              onAddToCart={onAddToCart}
+              imagePriority={i === 0}
+              className="w-full"
+            />
+          </li>
+        );
+      })}
     </ul>
   );
 }
