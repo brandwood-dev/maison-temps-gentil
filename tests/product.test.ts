@@ -124,10 +124,7 @@ console.log("\n== formatSpecifications ==");
   assert(keys.indexOf("brand") < keys.indexOf("reference"), "brand before reference");
   assert(keys.indexOf("movementType") < keys.indexOf("diameterMm"), "movement before diameter");
   const withoutDiameter = formatSpecifications(make({ diameterMm: null }));
-  assert(
-    !withoutDiameter.some((r) => r.key === "diameterMm"),
-    "diameter absent when not numeric",
-  );
+  assert(!withoutDiameter.some((r) => r.key === "diameterMm"), "diameter absent when not numeric");
 }
 
 console.log("\n== formatSchemaPriceTND ==");
@@ -165,10 +162,7 @@ console.log("\n== static guards ==");
   const here = path.dirname(url.fileURLToPath(import.meta.url));
   const root = path.join(here, "..");
 
-  const routeSrc = fs.readFileSync(
-    path.join(root, "src", "routes", "montres.$slug.tsx"),
-    "utf8",
-  );
+  const routeSrc = fs.readFileSync(path.join(root, "src", "routes", "montres.$slug.tsx"), "utf8");
   assert(!/NowProvider/.test(routeSrc), "dynamic route: no NowProvider");
   assert(!/Date\.now\s*\(/.test(routeSrc), "dynamic route: no Date.now(");
   assert(!/new\s+Date\s*\(/.test(routeSrc), "dynamic route: no new Date(");

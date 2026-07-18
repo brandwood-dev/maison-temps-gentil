@@ -61,7 +61,6 @@ export function ProductCard({
   const mainLoading = imagePriority ? "eager" : "lazy";
   const mainFetchPriority: "high" | "auto" = imagePriority ? "high" : "auto";
 
-
   const Media = (
     <div
       className="relative aspect-[4/5] w-full overflow-hidden bg-white"
