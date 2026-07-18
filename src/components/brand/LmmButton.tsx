@@ -12,8 +12,7 @@ const buttonVariants = cva(
           "bg-[color:var(--color-primary)] text-[color:var(--color-primary-foreground)] hover:bg-[#2a2928] active:bg-black",
         secondary:
           "bg-[color:var(--color-surface)] text-[color:var(--color-foreground)] border border-[color:var(--color-border-strong)] hover:bg-[color:var(--color-surface-cream)]",
-        gold:
-          "bg-[color:var(--color-gold)] text-[color:var(--color-gold-foreground)] hover:brightness-95 active:brightness-90",
+        gold: "bg-[color:var(--color-gold)] text-[color:var(--color-gold-foreground)] hover:brightness-95 active:brightness-90",
         ghost:
           "bg-transparent text-[color:var(--color-foreground)] hover:bg-[color:var(--color-surface-cream)]",
         link: "bg-transparent text-[color:var(--color-foreground)] underline-offset-4 hover:underline decoration-[color:var(--color-gold)] px-0",

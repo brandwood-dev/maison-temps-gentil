@@ -1,7 +1,6 @@
 import { cn } from "@/lib/utils";
 
-const SRC_DARK =
-  "https://res.cloudinary.com/dxkxiy900/image/upload/v1784391979/LOGO_VB_qf9hpa.png";
+const SRC_DARK = "https://res.cloudinary.com/dxkxiy900/image/upload/v1784391979/LOGO_VB_qf9hpa.png";
 const SRC_LIGHT =
   "https://res.cloudinary.com/dxkxiy900/image/upload/v1784391979/LOGO_VW_eczfrh.png";
 
@@ -13,12 +12,7 @@ type LogoProps = {
   priority?: boolean;
 };
 
-export function Logo({
-  variant = "dark",
-  className,
-  height = 40,
-  priority = false,
-}: LogoProps) {
+export function Logo({ variant = "dark", className, height = 40, priority = false }: LogoProps) {
   const src = variant === "light" ? SRC_LIGHT : SRC_DARK;
   return (
     <img

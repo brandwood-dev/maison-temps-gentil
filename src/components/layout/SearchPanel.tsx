@@ -46,7 +46,10 @@ export function SearchPanel({ open, onClose }: Props) {
               Rechercher un produit
             </label>
             <div className="flex min-w-0 flex-1 items-center gap-2 rounded-[var(--radius-md)] border border-[color:var(--color-border-strong)] bg-[color:var(--color-surface)] px-3 focus-within:border-[color:var(--color-gold)]">
-              <Search className="h-5 w-5 shrink-0 text-[color:var(--color-muted-foreground)]" strokeWidth={1.75} />
+              <Search
+                className="h-5 w-5 shrink-0 text-[color:var(--color-muted-foreground)]"
+                strokeWidth={1.75}
+              />
               <input
                 id="site-search"
                 ref={inputRef}
@@ -69,8 +72,8 @@ export function SearchPanel({ open, onClose }: Props) {
           <div className="mt-6 min-h-[120px] pb-6">
             <p className="eyebrow mb-3">Suggestions</p>
             <p className="text-sm text-[color:var(--color-muted-foreground)]">
-              Commencez à taper pour voir des résultats. Les suggestions apparaîtront
-              ici prochainement.
+              Commencez à taper pour voir des résultats. Les suggestions apparaîtront ici
+              prochainement.
             </p>
           </div>
         </div>

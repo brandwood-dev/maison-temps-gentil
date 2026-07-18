@@ -109,9 +109,15 @@ function SystemPreview() {
           <p className="eyebrow mb-3">Boutons</p>
           <div className="flex flex-wrap gap-2">
             <LmmButton size="sm">Primary</LmmButton>
-            <LmmButton size="sm" variant="secondary">Secondary</LmmButton>
-            <LmmButton size="sm" variant="gold">Or</LmmButton>
-            <LmmButton size="sm" variant="ghost">Ghost</LmmButton>
+            <LmmButton size="sm" variant="secondary">
+              Secondary
+            </LmmButton>
+            <LmmButton size="sm" variant="gold">
+              Or
+            </LmmButton>
+            <LmmButton size="sm" variant="ghost">
+              Ghost
+            </LmmButton>
           </div>
         </div>
       </div>
@@ -119,7 +125,15 @@ function SystemPreview() {
   );
 }
 
-function Swatch({ color, label, bordered = false }: { color: string; label: string; bordered?: boolean }) {
+function Swatch({
+  color,
+  label,
+  bordered = false,
+}: {
+  color: string;
+  label: string;
+  bordered?: boolean;
+}) {
   return (
     <div>
       <div

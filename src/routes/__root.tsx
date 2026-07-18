@@ -86,14 +86,27 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: "La Maison des Montres — Le temps, avec élégance" },
       {
         property: "og:description",
-        content: "La Maison des Montres — sélection de montres pour homme, femme, enfant, couple, connectées et coffrets cadeaux. Livraison rapide partout en Tunisie.",
+        content:
+          "La Maison des Montres — sélection de montres pour homme, femme, enfant, couple, connectées et coffrets cadeaux. Livraison rapide partout en Tunisie.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "La Maison des Montres — Le temps, avec élégance" },
-      { name: "twitter:description", content: "La Maison des Montres — sélection de montres pour homme, femme, enfant, couple, connectées et coffrets cadeaux. Livraison rapide partout en Tunisie." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/79aa588c-df41-40ec-bd1c-f919105298da/id-preview-b40db207--478dbe92-24eb-44b0-a280-6c7860f8618c.lovable.app-1784403349287.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/79aa588c-df41-40ec-bd1c-f919105298da/id-preview-b40db207--478dbe92-24eb-44b0-a280-6c7860f8618c.lovable.app-1784403349287.png" },
+      {
+        name: "twitter:description",
+        content:
+          "La Maison des Montres — sélection de montres pour homme, femme, enfant, couple, connectées et coffrets cadeaux. Livraison rapide partout en Tunisie.",
+      },
+      {
+        property: "og:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/79aa588c-df41-40ec-bd1c-f919105298da/id-preview-b40db207--478dbe92-24eb-44b0-a280-6c7860f8618c.lovable.app-1784403349287.png",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/79aa588c-df41-40ec-bd1c-f919105298da/id-preview-b40db207--478dbe92-24eb-44b0-a280-6c7860f8618c.lovable.app-1784403349287.png",
+      },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

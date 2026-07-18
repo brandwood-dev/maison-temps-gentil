@@ -73,7 +73,11 @@ function MobileCol({ col }: { col: Col }) {
           aria-hidden
         />
       </button>
-      {open && <div className="pb-4"><LinkList links={col.links} /></div>}
+      {open && (
+        <div className="pb-4">
+          <LinkList links={col.links} />
+        </div>
+      )}
     </div>
   );
 }
@@ -86,8 +90,8 @@ export function SiteFooter() {
           <div>
             <Logo variant="light" height={36} />
             <p className="mt-4 max-w-xs text-sm text-white/70">
-              La Maison des Montres — une sélection soignée pour chaque style et chaque
-              occasion. Livraison partout en Tunisie.
+              La Maison des Montres — une sélection soignée pour chaque style et chaque occasion.
+              Livraison partout en Tunisie.
             </p>
             <div className="mt-5 flex items-center gap-2">
               <span className="sr-only">Réseaux sociaux</span>
@@ -153,8 +157,8 @@ export function SiteFooter() {
               </button>
             </form>
             <p className="mt-2 text-[11px] leading-relaxed text-white/50">
-              En vous inscrivant, vous acceptez de recevoir nos communications. Vous
-              pouvez vous désinscrire à tout moment.
+              En vous inscrivant, vous acceptez de recevoir nos communications. Vous pouvez vous
+              désinscrire à tout moment.
             </p>
           </div>
         </div>

@@ -18,5 +18,4 @@ export const SECONDARY_LINKS = [
   { label: "Contact", href: "/contact" },
 ] as const;
 
-export const ANNOUNCEMENT_TEXT =
-  "Livraison rapide partout en Tunisie sous 2 à 3 jours";
+export const ANNOUNCEMENT_TEXT = "Livraison rapide partout en Tunisie sous 2 à 3 jours";
