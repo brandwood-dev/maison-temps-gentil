@@ -14,8 +14,8 @@ import { Route as MontresFemmeRouteImport } from './routes/montres-femme'
 import { Route as MontresEnfantRouteImport } from './routes/montres-enfant'
 import { Route as MontresCoupleRouteImport } from './routes/montres-couple'
 import { Route as MontresConnecteesRouteImport } from './routes/montres-connectees'
-import { Route as MontresRouteImport } from './routes/montres'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MontresIndexRouteImport } from './routes/montres.index'
 import { Route as MontresSlugRouteImport } from './routes/montres.$slug'
 import { Route as CollectionsCoffretsCadeauxRouteImport } from './routes/collections.coffrets-cadeaux'
 
@@ -44,20 +44,20 @@ const MontresConnecteesRoute = MontresConnecteesRouteImport.update({
   path: '/montres-connectees',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MontresRoute = MontresRouteImport.update({
-  id: '/montres',
-  path: '/montres',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MontresIndexRoute = MontresIndexRouteImport.update({
+  id: '/montres/',
+  path: '/montres/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MontresSlugRoute = MontresSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => MontresRoute,
+  id: '/montres/$slug',
+  path: '/montres/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const CollectionsCoffretsCadeauxRoute =
   CollectionsCoffretsCadeauxRouteImport.update({
@@ -68,7 +68,6 @@ const CollectionsCoffretsCadeauxRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/montres': typeof MontresRouteWithChildren
   '/montres-connectees': typeof MontresConnecteesRoute
   '/montres-couple': typeof MontresCoupleRoute
   '/montres-enfant': typeof MontresEnfantRoute
@@ -76,10 +75,10 @@ export interface FileRoutesByFullPath {
   '/montres-homme': typeof MontresHommeRoute
   '/collections/coffrets-cadeaux': typeof CollectionsCoffretsCadeauxRoute
   '/montres/$slug': typeof MontresSlugRoute
+  '/montres/': typeof MontresIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/montres': typeof MontresRouteWithChildren
   '/montres-connectees': typeof MontresConnecteesRoute
   '/montres-couple': typeof MontresCoupleRoute
   '/montres-enfant': typeof MontresEnfantRoute
@@ -87,11 +86,11 @@ export interface FileRoutesByTo {
   '/montres-homme': typeof MontresHommeRoute
   '/collections/coffrets-cadeaux': typeof CollectionsCoffretsCadeauxRoute
   '/montres/$slug': typeof MontresSlugRoute
+  '/montres': typeof MontresIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/montres': typeof MontresRouteWithChildren
   '/montres-connectees': typeof MontresConnecteesRoute
   '/montres-couple': typeof MontresCoupleRoute
   '/montres-enfant': typeof MontresEnfantRoute
@@ -99,12 +98,12 @@ export interface FileRoutesById {
   '/montres-homme': typeof MontresHommeRoute
   '/collections/coffrets-cadeaux': typeof CollectionsCoffretsCadeauxRoute
   '/montres/$slug': typeof MontresSlugRoute
+  '/montres/': typeof MontresIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/montres'
     | '/montres-connectees'
     | '/montres-couple'
     | '/montres-enfant'
@@ -112,10 +111,10 @@ export interface FileRouteTypes {
     | '/montres-homme'
     | '/collections/coffrets-cadeaux'
     | '/montres/$slug'
+    | '/montres/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/montres'
     | '/montres-connectees'
     | '/montres-couple'
     | '/montres-enfant'
@@ -123,10 +122,10 @@ export interface FileRouteTypes {
     | '/montres-homme'
     | '/collections/coffrets-cadeaux'
     | '/montres/$slug'
+    | '/montres'
   id:
     | '__root__'
     | '/'
-    | '/montres'
     | '/montres-connectees'
     | '/montres-couple'
     | '/montres-enfant'
@@ -134,17 +133,19 @@ export interface FileRouteTypes {
     | '/montres-homme'
     | '/collections/coffrets-cadeaux'
     | '/montres/$slug'
+    | '/montres/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  MontresRoute: typeof MontresRouteWithChildren
   MontresConnecteesRoute: typeof MontresConnecteesRoute
   MontresCoupleRoute: typeof MontresCoupleRoute
   MontresEnfantRoute: typeof MontresEnfantRoute
   MontresFemmeRoute: typeof MontresFemmeRoute
   MontresHommeRoute: typeof MontresHommeRoute
   CollectionsCoffretsCadeauxRoute: typeof CollectionsCoffretsCadeauxRoute
+  MontresSlugRoute: typeof MontresSlugRoute
+  MontresIndexRoute: typeof MontresIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -184,13 +185,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MontresConnecteesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/montres': {
-      id: '/montres'
-      path: '/montres'
-      fullPath: '/montres'
-      preLoaderRoute: typeof MontresRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -198,12 +192,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/montres/': {
+      id: '/montres/'
+      path: '/montres'
+      fullPath: '/montres/'
+      preLoaderRoute: typeof MontresIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/montres/$slug': {
       id: '/montres/$slug'
-      path: '/$slug'
+      path: '/montres/$slug'
       fullPath: '/montres/$slug'
       preLoaderRoute: typeof MontresSlugRouteImport
-      parentRoute: typeof MontresRoute
+      parentRoute: typeof rootRouteImport
     }
     '/collections/coffrets-cadeaux': {
       id: '/collections/coffrets-cadeaux'
@@ -215,26 +216,16 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface MontresRouteChildren {
-  MontresSlugRoute: typeof MontresSlugRoute
-}
-
-const MontresRouteChildren: MontresRouteChildren = {
-  MontresSlugRoute: MontresSlugRoute,
-}
-
-const MontresRouteWithChildren =
-  MontresRoute._addFileChildren(MontresRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  MontresRoute: MontresRouteWithChildren,
   MontresConnecteesRoute: MontresConnecteesRoute,
   MontresCoupleRoute: MontresCoupleRoute,
   MontresEnfantRoute: MontresEnfantRoute,
   MontresFemmeRoute: MontresFemmeRoute,
   MontresHommeRoute: MontresHommeRoute,
   CollectionsCoffretsCadeauxRoute: CollectionsCoffretsCadeauxRoute,
+  MontresSlugRoute: MontresSlugRoute,
+  MontresIndexRoute: MontresIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
