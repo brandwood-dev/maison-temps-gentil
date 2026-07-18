@@ -142,7 +142,7 @@ export function CatalogPage({
                 ) : (
                   <>
                     <div className="pt-4">
-                      <ProductGrid products={result.items} />
+                      <ProductGrid products={result.items} onAddToCart={handleAddToCart} />
                     </div>
                     <CatalogPagination
                       page={result.page}
