@@ -1,21 +1,23 @@
 import { useState } from "react";
+import { Expand } from "lucide-react";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { cn } from "@/lib/utils";
 import type { Product, ProductImage } from "@/types/product";
 
-type Props = {
-  product: Product;
-};
+type Props = { product: Product };
 
 /**
- * Simple, accessible gallery: main image + thumbnail strip.
- * Only the main image gets `fetchpriority="high"` (LCP).
- * If no image exists, renders a labelled placeholder.
+ * Accessible gallery: main image + thumbnails + Radix Dialog zoom.
+ * Focus is trapped by Radix and restored to the trigger on close.
  */
 export function ProductGallery({ product }: Props) {
   const images =
     product.images.length > 0 ? [...product.images].sort((a, b) => a.position - b.position) : [];
   const [activeId, setActiveId] = useState<string | null>(images[0]?.id ?? null);
+  const [zoomOpen, setZoomOpen] = useState(false);
   const active: ProductImage | undefined = images.find((i) => i.id === activeId) ?? images[0];
+
+  const zoomLabel = `Agrandir l'image de ${product.name}`;
 
   return (
     <div className="flex flex-col gap-3 md:gap-4">
@@ -35,6 +37,17 @@ export function ProductGallery({ product }: Props) {
             Image indisponible
           </div>
         )}
+
+        {active ? (
+          <button
+            type="button"
+            onClick={() => setZoomOpen(true)}
+            aria-label={zoomLabel}
+            className="absolute right-2 top-2 inline-flex h-11 w-11 items-center justify-center rounded-full border border-[color:var(--color-border)] bg-white/90 text-[color:var(--color-foreground)] transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-gold)]"
+          >
+            <Expand className="h-5 w-5" strokeWidth={1.75} aria-hidden />
+          </button>
+        ) : null}
       </div>
 
       {images.length > 1 ? (
@@ -68,6 +81,39 @@ export function ProductGallery({ product }: Props) {
           })}
         </ul>
       ) : null}
+
+      <DialogPrimitive.Root open={zoomOpen} onOpenChange={setZoomOpen}>
+        <DialogPrimitive.Portal>
+          <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/85 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+          <DialogPrimitive.Content className="fixed inset-0 z-50 flex flex-col p-4 md:p-8 focus:outline-none">
+            <DialogPrimitive.Title className="sr-only">{zoomLabel}</DialogPrimitive.Title>
+            <DialogPrimitive.Description className="sr-only">
+              {active?.alt ?? "Image du produit"}
+            </DialogPrimitive.Description>
+            <div className="flex justify-end">
+              <DialogPrimitive.Close
+                aria-label="Fermer l'aperçu"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-[color:var(--color-foreground)] transition-colors hover:bg-[color:var(--color-surface-cream)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-gold)]"
+              >
+                <span aria-hidden className="text-2xl leading-none">
+                  ×
+                </span>
+              </DialogPrimitive.Close>
+            </div>
+            <div className="mt-2 flex flex-1 items-center justify-center">
+              {active ? (
+                <img
+                  src={active.url}
+                  alt={active.alt}
+                  className="max-h-full max-w-full object-contain"
+                />
+              ) : (
+                <p className="text-white">Image indisponible</p>
+              )}
+            </div>
+          </DialogPrimitive.Content>
+        </DialogPrimitive.Portal>
+      </DialogPrimitive.Root>
     </div>
   );
 }
