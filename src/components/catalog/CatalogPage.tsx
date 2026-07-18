@@ -82,12 +82,11 @@ export function CatalogPage({
     navigate({ to: basePath, search: {} });
   };
 
-  const showEmptyCategory = isCategoryEmpty;
   const showNoResults = !isCategoryEmpty && result.totalItems === 0;
 
   const baseSearchForPagination = useMemo(() => {
-    const { page: _p, ...rest } = catalogQueryToSearch(query);
-    void _p;
+    const { page: _page, ...rest } = catalogQueryToSearch(query);
+    void _page;
     return rest;
   }, [query]);
 
