@@ -12,13 +12,18 @@ export function ProductGrid({ products, className, onAddToCart }: Props) {
   return (
     <ul
       className={cn(
-        "grid list-none grid-cols-1 gap-3 [@media(min-width:380px)]:grid-cols-2 md:grid-cols-3 md:gap-5 lg:grid-cols-4",
+        "grid list-none grid-cols-1 gap-3 xs:grid-cols-2 md:grid-cols-3 md:gap-5 lg:grid-cols-4",
         className,
       )}
     >
-      {products.map((p) => (
+      {products.map((p, i) => (
         <li key={p.id} className="flex">
-          <ProductCard product={p} onAddToCart={onAddToCart} className="w-full" />
+          <ProductCard
+            product={p}
+            onAddToCart={onAddToCart}
+            imagePriority={i === 0}
+            className="w-full"
+          />
         </li>
       ))}
     </ul>

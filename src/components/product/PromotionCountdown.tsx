@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
-import { getRemainingTime, type Remaining } from "@/lib/product-pricing";
+import { getRemainingTime } from "@/lib/product-pricing";
+import { useNow } from "@/lib/now-store";
 
 type Props = {
   endsAt: string;
@@ -10,50 +11,21 @@ type Props = {
   variant?: "compact" | "detailed";
 };
 
-// Shared ticker so N cards don't spawn N timers.
-type Listener = () => void;
-const listeners = new Set<Listener>();
-let intervalId: ReturnType<typeof setInterval> | null = null;
-
-function subscribe(fn: Listener) {
-  listeners.add(fn);
-  if (intervalId === null && typeof window !== "undefined") {
-    intervalId = setInterval(() => {
-      listeners.forEach((l) => l());
-    }, 1000);
-  }
-  return () => {
-    listeners.delete(fn);
-    if (listeners.size === 0 && intervalId !== null) {
-      clearInterval(intervalId);
-      intervalId = null;
-    }
-  };
-}
-
 function pad(n: number) {
   return n.toString().padStart(2, "0");
 }
 
 export function PromotionCountdown({ endsAt, className, onExpire, variant = "compact" }: Props) {
-  const [hydrated, setHydrated] = useState(false);
-  const [remaining, setRemaining] = useState<Remaining>(() => getRemainingTime(endsAt));
+  const nowTs = useNow();
+  const firedRef = useRef(false);
 
+  // Reset the guard when the target date changes.
   useEffect(() => {
-    setHydrated(true);
-    setRemaining(getRemainingTime(endsAt));
-    const unsub = subscribe(() => {
-      const r = getRemainingTime(endsAt);
-      setRemaining(r);
-      if (r.expired) {
-        onExpire?.();
-      }
-    });
-    return unsub;
-  }, [endsAt, onExpire]);
+    firedRef.current = false;
+  }, [endsAt]);
 
   // Stable, non-time-sensitive placeholder before hydration to avoid mismatch.
-  if (!hydrated) {
+  if (nowTs === 0) {
     return (
       <p
         className={cn("text-xs text-[color:var(--color-muted-foreground)] tabular-nums", className)}
@@ -63,7 +35,16 @@ export function PromotionCountdown({ endsAt, className, onExpire, variant = "com
     );
   }
 
-  if (remaining.expired) return null;
+  const remaining = getRemainingTime(endsAt, new Date(nowTs));
+
+  if (remaining.expired) {
+    if (!firedRef.current) {
+      firedRef.current = true;
+      // Defer to avoid setState-in-render inside a parent.
+      if (onExpire) queueMicrotask(onExpire);
+    }
+    return null;
+  }
 
   const label =
     variant === "detailed"
