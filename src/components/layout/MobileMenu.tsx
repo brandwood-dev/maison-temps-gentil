@@ -1,7 +1,7 @@
 import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Logo } from "@/components/brand/Logo";
 import { NAV_LINKS, SECONDARY_LINKS } from "@/config/nav";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+
 
 type Props = { open: boolean; onClose: () => void };
 
@@ -13,12 +13,12 @@ export function MobileMenu({ open, onClose }: Props) {
         aria-label="Menu principal"
         className="flex w-[86%] max-w-sm flex-col gap-0 border-r-0 bg-[color:var(--color-background)] p-0 shadow-[var(--shadow-soft)]"
       >
-        <VisuallyHidden>
+        <div className="sr-only">
           <SheetTitle>Menu principal</SheetTitle>
           <SheetDescription>
             Navigation par catégories de La Maison des Montres
           </SheetDescription>
-        </VisuallyHidden>
+        </div>
 
         <div className="flex h-14 items-center border-b border-[color:var(--color-border)] px-4">
           <Logo variant="dark" height={26} />

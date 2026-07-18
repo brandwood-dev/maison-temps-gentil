@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { Search } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+
 
 type Props = { open: boolean; onClose: () => void };
 
@@ -18,12 +18,12 @@ export function SearchPanel({ open, onClose }: Props) {
         }}
         className="left-0 right-0 top-0 z-50 grid max-w-none translate-x-0 translate-y-0 gap-0 rounded-none border-0 border-b border-[color:var(--color-border)] bg-[color:var(--color-background)] p-0 shadow-[var(--shadow-soft)] data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top sm:rounded-none"
       >
-        <VisuallyHidden>
+        <div className="sr-only">
           <DialogTitle>Rechercher</DialogTitle>
           <DialogDescription>
             Rechercher une montre ou une marque sur La Maison des Montres
           </DialogDescription>
-        </VisuallyHidden>
+        </div>
 
         <div className="container-page py-4">
           <form
