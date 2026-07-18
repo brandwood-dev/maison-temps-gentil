@@ -99,12 +99,14 @@ export function SiteHeader({ cartCount = 0 }: { cartCount?: number }) {
             <IconAction label="Rechercher" onClick={() => setSearchOpen(true)}>
               <Search className="h-5 w-5" strokeWidth={1.75} />
             </IconAction>
-            <IconAction label="Favoris" href="/favoris">
-              <Heart className="h-5 w-5" strokeWidth={1.75} />
-            </IconAction>
-            <IconAction label="Suivre ma commande" href="/suivi">
-              <Truck className="h-5 w-5" strokeWidth={1.75} />
-            </IconAction>
+            <div className="hidden xl:flex items-center gap-1">
+              <IconAction label="Favoris" href="/favoris">
+                <Heart className="h-5 w-5" strokeWidth={1.75} />
+              </IconAction>
+              <IconAction label="Suivre ma commande" href="/suivi">
+                <Truck className="h-5 w-5" strokeWidth={1.75} />
+              </IconAction>
+            </div>
             <IconAction label="Panier" href="/panier" badge={cartCount}>
               <ShoppingBag className="h-5 w-5" strokeWidth={1.75} />
             </IconAction>
