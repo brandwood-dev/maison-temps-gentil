@@ -48,7 +48,7 @@ export function SiteHeader({ cartCount = 0 }: { cartCount?: number }) {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-[color:var(--color-border)] bg-[color:var(--color-background)]/95 backdrop-blur supports-[backdrop-filter]:bg-[color:var(--color-background)]/80">
       {/* Mobile + tablette (< lg) */}
-      <div className="container-page grid h-14 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 lg:hidden">
+      <div className="container-page grid h-14 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 xl:hidden">
         <button
           type="button"
           onClick={() => setMenuOpen(true)}
@@ -76,7 +76,7 @@ export function SiteHeader({ cartCount = 0 }: { cartCount?: number }) {
       </div>
 
       {/* Desktop (≥ lg) */}
-      <div className="container-page hidden lg:block">
+      <div className="container-page hidden xl:block">
         <div className="flex h-16 items-center justify-between gap-4">
           <a href="/" aria-label="La Maison des Montres — Accueil" className="inline-flex shrink-0">
             <Logo variant="dark" height={36} priority />
@@ -99,7 +99,7 @@ export function SiteHeader({ cartCount = 0 }: { cartCount?: number }) {
             <IconAction label="Rechercher" onClick={() => setSearchOpen(true)}>
               <Search className="h-5 w-5" strokeWidth={1.75} />
             </IconAction>
-            <div className="hidden xl:flex items-center gap-1">
+            <div className="flex items-center gap-1">
               <IconAction label="Favoris" href="/favoris">
                 <Heart className="h-5 w-5" strokeWidth={1.75} />
               </IconAction>
