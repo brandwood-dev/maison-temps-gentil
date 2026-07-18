@@ -76,7 +76,7 @@ export function SiteHeader({ cartCount = 0 }: { cartCount?: number }) {
       </div>
 
       {/* Desktop (≥ lg) */}
-      <div className="container-page hidden xl:block">
+      <div className="container-page hidden lg:block">
         <div className="flex h-16 items-center justify-between gap-4">
           <a href="/" aria-label="La Maison des Montres — Accueil" className="inline-flex shrink-0">
             <Logo variant="dark" height={36} priority />
