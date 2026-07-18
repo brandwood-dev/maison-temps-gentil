@@ -66,9 +66,11 @@ function DesktopNav() {
   );
 }
 
-export function SiteHeader({ cartCount = 0 }: { cartCount?: number }) {
+export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const { totalQuantity } = useCart();
+  const cartCount = totalQuantity;
 
   return (
     <>
