@@ -26,7 +26,7 @@ export function MobileMenu({ open, onClose }: Props) {
   return (
     <div
       aria-hidden={!open}
-      className={`fixed inset-0 z-50 md:hidden ${open ? "pointer-events-auto" : "pointer-events-none"}`}
+      className={`fixed inset-0 z-50 xl:hidden ${open ? "pointer-events-auto" : "pointer-events-none"}`}
     >
       <div
         onClick={onClose}
