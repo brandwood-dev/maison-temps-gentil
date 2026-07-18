@@ -1,3 +1,6 @@
+/**
+ * Etats vides du catalogue : catégorie sans produit ou filtres sans résultat.
+ */
 import { PackageSearch } from "lucide-react";
 
 type Variant =
