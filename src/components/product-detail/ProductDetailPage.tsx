@@ -100,7 +100,7 @@ export function ProductDetailPage({ product, allProducts, canonicalUrl }: Props)
                   Voir la catégorie
                 </Link>
               </div>
-              <ProductGrid products={related} />
+              <ProductGrid products={related} onAddToCart={handleAddToCart} />
             </div>
           </section>
         ) : null}
