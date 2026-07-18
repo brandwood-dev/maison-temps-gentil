@@ -77,7 +77,7 @@ export function ProductDetailPage({ product, allProducts, canonicalUrl }: Props)
         <section className="container-page pb-10 md:pb-16">
           <div className="grid gap-8 md:grid-cols-2 md:gap-10 lg:gap-14">
             <ProductGallery product={product} />
-            <ProductSummary product={product} />
+            <ProductSummary product={product} onAddToCart={handleAddToCart} />
           </div>
 
           <ProductSpecifications product={product} />
