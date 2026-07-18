@@ -252,5 +252,87 @@ console.log("\n== no mutation ==");
   assert(JSON.stringify(TEST_FIXTURES) === snapshot, "input array + products untouched");
 }
 
+console.log("\n== URL raw params normalize into typed CatalogQuery ==");
+{
+  const q1 = parseCatalogSearch({ promo: "true" });
+  assert(q1.promotionOnly === true, "?promo=true → promotionOnly === true");
+  const q2 = parseCatalogSearch({ minPrice: "500000" });
+  assert(q2.minPriceMillimes === 500_000, "?minPrice=500000 → minPriceMillimes === 500000");
+  const q3 = parseCatalogSearch({ maxPrice: "500000" });
+  assert(q3.maxPriceMillimes === 500_000, "?maxPrice=500000 → maxPriceMillimes === 500000");
+}
+
+console.log("\n== idempotence: parse(serialize(parse(raw))) === parse(raw) ==");
+{
+  const raw = {
+    brands: "BrandA,BrandB",
+    minPrice: "300000",
+    maxPrice: "1500000",
+    promo: "true",
+    sort: "price-asc",
+    page: "2",
+  };
+  const once = parseCatalogSearch(raw);
+  const twice = parseCatalogSearch(catalogQueryToSearch(once) as Record<string, unknown>);
+  assert(JSON.stringify(once) === JSON.stringify(twice), "no info loss on round-trip");
+  assert(twice.promotionOnly === true, "promotionOnly preserved");
+  assert(twice.minPriceMillimes === 300_000, "minPriceMillimes preserved");
+  assert(twice.maxPriceMillimes === 1_500_000, "maxPriceMillimes preserved");
+  assert(twice.sort === "price-asc", "sort preserved");
+  assert(JSON.stringify(twice.brands) === JSON.stringify(["BrandA", "BrandB"]), "brands preserved");
+}
+
+console.log("\n== combined URL: brand + minPrice + maxPrice + promo + sort ==");
+{
+  const raw = {
+    brands: "BrandA",
+    minPrice: "100000",
+    maxPrice: "1000000",
+    promo: "true",
+    sort: "price-desc",
+  };
+  const q = parseCatalogSearch(raw);
+  assert(q.brands.length === 1 && q.brands[0] === "BrandA", "brand filter kept");
+  assert(q.minPriceMillimes === 100_000 && q.maxPriceMillimes === 1_000_000, "price range kept");
+  assert(q.promotionOnly === true, "promo kept");
+  assert(q.sort === "price-desc", "sort kept");
+  const r = getCatalogResult(TEST_FIXTURES, q, { now });
+  // only BrandA with active promo in [100000, 1000000]: b (600000, promo actif)
+  assert(
+    r.totalItems === 1 && r.items[0].id === "b",
+    "combined filters return only matching product",
+  );
+}
+
+console.log("\n== static guard on CatalogPage.tsx ==");
+{
+  const fs = await import("node:fs");
+  const path = await import("node:path");
+  const url = await import("node:url");
+  const here = path.dirname(url.fileURLToPath(import.meta.url));
+  const src = fs.readFileSync(
+    path.join(here, "..", "src", "components", "catalog", "CatalogPage.tsx"),
+    "utf8",
+  );
+  assert(
+    !/\bparseCatalogSearch\b/.test(src),
+    "CatalogPage.tsx must not reference parseCatalogSearch",
+  );
+  assert(!/\buseSearch\b/.test(src), "CatalogPage.tsx must not use useSearch from TanStack");
+  assert(
+    !/as\s+Record<string,\s*unknown>/.test(src),
+    "CatalogPage.tsx must not cast as Record<string, unknown>",
+  );
+  assert(
+    !/as\s+CatalogQuery\b/.test(src),
+    "CatalogPage.tsx must not cast as CatalogQuery",
+  );
+  assert(
+    /\bquery\s*:\s*CatalogQuery\b/.test(src),
+    "CatalogPage.tsx must declare prop `query: CatalogQuery`",
+  );
+}
+
 console.log(`\n${passed} passed, ${failed} failed\n`);
 if (failed > 0) process.exit(1);
+
