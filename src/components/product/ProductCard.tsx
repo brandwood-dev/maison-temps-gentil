@@ -159,28 +159,29 @@ export function ProductCard({
   const viewLabelShort = "Voir";
   const viewLabelLong = "Voir le produit";
 
-  const ViewAction = viewEnabled && href ? (
-    <a
-      href={href}
-      aria-label={`${viewLabelLong} ${product.name}`}
-      className={cn(viewBaseClasses, viewEnabledClasses)}
-    >
-      <span className="sm:hidden">{viewLabelShort}</span>
-      <span className="hidden sm:inline">{viewLabelLong}</span>
-      <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden />
-    </a>
-  ) : (
-    <span
-      role="link"
-      aria-disabled="true"
-      aria-label={`${viewLabelLong} ${product.name} (bientôt disponible)`}
-      className={cn(viewBaseClasses, viewDisabledClasses)}
-    >
-      <span className="sm:hidden">{viewLabelShort}</span>
-      <span className="hidden sm:inline">{viewLabelLong}</span>
-      <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden />
-    </span>
-  );
+  const ViewAction =
+    viewEnabled && href ? (
+      <a
+        href={href}
+        aria-label={`${viewLabelLong} ${product.name}`}
+        className={cn(viewBaseClasses, viewEnabledClasses)}
+      >
+        <span className="sm:hidden">{viewLabelShort}</span>
+        <span className="hidden sm:inline">{viewLabelLong}</span>
+        <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden />
+      </a>
+    ) : (
+      <span
+        role="link"
+        aria-disabled="true"
+        aria-label={`${viewLabelLong} ${product.name} (bientôt disponible)`}
+        className={cn(viewBaseClasses, viewDisabledClasses)}
+      >
+        <span className="sm:hidden">{viewLabelShort}</span>
+        <span className="hidden sm:inline">{viewLabelLong}</span>
+        <ArrowRight className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden />
+      </span>
+    );
 
   return (
     <article
