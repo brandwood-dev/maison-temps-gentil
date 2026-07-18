@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
+import { Link } from "@tanstack/react-router";
 import { ArrowRight, Heart, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Product } from "@/types/product";
