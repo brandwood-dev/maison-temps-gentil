@@ -15,10 +15,7 @@ export function ProductSpecifications({ product }: Props) {
 
   return (
     <section aria-labelledby="specs-heading" className="mt-12 md:mt-16">
-      <h2
-        id="specs-heading"
-        className="t-h2 mb-5 text-[color:var(--color-foreground)] md:mb-6"
-      >
+      <h2 id="specs-heading" className="t-h2 mb-5 text-[color:var(--color-foreground)] md:mb-6">
         Caractéristiques
       </h2>
       <dl className="grid gap-x-8 gap-y-3 border-t border-[color:var(--color-border)] pt-5 sm:grid-cols-2">

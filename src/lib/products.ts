@@ -21,9 +21,7 @@ export function getRelatedProducts(
   currentProduct: Product,
   limit = 4,
 ): Product[] {
-  const pool = products.filter(
-    (p) => p.id !== currentProduct.id && p.availability !== "hidden",
-  );
+  const pool = products.filter((p) => p.id !== currentProduct.id && p.availability !== "hidden");
   const sameCategory = pool.filter((p) => p.category === currentProduct.category);
   const others = pool.filter((p) => p.category !== currentProduct.category);
 

@@ -20,9 +20,10 @@ type Props = {
 export function ProductStructuredData({ product, url }: Props) {
   const nowTs = useNow();
   const promoActive = isPromotionActive(product.promotion, new Date(nowTs));
-  const priceMillimes = promoActive && product.promotion
-    ? product.promotion.salePriceMillimes
-    : product.regularPriceMillimes;
+  const priceMillimes =
+    promoActive && product.promotion
+      ? product.promotion.salePriceMillimes
+      : product.regularPriceMillimes;
 
   const availability =
     product.availability === "available"

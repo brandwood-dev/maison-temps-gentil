@@ -107,7 +107,9 @@ export function ProductSummary({ product, onAddToCart }: Props) {
             strokeWidth={1.75}
             aria-hidden
           />
-          <span className="hidden sm:inline">{fav ? "Dans vos favoris" : "Ajouter aux favoris"}</span>
+          <span className="hidden sm:inline">
+            {fav ? "Dans vos favoris" : "Ajouter aux favoris"}
+          </span>
         </button>
       </div>
 

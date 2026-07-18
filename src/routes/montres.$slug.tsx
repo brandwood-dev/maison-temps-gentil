@@ -47,7 +47,10 @@ export const Route = createFileRoute("/montres/$slug")({
       { property: "product:brand", content: product.brand },
       { property: "product:price:amount", content: (price / 1000).toFixed(3) },
       { property: "product:price:currency", content: "TND" },
-      { property: "product:availability", content: product.availability === "available" ? "in stock" : "out of stock" },
+      {
+        property: "product:availability",
+        content: product.availability === "available" ? "in stock" : "out of stock",
+      },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: title },
       { name: "twitter:description", content: description },
@@ -72,9 +75,7 @@ function ProductDetailRoute() {
   const { product } = Route.useLoaderData();
   const { slug } = Route.useParams();
   const canonicalUrl = `${SITE}/montres/${slug}`;
-  return (
-    <ProductDetailPage product={product} allProducts={PRODUCTS} canonicalUrl={canonicalUrl} />
-  );
+  return <ProductDetailPage product={product} allProducts={PRODUCTS} canonicalUrl={canonicalUrl} />;
 }
 
 function ProductNotFound() {

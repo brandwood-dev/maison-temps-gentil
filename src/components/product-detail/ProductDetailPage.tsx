@@ -49,10 +49,7 @@ export function ProductDetailPage({ product, allProducts, canonicalUrl }: Props)
                 <ChevronRight className="h-3.5 w-3.5" />
               </li>
               <li>
-                <Link
-                  to="/montres"
-                  className="hover:text-[color:var(--color-foreground)]"
-                >
+                <Link to="/montres" className="hover:text-[color:var(--color-foreground)]">
                   Montres
                 </Link>
               </li>
@@ -60,10 +57,7 @@ export function ProductDetailPage({ product, allProducts, canonicalUrl }: Props)
                 <ChevronRight className="h-3.5 w-3.5" />
               </li>
               <li>
-                <Link
-                  to={categoryRoute}
-                  className="hover:text-[color:var(--color-foreground)]"
-                >
+                <Link to={categoryRoute} className="hover:text-[color:var(--color-foreground)]">
                   {categoryLabel}
                 </Link>
               </li>

@@ -12,7 +12,8 @@ type Props = {
  * If no image exists, renders a labelled placeholder.
  */
 export function ProductGallery({ product }: Props) {
-  const images = product.images.length > 0 ? [...product.images].sort((a, b) => a.position - b.position) : [];
+  const images =
+    product.images.length > 0 ? [...product.images].sort((a, b) => a.position - b.position) : [];
   const [activeId, setActiveId] = useState<string | null>(images[0]?.id ?? null);
   const active: ProductImage | undefined = images.find((i) => i.id === activeId) ?? images[0];
 
