@@ -4,6 +4,7 @@ import { useNavigate } from "@tanstack/react-router";
 import type { Product, ProductCategory } from "@/types/product";
 import type { CatalogQuery } from "@/types/catalog";
 import { useNow } from "@/lib/now-store";
+import { useCart } from "@/lib/cart-store";
 import { catalogQueryToSearch, getCatalogResult, hasActiveFilters } from "@/lib/catalog";
 
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
