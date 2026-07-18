@@ -112,9 +112,7 @@ export function addItem(productId: string, quantity = 1) {
   const existing = items.find((i) => i.productId === productId);
   if (existing) {
     setItems(
-      items.map((i) =>
-        i.productId === productId ? { ...i, quantity: i.quantity + qty } : i,
-      ),
+      items.map((i) => (i.productId === productId ? { ...i, quantity: i.quantity + qty } : i)),
     );
   } else {
     setItems([...items, { productId, quantity: qty }]);

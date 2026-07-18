@@ -8,11 +8,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { PRODUCTS } from "@/fixtures/products";
 import { useCart } from "@/lib/cart-store";
 import { useNow } from "@/lib/now-store";
-import {
-  formatPriceTND,
-  getCurrentPriceMillimes,
-  isPromotionActive,
-} from "@/lib/product-pricing";
+import { formatPriceTND, getCurrentPriceMillimes, isPromotionActive } from "@/lib/product-pricing";
 import type { Product } from "@/types/product";
 import { cn } from "@/lib/utils";
 
@@ -47,9 +43,7 @@ function CartPage() {
     product: PRODUCTS.find((p) => p.id === it.productId && p.availability !== "hidden") ?? null,
   }));
 
-  const purchasableLines = lines.filter(
-    (l) => l.product && l.product.availability === "available",
-  );
+  const purchasableLines = lines.filter((l) => l.product && l.product.availability === "available");
   const subtotalMillimes = purchasableLines.reduce(
     (sum, l) => sum + getCurrentPriceMillimes(l.product!, now) * l.quantity,
     0,
