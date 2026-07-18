@@ -42,6 +42,8 @@ export function CatalogPage({
 }: Props) {
   const navigate = useNavigate();
   const nowTs = useNow();
+  const { addItem } = useCart();
+  const handleAddToCart = (p: Product, quantity: number) => addItem(p.id, quantity);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const result = useMemo(
