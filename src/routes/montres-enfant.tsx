@@ -5,7 +5,7 @@ import { parseCatalogSearch } from "@/lib/catalog";
 
 const CANONICAL = "https://maison-temps-gentil.lovable.app/montres-enfant";
 const TITLE = "Montres Enfant | La Maison des Montres";
-const DESC = "Des montres colorées, robustes et faciles à lire, pensées pour les enfants.";
+const DESC = "Des montres colorées et robustes pour les enfants, faciles à lire et à porter.";
 
 export const Route = createFileRoute("/montres-enfant")({
   validateSearch: (raw) => parseCatalogSearch(raw as Record<string, unknown>),
@@ -20,11 +20,16 @@ export const Route = createFileRoute("/montres-enfant")({
     ],
     links: [{ rel: "canonical", href: CANONICAL }],
   }),
-  component: () => (
+  component: MontresEnfantPage,
+});
+
+function MontresEnfantPage() {
+  const query = Route.useSearch();
+  return (
     <CatalogPage
       basePath="/montres-enfant"
       title="Montres Enfant"
-      intro="Des modèles ludiques et confortables pour accompagner les plus jeunes."
+      intro="Des modèles colorés et pratiques pour les plus jeunes."
       crumbs={[
         { label: "Accueil", href: "/" },
         { label: "Montres", href: "/montres" },
@@ -32,6 +37,7 @@ export const Route = createFileRoute("/montres-enfant")({
       ]}
       products={PRODUCTS}
       fixedCategory="children"
+      query={query}
     />
-  ),
-});
+  );
+}

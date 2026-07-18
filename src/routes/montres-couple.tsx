@@ -20,7 +20,12 @@ export const Route = createFileRoute("/montres-couple")({
     ],
     links: [{ rel: "canonical", href: CANONICAL }],
   }),
-  component: () => (
+  component: MontresCouplePage,
+});
+
+function MontresCouplePage() {
+  const query = Route.useSearch();
+  return (
     <CatalogPage
       basePath="/montres-couple"
       title="Montres Couple"
@@ -32,6 +37,7 @@ export const Route = createFileRoute("/montres-couple")({
       ]}
       products={PRODUCTS}
       fixedCategory="couple"
+      query={query}
     />
-  ),
-});
+  );
+}

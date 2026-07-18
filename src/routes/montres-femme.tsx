@@ -6,7 +6,7 @@ import { parseCatalogSearch } from "@/lib/catalog";
 const CANONICAL = "https://maison-temps-gentil.lovable.app/montres-femme";
 const TITLE = "Montres Femme | La Maison des Montres";
 const DESC =
-  "Notre sélection de montres pour femme : lignes épurées, finitions raffinées et pièces à porter au quotidien.";
+  "Notre sélection de montres pour femme : lignes délicates, matériaux précieux et cadrans lumineux.";
 
 export const Route = createFileRoute("/montres-femme")({
   validateSearch: (raw) => parseCatalogSearch(raw as Record<string, unknown>),
@@ -21,11 +21,16 @@ export const Route = createFileRoute("/montres-femme")({
     ],
     links: [{ rel: "canonical", href: CANONICAL }],
   }),
-  component: () => (
+  component: MontresFemmePage,
+});
+
+function MontresFemmePage() {
+  const query = Route.useSearch();
+  return (
     <CatalogPage
       basePath="/montres-femme"
       title="Montres Femme"
-      intro="Des montres féminines à l’élégance discrète, pour toutes les occasions."
+      intro="Des montres féminines choisies pour leur élégance et leur finition."
       crumbs={[
         { label: "Accueil", href: "/" },
         { label: "Montres", href: "/montres" },
@@ -33,6 +38,7 @@ export const Route = createFileRoute("/montres-femme")({
       ]}
       products={PRODUCTS}
       fixedCategory="women"
+      query={query}
     />
-  ),
-});
+  );
+}
