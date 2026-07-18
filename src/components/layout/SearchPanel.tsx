@@ -2,7 +2,6 @@ import { useRef } from "react";
 import { Search } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
-
 type Props = { open: boolean; onClose: () => void };
 
 export function SearchPanel({ open, onClose }: Props) {

@@ -2,7 +2,6 @@ import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/
 import { Logo } from "@/components/brand/Logo";
 import { NAV_LINKS, SECONDARY_LINKS } from "@/config/nav";
 
-
 type Props = { open: boolean; onClose: () => void };
 
 export function MobileMenu({ open, onClose }: Props) {
@@ -15,9 +14,7 @@ export function MobileMenu({ open, onClose }: Props) {
       >
         <div className="sr-only">
           <SheetTitle>Menu principal</SheetTitle>
-          <SheetDescription>
-            Navigation par catégories de La Maison des Montres
-          </SheetDescription>
+          <SheetDescription>Navigation par catégories de La Maison des Montres</SheetDescription>
         </div>
 
         <div className="flex h-14 items-center border-b border-[color:var(--color-border)] px-4">

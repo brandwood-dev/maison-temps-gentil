@@ -104,7 +104,11 @@ export function SiteHeader({ cartCount = 0 }: { cartCount?: number }) {
         {/* Desktop compact (lg → xl) : deux niveaux */}
         <div className="container-page hidden lg:block xl:hidden">
           <div className="flex h-16 items-center justify-between gap-4">
-            <a href="/" aria-label="La Maison des Montres — Accueil" className="inline-flex shrink-0">
+            <a
+              href="/"
+              aria-label="La Maison des Montres — Accueil"
+              className="inline-flex shrink-0"
+            >
               <Logo variant="dark" height={32} priority />
             </a>
             <div className="flex shrink-0 items-center gap-1">
@@ -130,7 +134,11 @@ export function SiteHeader({ cartCount = 0 }: { cartCount?: number }) {
         {/* Desktop premium (≥ xl) : une seule ligne */}
         <div className="container-page hidden xl:block">
           <div className="flex h-16 items-center justify-between gap-4">
-            <a href="/" aria-label="La Maison des Montres — Accueil" className="inline-flex shrink-0">
+            <a
+              href="/"
+              aria-label="La Maison des Montres — Accueil"
+              className="inline-flex shrink-0"
+            >
               <Logo variant="dark" height={36} priority />
             </a>
             <div className="min-w-0 flex-1">
