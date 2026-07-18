@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 
 const STORAGE_KEY = "lmm:favorites:v1";
 
@@ -28,52 +28,91 @@ function writeStorage(ids: string[]) {
   }
 }
 
+/* ---------- module-scope store (single source of truth) ---------- */
+
+const EMPTY: string[] = [];
+let ids: string[] = EMPTY;
+let hydrated = false;
+let attached = false;
+
+const listeners = new Set<() => void>();
+
+function emit() {
+  listeners.forEach((l) => l());
+}
+
+function onStorage(e: StorageEvent) {
+  if (e.key !== STORAGE_KEY) return;
+  ids = readStorage();
+  emit();
+}
+
+function ensureAttached() {
+  if (attached || typeof window === "undefined") return;
+  attached = true;
+  ids = readStorage();
+  hydrated = true;
+  window.addEventListener("storage", onStorage);
+}
+
+function subscribe(fn: () => void) {
+  ensureAttached();
+  listeners.add(fn);
+  // Notify the fresh subscriber so its hydrated snapshot flushes immediately.
+  fn();
+  return () => {
+    listeners.delete(fn);
+  };
+}
+
+function getSnapshot(): string[] {
+  return ids;
+}
+
+function getServerSnapshot(): string[] {
+  return EMPTY;
+}
+
+/* ---------- imperative actions (stable references) ---------- */
+
+function setIds(next: string[]) {
+  ids = next;
+  writeStorage(next);
+  emit();
+}
+
+function addId(id: string) {
+  if (ids.includes(id)) return;
+  setIds([...ids, id]);
+}
+
+function removeId(id: string) {
+  if (!ids.includes(id)) return;
+  setIds(ids.filter((x) => x !== id));
+}
+
+function toggleId(id: string) {
+  if (ids.includes(id)) removeId(id);
+  else addId(id);
+}
+
 /**
- * Local favorites (localStorage). SSR-safe: starts empty, syncs on mount.
- * Sync across tabs via `storage` event. Later, ids can be merged into a
- * customer account when auth is added.
+ * Local favorites — single shared store backed by localStorage.
+ * All ProductCards read from the same in-memory list; one global `storage`
+ * listener syncs across tabs. Later, ids can be merged into a customer
+ * account when auth is added.
  */
 export function useFavorites() {
-  const [ids, setIds] = useState<string[]>([]);
-  const [hydrated, setHydrated] = useState(false);
+  const currentIds = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
-  useEffect(() => {
-    setIds(readStorage());
-    setHydrated(true);
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === STORAGE_KEY) setIds(readStorage());
-    };
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, []);
+  const isFavorite = useCallback((id: string) => currentIds.includes(id), [currentIds]);
 
-  const isFavorite = useCallback((id: string) => ids.includes(id), [ids]);
-
-  const add = useCallback((id: string) => {
-    setIds((prev) => {
-      if (prev.includes(id)) return prev;
-      const next = [...prev, id];
-      writeStorage(next);
-      return next;
-    });
-  }, []);
-
-  const remove = useCallback((id: string) => {
-    setIds((prev) => {
-      if (!prev.includes(id)) return prev;
-      const next = prev.filter((x) => x !== id);
-      writeStorage(next);
-      return next;
-    });
-  }, []);
-
-  const toggle = useCallback((id: string) => {
-    setIds((prev) => {
-      const next = prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id];
-      writeStorage(next);
-      return next;
-    });
-  }, []);
-
-  return { ids, isFavorite, add, remove, toggle, hydrated };
+  return {
+    ids: currentIds,
+    isFavorite,
+    add: addId,
+    remove: removeId,
+    toggle: toggleId,
+    hydrated: currentIds !== EMPTY || hydrated,
+  };
 }

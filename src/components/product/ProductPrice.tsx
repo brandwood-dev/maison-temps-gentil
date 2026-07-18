@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import type { Product } from "@/types/product";
 import {
@@ -7,6 +6,7 @@ import {
   getSavingsMillimes,
   isPromotionActive,
 } from "@/lib/product-pricing";
+import { useNow } from "@/lib/now-store";
 
 type Props = {
   product: Product;
@@ -14,22 +14,27 @@ type Props = {
   className?: string;
 };
 
+/**
+ * SSR: `useNow()` returns 0 → we trust the fixture (promo exists and
+ * sale < regular). Client after hydration: we re-check `isPromotionActive`
+ * against the shared clock, so an expiring promo flips back to the regular
+ * price at the tick following expiration without any reload.
+ */
 export function ProductPrice({ product, mode = "compact", className }: Props) {
-  // Render server-side using the stored data (may show promo). Re-evaluate on
-  // client to hide any promo that expired between SSR and hydration.
-  const [now, setNow] = useState<Date | null>(null);
-  useEffect(() => {
-    setNow(new Date());
-  }, []);
+  const nowTs = useNow();
+  const promo = product.promotion;
 
-  const evalDate = now ?? new Date(product.promotion?.endsAt ?? Date.now());
-  // For SSR, trust the fixture data — assume promo is active if it exists and is well-formed.
-  const active = now
-    ? isPromotionActive(product.promotion, now)
-    : !!product.promotion &&
-      product.promotion.salePriceMillimes < product.promotion.regularPriceMillimes;
+  let active: boolean;
+  let evalDate: Date;
+  if (nowTs === 0) {
+    evalDate = new Date(0);
+    active = !!promo && promo.salePriceMillimes < promo.regularPriceMillimes;
+  } else {
+    evalDate = new Date(nowTs);
+    active = isPromotionActive(promo, evalDate);
+  }
 
-  if (!active || !product.promotion) {
+  if (!active || !promo) {
     return (
       <p className={cn("text-base font-bold text-[color:var(--color-foreground)]", className)}>
         {formatPriceTND(product.regularPriceMillimes)}
@@ -37,16 +42,25 @@ export function ProductPrice({ product, mode = "compact", className }: Props) {
     );
   }
 
-  const discount = getDiscountPercent(product, evalDate);
-  const savings = getSavingsMillimes(product, evalDate);
+  const discount =
+    nowTs === 0
+      ? Math.round(
+          ((promo.regularPriceMillimes - promo.salePriceMillimes) / promo.regularPriceMillimes) *
+            100,
+        )
+      : getDiscountPercent(product, evalDate);
+  const savings =
+    nowTs === 0
+      ? promo.regularPriceMillimes - promo.salePriceMillimes
+      : getSavingsMillimes(product, evalDate);
 
   return (
     <div className={cn("flex flex-wrap items-baseline gap-x-2 gap-y-1", className)}>
       <span className="text-base font-bold text-[color:var(--color-foreground)]">
-        {formatPriceTND(product.promotion.salePriceMillimes)}
+        {formatPriceTND(promo.salePriceMillimes)}
       </span>
       <span className="text-sm font-medium text-[color:var(--color-muted-foreground)] line-through">
-        {formatPriceTND(product.promotion.regularPriceMillimes)}
+        {formatPriceTND(promo.regularPriceMillimes)}
       </span>
       <span
         className="rounded-[var(--radius-sm)] bg-[color:var(--color-foreground)] px-1.5 py-0.5 text-[11px] font-semibold text-[color:var(--color-primary-foreground)]"
