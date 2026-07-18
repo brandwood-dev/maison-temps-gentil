@@ -21,6 +21,7 @@ function HomePage() {
       <main id="content">
         <Hero />
         <TrustStrip />
+        <FeaturedProducts />
         <SystemPreview />
       </main>
 
