@@ -107,7 +107,7 @@ export function ProductCard({
         <ul className="absolute left-2 top-2 flex flex-col items-start gap-1">
           {visibleBadges.map((b) => (
             <li
-              key={b.key}
+              key={b.id}
               className={cn(
                 "rounded-[var(--radius-sm)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
                 b.tone === "promo" &&
