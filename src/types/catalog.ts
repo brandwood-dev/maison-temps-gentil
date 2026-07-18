@@ -7,12 +7,7 @@ import type { Product, ProductCategory } from "@/types/product";
  * Prices are integer millimes (1 DT = 1000 millimes).
  */
 
-export type CatalogSort =
-  | "featured"
-  | "price-asc"
-  | "price-desc"
-  | "newest"
-  | "discount-desc";
+export type CatalogSort = "featured" | "price-asc" | "price-desc" | "newest" | "discount-desc";
 
 export interface CatalogQuery {
   page: number;

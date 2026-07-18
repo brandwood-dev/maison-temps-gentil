@@ -5,8 +5,7 @@ import { parseCatalogSearch } from "@/lib/catalog";
 
 const CANONICAL = "https://maison-temps-gentil.lovable.app/montres-enfant";
 const TITLE = "Montres Enfant | La Maison des Montres";
-const DESC =
-  "Des montres colorées, robustes et faciles à lire, pensées pour les enfants.";
+const DESC = "Des montres colorées, robustes et faciles à lire, pensées pour les enfants.";
 
 export const Route = createFileRoute("/montres-enfant")({
   validateSearch: (raw) => parseCatalogSearch(raw as Record<string, unknown>),

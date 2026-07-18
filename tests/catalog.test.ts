@@ -137,7 +137,11 @@ console.log("\n== multi-brand filter ==");
 
 console.log("\n== active vs expired promotion ==");
 {
-  const r = getCatalogResult(TEST_FIXTURES, { ...DEFAULT_CATALOG_QUERY, promotionOnly: true }, { now });
+  const r = getCatalogResult(
+    TEST_FIXTURES,
+    { ...DEFAULT_CATALOG_QUERY, promotionOnly: true },
+    { now },
+  );
   const ids = r.items.map((p) => p.id).sort();
   assert(
     JSON.stringify(ids) === JSON.stringify(["b", "d"]),
@@ -181,7 +185,10 @@ console.log("\n== discount sort places non-promo last ==");
     JSON.stringify(first) === JSON.stringify(["d", "b"]),
     "discount-desc puts active promos first, in order",
   );
-  const lastIds = r.items.slice(2).map((p) => p.id).sort();
+  const lastIds = r.items
+    .slice(2)
+    .map((p) => p.id)
+    .sort();
   assert(
     JSON.stringify(lastIds) === JSON.stringify(["a", "c"]),
     "non-promo items are placed after active promos",

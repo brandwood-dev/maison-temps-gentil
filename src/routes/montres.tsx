@@ -30,10 +30,7 @@ function MontresPage() {
       basePath="/montres"
       title="Toutes les montres"
       intro="Découvrez l’intégralité de notre sélection, toutes catégories confondues."
-      crumbs={[
-        { label: "Accueil", href: "/" },
-        { label: "Montres" },
-      ]}
+      crumbs={[{ label: "Accueil", href: "/" }, { label: "Montres" }]}
       products={PRODUCTS}
     />
   );

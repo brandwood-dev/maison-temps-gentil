@@ -137,9 +137,8 @@ export function getCatalogResult(
   const dialColors: CatalogFacetOption[] = uniqueColors.map((label) => ({
     value: label,
     label,
-    count: scoped.filter(
-      (p) => p.dialColor?.label === label && matches(p, { ignoreColor: true }),
-    ).length,
+    count: scoped.filter((p) => p.dialColor?.label === label && matches(p, { ignoreColor: true }))
+      .length,
   }));
 
   let priceRange: CatalogResult["availableFilters"]["priceRange"] = null;
@@ -228,9 +227,7 @@ export function parseCatalogSearch(raw: Record<string, unknown>): CatalogQuery {
 }
 
 /** Serialize a query into a URL search object, dropping default values. */
-export function catalogQueryToSearch(
-  q: Partial<CatalogQuery>,
-): Record<string, string | undefined> {
+export function catalogQueryToSearch(q: Partial<CatalogQuery>): Record<string, string | undefined> {
   const out: Record<string, string | undefined> = {};
   if (q.page && q.page > 1) out.page = String(q.page);
   if (q.sort && q.sort !== "featured") out.sort = q.sort;
