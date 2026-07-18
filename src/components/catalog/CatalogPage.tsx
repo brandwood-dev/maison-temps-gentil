@@ -90,7 +90,7 @@ export function CatalogPage({
   return (
     <div className="min-h-screen bg-[color:var(--color-background)]">
       <AnnouncementBar />
-      <SiteHeader cartCount={0} />
+      <SiteHeader />
 
       <main id="content">
         <CatalogHeader crumbs={crumbs} title={title} intro={intro} totalItems={result.totalItems} />
