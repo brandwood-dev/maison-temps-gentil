@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import type { Product } from "@/types/product";
 import { isPromotionActive } from "@/lib/product-pricing";
 import { useFavorites } from "@/hooks/useFavorites";
+import { useNow } from "@/lib/now-store";
 import { ProductPrice } from "./ProductPrice";
 import { PromotionCountdown } from "./PromotionCountdown";
 
@@ -13,11 +14,20 @@ type Props = {
   href?: string;
   /** Optional add-to-cart callback. Omit until cart is implemented. */
   onAddToCart?: (product: Product) => void;
+  /** Prioritize main image loading (LCP). Only the first card in a grid should set this. */
+  imagePriority?: boolean;
   className?: string;
 };
 
-export function ProductCard({ product, href, onAddToCart, className }: Props) {
+export function ProductCard({
+  product,
+  href,
+  onAddToCart,
+  imagePriority = false,
+  className,
+}: Props) {
   const { isFavorite, toggle, hydrated } = useFavorites();
+  const nowTs = useNow();
   const [imgHover, setImgHover] = useState(false);
   const [mainLoaded, setMainLoaded] = useState(false);
   const [mainError, setMainError] = useState(false);
@@ -25,7 +35,14 @@ export function ProductCard({ product, href, onAddToCart, className }: Props) {
   const primary = product.images.find((i) => i.position === 1) ?? product.images[0];
   const secondary = product.images.find((i) => i.position === 2) ?? null;
 
-  const promoActive = isPromotionActive(product.promotion);
+  // Shared clock: SSR (nowTs===0) trusts fixture; post-hydration re-evaluates
+  // every tick so an expiring promo drops the badge / countdown together with
+  // the sale price in the same render pass.
+  const promoActive =
+    nowTs === 0
+      ? !!product.promotion &&
+        product.promotion.salePriceMillimes < product.promotion.regularPriceMillimes
+      : isPromotionActive(product.promotion, new Date(nowTs));
   const unavailable = product.availability === "unavailable";
 
   const fav = hydrated && isFavorite(product.id);
@@ -46,6 +63,9 @@ export function ProductCard({ product, href, onAddToCart, className }: Props) {
     badges.push({ key: "new", label: "Nouveauté", tone: "new" });
   const visibleBadges = badges.slice(0, 2);
 
+  const mainLoading = imagePriority ? "eager" : "lazy";
+  const mainFetchPriority: "high" | "auto" = imagePriority ? "high" : "auto";
+
   const Media = (
     <div
       className="relative aspect-[4/5] w-full overflow-hidden bg-white"
@@ -56,7 +76,8 @@ export function ProductCard({ product, href, onAddToCart, className }: Props) {
         <img
           src={primary.url}
           alt={primary.alt}
-          loading="eager"
+          loading={mainLoading}
+          fetchPriority={mainFetchPriority}
           decoding="async"
           onLoad={() => setMainLoaded(true)}
           onError={() => setMainError(true)}
@@ -76,6 +97,7 @@ export function ProductCard({ product, href, onAddToCart, className }: Props) {
           src={secondary.url}
           alt={secondary.alt}
           loading="lazy"
+          fetchPriority="auto"
           decoding="async"
           className={cn(
             "absolute inset-0 hidden h-full w-full object-contain p-4 opacity-0 transition-opacity duration-300 md:block",

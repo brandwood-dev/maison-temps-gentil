@@ -16,9 +16,14 @@ export function ProductGrid({ products, className, onAddToCart }: Props) {
         className,
       )}
     >
-      {products.map((p) => (
+      {products.map((p, i) => (
         <li key={p.id} className="flex">
-          <ProductCard product={p} onAddToCart={onAddToCart} className="w-full" />
+          <ProductCard
+            product={p}
+            onAddToCart={onAddToCart}
+            imagePriority={i === 0}
+            className="w-full"
+          />
         </li>
       ))}
     </ul>
