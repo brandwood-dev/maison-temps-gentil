@@ -33,7 +33,7 @@ function Hero() {
       <div className="container-page grid items-center gap-10 py-12 md:grid-cols-2 md:gap-14 md:py-20 lg:py-24">
         <div className="max-w-xl">
           <p className="eyebrow">La Maison des Montres</p>
-          <h1 className="h-display mt-3 text-[color:var(--color-foreground)]">
+          <h1 className="t-display mt-3 text-[color:var(--color-foreground)]">
             Le temps, avec <em className="not-italic text-[color:var(--color-gold)]">élégance</em>.
           </h1>
           <p className="mt-5 max-w-md text-base text-[color:var(--color-muted-foreground)] md:text-lg">
@@ -76,7 +76,7 @@ function SystemPreview() {
     <section className="container-page py-14 md:py-20">
       <div className="mb-8 max-w-2xl">
         <p className="eyebrow">Design system</p>
-        <h2 className="h-1 mt-2">Fondations visuelles</h2>
+        <h2 className="t-h1 mt-2">Fondations visuelles</h2>
         <p className="mt-3 text-sm text-[color:var(--color-muted-foreground)]">
           Aperçu des tokens de base — provisoire, réservé à la validation interne.
         </p>
