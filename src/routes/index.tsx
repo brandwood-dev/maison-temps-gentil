@@ -7,6 +7,8 @@ import { TrustStrip } from "@/components/layout/TrustStrip";
 import { LmmButton } from "@/components/brand/LmmButton";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { PRODUCTS } from "@/fixtures/products";
+import { useCart } from "@/lib/cart-store";
+import type { Product } from "@/types/product";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
