@@ -1,46 +1,35 @@
-import { useEffect, useRef } from "react";
-import { Search, X } from "lucide-react";
+import { useRef } from "react";
+import { Search } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 type Props = { open: boolean; onClose: () => void };
 
 export function SearchPanel({ open, onClose }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", onKey);
-    setTimeout(() => inputRef.current?.focus(), 30);
-    return () => {
-      document.body.style.overflow = prev;
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [open, onClose]);
-
   return (
-    <div
-      aria-hidden={!open}
-      className={`fixed inset-0 z-50 ${open ? "pointer-events-auto" : "pointer-events-none"}`}
-    >
-      <div
-        onClick={onClose}
-        className={`absolute inset-0 bg-black/40 transition-opacity duration-200 ${open ? "opacity-100" : "opacity-0"}`}
-      />
-      <div
-        role="dialog"
-        aria-modal="true"
+    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+      <DialogContent
         aria-label="Recherche"
-        className={`absolute inset-x-0 top-0 bg-[color:var(--color-background)] shadow-[var(--shadow-soft)] transition-transform duration-200 ${open ? "translate-y-0" : "-translate-y-full"}`}
+        onOpenAutoFocus={(e) => {
+          e.preventDefault();
+          inputRef.current?.focus();
+        }}
+        className="left-0 right-0 top-0 z-50 grid max-w-none translate-x-0 translate-y-0 gap-0 rounded-none border-0 border-b border-[color:var(--color-border)] bg-[color:var(--color-background)] p-0 shadow-[var(--shadow-soft)] data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top sm:rounded-none"
       >
+        <VisuallyHidden>
+          <DialogTitle>Rechercher</DialogTitle>
+          <DialogDescription>
+            Rechercher une montre ou une marque sur La Maison des Montres
+          </DialogDescription>
+        </VisuallyHidden>
+
         <div className="container-page py-4">
           <form
             role="search"
             onSubmit={(e) => e.preventDefault()}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 pr-12"
           >
             <label htmlFor="site-search" className="sr-only">
               Rechercher un produit
@@ -59,14 +48,6 @@ export function SearchPanel({ open, onClose }: Props) {
                 className="h-11 w-full min-w-0 bg-transparent text-[15px] outline-none placeholder:text-[color:var(--color-muted-foreground)]"
               />
             </div>
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Fermer la recherche"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-[var(--radius-md)] hover:bg-[color:var(--color-surface-cream)]"
-            >
-              <X className="h-5 w-5" strokeWidth={1.75} />
-            </button>
           </form>
 
           <div className="mt-6 min-h-[120px] pb-6">
@@ -77,7 +58,7 @@ export function SearchPanel({ open, onClose }: Props) {
             </p>
           </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

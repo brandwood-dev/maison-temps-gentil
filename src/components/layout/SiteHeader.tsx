@@ -46,6 +46,25 @@ function IconAction({ label, onClick, href, badge, children }: IconLinkProps) {
   );
 }
 
+function DesktopNav() {
+  return (
+    <nav aria-label="Navigation principale">
+      <ul className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 xl:gap-x-7">
+        {NAV_LINKS.map((l) => (
+          <li key={l.href}>
+            <a
+              href={l.href}
+              className="whitespace-nowrap text-[13px] font-medium tracking-wide text-[color:var(--color-foreground)] transition-colors hover:text-[color:var(--color-gold)]"
+            >
+              {l.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
 export function SiteHeader({ cartCount = 0 }: { cartCount?: number }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -60,6 +79,7 @@ export function SiteHeader({ cartCount = 0 }: { cartCount?: number }) {
             onClick={() => setMenuOpen(true)}
             aria-label="Ouvrir le menu"
             aria-expanded={menuOpen}
+            aria-haspopup="dialog"
             className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--radius-md)] hover:bg-[color:var(--color-surface-cream)]"
           >
             <MenuIcon />
@@ -81,42 +101,51 @@ export function SiteHeader({ cartCount = 0 }: { cartCount?: number }) {
           </div>
         </div>
 
-        {/* Desktop (≥ lg) */}
-        <div className="container-page hidden lg:block">
+        {/* Desktop compact (lg → xl) : deux niveaux */}
+        <div className="container-page hidden lg:block xl:hidden">
           <div className="flex h-16 items-center justify-between gap-4">
-            <a
-              href="/"
-              aria-label="La Maison des Montres — Accueil"
-              className="inline-flex shrink-0"
-            >
-              <Logo variant="dark" height={36} priority />
+            <a href="/" aria-label="La Maison des Montres — Accueil" className="inline-flex shrink-0">
+              <Logo variant="dark" height={32} priority />
             </a>
-            <nav aria-label="Navigation principale" className="min-w-0 flex-1">
-              <ul className="flex items-center justify-center gap-3 lg:gap-5 xl:gap-7">
-                {NAV_LINKS.map((l) => (
-                  <li key={l.href}>
-                    <a
-                      href={l.href}
-                      className="whitespace-nowrap text-[13px] font-medium tracking-wide text-[color:var(--color-foreground)] transition-colors hover:text-[color:var(--color-gold)]"
-                    >
-                      {l.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
             <div className="flex shrink-0 items-center gap-1">
               <IconAction label="Rechercher" onClick={() => setSearchOpen(true)}>
                 <Search className="h-5 w-5" strokeWidth={1.75} />
               </IconAction>
-              <div className="flex items-center gap-1">
-                <IconAction label="Favoris" href="/favoris">
-                  <Heart className="h-5 w-5" strokeWidth={1.75} />
-                </IconAction>
-                <IconAction label="Suivre ma commande" href="/suivi">
-                  <Truck className="h-5 w-5" strokeWidth={1.75} />
-                </IconAction>
-              </div>
+              <IconAction label="Favoris" href="/favoris">
+                <Heart className="h-5 w-5" strokeWidth={1.75} />
+              </IconAction>
+              <IconAction label="Suivre ma commande" href="/suivi-commande">
+                <Truck className="h-5 w-5" strokeWidth={1.75} />
+              </IconAction>
+              <IconAction label="Panier" href="/panier" badge={cartCount}>
+                <ShoppingBag className="h-5 w-5" strokeWidth={1.75} />
+              </IconAction>
+            </div>
+          </div>
+          <div className="border-t border-[color:var(--color-border)] py-2">
+            <DesktopNav />
+          </div>
+        </div>
+
+        {/* Desktop premium (≥ xl) : une seule ligne */}
+        <div className="container-page hidden xl:block">
+          <div className="flex h-16 items-center justify-between gap-4">
+            <a href="/" aria-label="La Maison des Montres — Accueil" className="inline-flex shrink-0">
+              <Logo variant="dark" height={36} priority />
+            </a>
+            <div className="min-w-0 flex-1">
+              <DesktopNav />
+            </div>
+            <div className="flex shrink-0 items-center gap-1">
+              <IconAction label="Rechercher" onClick={() => setSearchOpen(true)}>
+                <Search className="h-5 w-5" strokeWidth={1.75} />
+              </IconAction>
+              <IconAction label="Favoris" href="/favoris">
+                <Heart className="h-5 w-5" strokeWidth={1.75} />
+              </IconAction>
+              <IconAction label="Suivre ma commande" href="/suivi-commande">
+                <Truck className="h-5 w-5" strokeWidth={1.75} />
+              </IconAction>
               <IconAction label="Panier" href="/panier" badge={cartCount}>
                 <ShoppingBag className="h-5 w-5" strokeWidth={1.75} />
               </IconAction>
