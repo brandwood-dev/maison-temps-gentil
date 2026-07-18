@@ -6,7 +6,7 @@ import type { Product } from "@/types/product";
  * Prices are expressed in millimes (1 DT = 1000 millimes).
  */
 
-const PROMO_END = "2026-07-25T23:59:59+01:00";
+const PROMO_END = "2026-07-18T21:11:07+00:00";
 
 export const PRODUCTS: Product[] = [
   {
