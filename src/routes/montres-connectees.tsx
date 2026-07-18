@@ -21,7 +21,12 @@ export const Route = createFileRoute("/montres-connectees")({
     ],
     links: [{ rel: "canonical", href: CANONICAL }],
   }),
-  component: () => (
+  component: MontresConnecteesPage,
+});
+
+function MontresConnecteesPage() {
+  const query = Route.useSearch();
+  return (
     <CatalogPage
       basePath="/montres-connectees"
       title="Montres Connectées"
@@ -33,6 +38,7 @@ export const Route = createFileRoute("/montres-connectees")({
       ]}
       products={PRODUCTS}
       fixedCategory="connected"
+      query={query}
     />
-  ),
-});
+  );
+}

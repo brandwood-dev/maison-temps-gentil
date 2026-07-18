@@ -20,7 +20,12 @@ export const Route = createFileRoute("/collections/coffrets-cadeaux")({
     ],
     links: [{ rel: "canonical", href: CANONICAL }],
   }),
-  component: () => (
+  component: CoffretsCadeauxPage,
+});
+
+function CoffretsCadeauxPage() {
+  const query = Route.useSearch();
+  return (
     <CatalogPage
       basePath="/collections/coffrets-cadeaux"
       title="Coffrets cadeaux"
@@ -32,6 +37,7 @@ export const Route = createFileRoute("/collections/coffrets-cadeaux")({
       ]}
       products={PRODUCTS}
       fixedCollection="gift-boxes"
+      query={query}
     />
-  ),
-});
+  );
+}
