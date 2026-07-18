@@ -5,13 +5,15 @@ import type { Product, ProductCategory } from "@/types/product";
 import type { CatalogQuery } from "@/types/catalog";
 import { useNow } from "@/lib/now-store";
 import {
-  DEFAULT_CATALOG_QUERY,
   catalogQueryToSearch,
   getCatalogResult,
   hasActiveFilters,
   parseCatalogSearch,
 } from "@/lib/catalog";
 
+import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
+import { SiteHeader } from "@/components/layout/SiteHeader";
+import { SiteFooter } from "@/components/layout/SiteFooter";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { CatalogHeader, type Crumb } from "./CatalogHeader";
 import { CatalogToolbar } from "./CatalogToolbar";
