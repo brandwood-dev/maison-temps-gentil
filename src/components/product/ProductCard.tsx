@@ -6,6 +6,7 @@ import type { Product } from "@/types/product";
 import { isPromotionActive } from "@/lib/product-pricing";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useNow } from "@/lib/now-store";
+import { getProductBadges } from "@/lib/product-badges";
 import { ProductPrice } from "./ProductPrice";
 import { PromotionCountdown } from "./PromotionCountdown";
 
@@ -14,7 +15,7 @@ type Props = {
   /** Optional link to the future product page. Omit until product pages exist. */
   href?: string;
   /** Optional add-to-cart callback. Omit until cart is implemented. */
-  onAddToCart?: (product: Product) => void;
+  onAddToCart?: (product: Product, quantity: number) => void;
   /** Prioritize main image loading (LCP). Only the first card in a grid should set this. */
   imagePriority?: boolean;
   className?: string;
@@ -55,15 +56,11 @@ export function ProductCard({
     ? `Produit indisponible : ${product.name}`
     : `Ajouter ${product.name} au panier`;
 
-  const badges: { key: string; label: string; tone: "promo" | "best" | "new" }[] = [];
-  if (promoActive) badges.push({ key: "promo", label: "Promo", tone: "promo" });
-  if (product.isBestSeller) badges.push({ key: "best", label: "Meilleure vente", tone: "best" });
-  if (product.isNew && badges.length < 2)
-    badges.push({ key: "new", label: "Nouveauté", tone: "new" });
-  const visibleBadges = badges.slice(0, 2);
+  const visibleBadges = getProductBadges(product, nowTs);
 
   const mainLoading = imagePriority ? "eager" : "lazy";
   const mainFetchPriority: "high" | "auto" = imagePriority ? "high" : "auto";
+
 
   const Media = (
     <div
