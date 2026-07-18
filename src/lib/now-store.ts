@@ -1,52 +1,82 @@
 /**
- * Shared client clock. A single setInterval ticks once per second while at
- * least one subscriber is mounted. Consumers use `useNow()` to re-render in
- * lockstep whenever the tick advances.
+ * Per-request now-store for La Maison des Montres.
  *
- * SSR / hydration:
- *  - `getServerSnapshot` returns a stable sentinel (0) so server render and
- *    the first client render agree on the timestamp — no hydration mismatch.
- *  - Consumers that need time-sensitive evaluation must treat `now === 0`
- *    as "not hydrated yet" and fall back to trusting the fixture data.
+ * SSR safety: no timestamp state lives at module scope. Each React tree owns
+ * its own `NowStore` instance (created by `NowProvider` via `useRef`), so
+ * concurrent SSR requests never share a mutable clock.
+ *
+ * Consistency: `initialNow` comes from the root loader and is serialized by
+ * TanStack Start, so SSR and the first client render observe the exact same
+ * timestamp — no hydration mismatch. The ticker starts only on the client,
+ * inside a `useEffect`, and is cleared on unmount.
  */
-import { useSyncExternalStore } from "react";
+import {
+  createContext,
+  createElement,
+  useContext,
+  useEffect,
+  useRef,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
 
 type Listener = () => void;
 
-const listeners = new Set<Listener>();
-let currentTs = 0;
-let intervalId: ReturnType<typeof setInterval> | null = null;
+export type NowStore = {
+  subscribe: (fn: Listener) => () => void;
+  getSnapshot: () => number;
+  getServerSnapshot: () => number;
+  /** Internal — exposed for the provider's client-only ticker. */
+  _set: (ts: number) => void;
+};
 
-function tick() {
-  currentTs = Date.now();
-  listeners.forEach((l) => l());
-}
+export function createNowStore(initialNow: number): NowStore {
+  let currentTs = initialNow;
+  const listeners = new Set<Listener>();
+  const initial = initialNow;
 
-function subscribe(fn: Listener) {
-  listeners.add(fn);
-  if (intervalId === null && typeof window !== "undefined") {
-    // Prime on first subscriber so `useNow()` returns a real value on mount.
-    currentTs = Date.now();
-    intervalId = setInterval(tick, 1000);
-  }
-  return () => {
-    listeners.delete(fn);
-    if (listeners.size === 0 && intervalId !== null) {
-      clearInterval(intervalId);
-      intervalId = null;
-    }
+  const subscribe = (fn: Listener) => {
+    listeners.add(fn);
+    return () => {
+      listeners.delete(fn);
+    };
   };
+
+  const getSnapshot = () => currentTs;
+  const getServerSnapshot = () => initial;
+  const _set = (ts: number) => {
+    if (ts === currentTs) return;
+    currentTs = ts;
+    listeners.forEach((l) => l());
+  };
+
+  return { subscribe, getSnapshot, getServerSnapshot, _set };
 }
 
-function getSnapshot() {
-  return currentTs;
+const NowContext = createContext<NowStore | null>(null);
+
+export function NowProvider({ initialNow, children }: { initialNow: number; children: ReactNode }) {
+  const storeRef = useRef<NowStore | null>(null);
+  if (storeRef.current === null) {
+    storeRef.current = createNowStore(initialNow);
+  }
+  const store = storeRef.current;
+
+  useEffect(() => {
+    // Client-only ticker; one interval per NowProvider mount.
+    store._set(Date.now());
+    const id = setInterval(() => store._set(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, [store]);
+
+  return createElement(NowContext.Provider, { value: store }, children);
 }
 
-function getServerSnapshot() {
-  return 0;
-}
-
-/** Returns a millisecond timestamp. `0` means SSR / pre-hydration. */
+/** Returns a millisecond timestamp. Same value on SSR and first client render. */
 export function useNow(): number {
-  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const store = useContext(NowContext);
+  if (!store) {
+    throw new Error("useNow() must be used inside <NowProvider>.");
+  }
+  return useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot);
 }

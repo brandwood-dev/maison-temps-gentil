@@ -15,24 +15,16 @@ type Props = {
 };
 
 /**
- * SSR: `useNow()` returns 0 → we trust the fixture (promo exists and
- * sale < regular). Client after hydration: we re-check `isPromotionActive`
- * against the shared clock, so an expiring promo flips back to the regular
- * price at the tick following expiration without any reload.
+ * Single source of truth for promo evaluation: the shared per-request clock
+ * (`useNow`). SSR and the first client render use the same `initialNow`, so
+ * the HTML is consistent and expired promos never appear in the SSR output.
+ * After hydration, the ticker re-evaluates on every second.
  */
 export function ProductPrice({ product, mode = "compact", className }: Props) {
   const nowTs = useNow();
   const promo = product.promotion;
-
-  let active: boolean;
-  let evalDate: Date;
-  if (nowTs === 0) {
-    evalDate = new Date(0);
-    active = !!promo && promo.salePriceMillimes < promo.regularPriceMillimes;
-  } else {
-    evalDate = new Date(nowTs);
-    active = isPromotionActive(promo, evalDate);
-  }
+  const evalDate = new Date(nowTs);
+  const active = isPromotionActive(promo, evalDate);
 
   if (!active || !promo) {
     return (
@@ -42,17 +34,8 @@ export function ProductPrice({ product, mode = "compact", className }: Props) {
     );
   }
 
-  const discount =
-    nowTs === 0
-      ? Math.round(
-          ((promo.regularPriceMillimes - promo.salePriceMillimes) / promo.regularPriceMillimes) *
-            100,
-        )
-      : getDiscountPercent(product, evalDate);
-  const savings =
-    nowTs === 0
-      ? promo.regularPriceMillimes - promo.salePriceMillimes
-      : getSavingsMillimes(product, evalDate);
+  const discount = getDiscountPercent(product, evalDate);
+  const savings = getSavingsMillimes(product, evalDate);
 
   return (
     <div className={cn("flex flex-wrap items-baseline gap-x-2 gap-y-1", className)}>

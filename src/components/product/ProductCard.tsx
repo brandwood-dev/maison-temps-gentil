@@ -35,14 +35,12 @@ export function ProductCard({
   const primary = product.images.find((i) => i.position === 1) ?? product.images[0];
   const secondary = product.images.find((i) => i.position === 2) ?? null;
 
-  // Shared clock: SSR (nowTs===0) trusts fixture; post-hydration re-evaluates
-  // every tick so an expiring promo drops the badge / countdown together with
-  // the sale price in the same render pass.
-  const promoActive =
-    nowTs === 0
-      ? !!product.promotion &&
-        product.promotion.salePriceMillimes < product.promotion.regularPriceMillimes
-      : isPromotionActive(product.promotion, new Date(nowTs));
+  // Shared per-request clock: SSR and first client render agree on `nowTs`,
+  // so `promoActive` matches the HTML sent by the server. After hydration the
+  // ticker re-evaluates every second — badge, price and countdown drop
+  // together in the same render pass when the promo expires.
+  const promoActive = isPromotionActive(product.promotion, new Date(nowTs));
+
   const unavailable = product.availability === "unavailable";
 
   const fav = hydrated && isFavorite(product.id);
@@ -191,8 +189,6 @@ export function ProductCard({
         className,
       )}
     >
-
-
       {href && !unavailable ? (
         <a href={href} className="block" aria-label={product.name}>
           {Media}
