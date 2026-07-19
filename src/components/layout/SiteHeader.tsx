@@ -2,6 +2,7 @@ import { Heart, Search, ShoppingBag, Truck } from "lucide-react";
 import { useState } from "react";
 import { Logo } from "@/components/brand/Logo";
 import { NAV_LINKS } from "@/config/nav";
+import { useCart } from "@/lib/cart-store";
 import { SearchPanel } from "./SearchPanel";
 import { MobileMenu } from "./MobileMenu";
 
@@ -65,9 +66,11 @@ function DesktopNav() {
   );
 }
 
-export function SiteHeader({ cartCount = 0 }: { cartCount?: number }) {
+export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const { totalQuantity } = useCart();
+  const cartCount = totalQuantity;
 
   return (
     <>

@@ -4,6 +4,7 @@ import { useNavigate } from "@tanstack/react-router";
 import type { Product, ProductCategory } from "@/types/product";
 import type { CatalogQuery } from "@/types/catalog";
 import { useNow } from "@/lib/now-store";
+import { useCart } from "@/lib/cart-store";
 import { catalogQueryToSearch, getCatalogResult, hasActiveFilters } from "@/lib/catalog";
 
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
@@ -41,6 +42,8 @@ export function CatalogPage({
 }: Props) {
   const navigate = useNavigate();
   const nowTs = useNow();
+  const { addItem } = useCart();
+  const handleAddToCart = (p: Product, quantity: number) => addItem(p.id, quantity);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const result = useMemo(
@@ -90,7 +93,7 @@ export function CatalogPage({
   return (
     <div className="min-h-screen bg-[color:var(--color-background)]">
       <AnnouncementBar />
-      <SiteHeader cartCount={0} />
+      <SiteHeader />
 
       <main id="content">
         <CatalogHeader crumbs={crumbs} title={title} intro={intro} totalItems={result.totalItems} />
@@ -139,7 +142,7 @@ export function CatalogPage({
                 ) : (
                   <>
                     <div className="pt-4">
-                      <ProductGrid products={result.items} />
+                      <ProductGrid products={result.items} onAddToCart={handleAddToCart} />
                     </div>
                     <CatalogPagination
                       page={result.page}

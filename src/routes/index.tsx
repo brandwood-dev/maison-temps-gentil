@@ -7,6 +7,8 @@ import { TrustStrip } from "@/components/layout/TrustStrip";
 import { LmmButton } from "@/components/brand/LmmButton";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { PRODUCTS } from "@/fixtures/products";
+import { useCart } from "@/lib/cart-store";
+import type { Product } from "@/types/product";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -16,7 +18,7 @@ function HomePage() {
   return (
     <div className="min-h-screen bg-[color:var(--color-background)]">
       <AnnouncementBar />
-      <SiteHeader cartCount={0} />
+      <SiteHeader />
 
       <main id="content">
         <Hero />
@@ -75,13 +77,15 @@ function Hero() {
 }
 
 function FeaturedProducts() {
+  const { addItem } = useCart();
+  const handleAddToCart = (p: Product, quantity: number) => addItem(p.id, quantity);
   return (
     <section className="container-page py-12 md:py-16">
       <div className="mb-6 max-w-2xl md:mb-8">
         <p className="eyebrow">Sélection</p>
         <h2 className="t-h1 mt-2">Nos montres</h2>
       </div>
-      <ProductGrid products={PRODUCTS} />
+      <ProductGrid products={PRODUCTS} onAddToCart={handleAddToCart} />
     </section>
   );
 }

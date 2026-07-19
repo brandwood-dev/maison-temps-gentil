@@ -7,6 +7,7 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { getCategoryLabel, getCategoryRoute, getRelatedProducts } from "@/lib/products";
+import { useCart } from "@/lib/cart-store";
 import { ProductGallery } from "./ProductGallery";
 import { ProductSummary } from "./ProductSummary";
 import { ProductSpecifications } from "./ProductSpecifications";
@@ -26,11 +27,13 @@ export function ProductDetailPage({ product, allProducts, canonicalUrl }: Props)
   const categoryRoute = getCategoryRoute(product.category);
   const categoryLabel = getCategoryLabel(product.category);
   const related = getRelatedProducts(allProducts, product, 4);
+  const { addItem } = useCart();
+  const handleAddToCart = (p: Product, quantity: number) => addItem(p.id, quantity);
 
   return (
     <div className="min-h-screen bg-[color:var(--color-background)]">
       <AnnouncementBar />
-      <SiteHeader cartCount={0} />
+      <SiteHeader />
 
       <main id="content">
         <div className="container-page py-4 md:py-6">
@@ -74,7 +77,7 @@ export function ProductDetailPage({ product, allProducts, canonicalUrl }: Props)
         <section className="container-page pb-10 md:pb-16">
           <div className="grid gap-8 md:grid-cols-2 md:gap-10 lg:gap-14">
             <ProductGallery product={product} />
-            <ProductSummary product={product} />
+            <ProductSummary product={product} onAddToCart={handleAddToCart} />
           </div>
 
           <ProductSpecifications product={product} />
@@ -97,7 +100,7 @@ export function ProductDetailPage({ product, allProducts, canonicalUrl }: Props)
                   Voir la catégorie
                 </Link>
               </div>
-              <ProductGrid products={related} />
+              <ProductGrid products={related} onAddToCart={handleAddToCart} />
             </div>
           </section>
         ) : null}
