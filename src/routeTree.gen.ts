@@ -17,6 +17,8 @@ import { Route as MontresEnfantRouteImport } from './routes/montres-enfant'
 import { Route as MontresCoupleRouteImport } from './routes/montres-couple'
 import { Route as MontresConnecteesRouteImport } from './routes/montres-connectees'
 import { Route as FavorisRouteImport } from './routes/favoris'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as ConditionsGeneralesVenteRouteImport } from './routes/conditions-generales-vente'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MontresIndexRouteImport } from './routes/montres.index'
 import { Route as MontresSlugRouteImport } from './routes/montres.$slug'
@@ -62,6 +64,17 @@ const FavorisRoute = FavorisRouteImport.update({
   path: '/favoris',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConditionsGeneralesVenteRoute =
+  ConditionsGeneralesVenteRouteImport.update({
+    id: '/conditions-generales-vente',
+    path: '/conditions-generales-vente',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -86,6 +99,8 @@ const CollectionsCoffretsCadeauxRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/conditions-generales-vente': typeof ConditionsGeneralesVenteRoute
+  '/contact': typeof ContactRoute
   '/favoris': typeof FavorisRoute
   '/montres-connectees': typeof MontresConnecteesRoute
   '/montres-couple': typeof MontresCoupleRoute
@@ -100,6 +115,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/conditions-generales-vente': typeof ConditionsGeneralesVenteRoute
+  '/contact': typeof ContactRoute
   '/favoris': typeof FavorisRoute
   '/montres-connectees': typeof MontresConnecteesRoute
   '/montres-couple': typeof MontresCoupleRoute
@@ -115,6 +132,8 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/conditions-generales-vente': typeof ConditionsGeneralesVenteRoute
+  '/contact': typeof ContactRoute
   '/favoris': typeof FavorisRoute
   '/montres-connectees': typeof MontresConnecteesRoute
   '/montres-couple': typeof MontresCoupleRoute
@@ -131,6 +150,8 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/conditions-generales-vente'
+    | '/contact'
     | '/favoris'
     | '/montres-connectees'
     | '/montres-couple'
@@ -145,6 +166,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/conditions-generales-vente'
+    | '/contact'
     | '/favoris'
     | '/montres-connectees'
     | '/montres-couple'
@@ -159,6 +182,8 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/conditions-generales-vente'
+    | '/contact'
     | '/favoris'
     | '/montres-connectees'
     | '/montres-couple'
@@ -174,6 +199,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ConditionsGeneralesVenteRoute: typeof ConditionsGeneralesVenteRoute
+  ContactRoute: typeof ContactRoute
   FavorisRoute: typeof FavorisRoute
   MontresConnecteesRoute: typeof MontresConnecteesRoute
   MontresCoupleRoute: typeof MontresCoupleRoute
@@ -245,6 +272,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FavorisRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/conditions-generales-vente': {
+      id: '/conditions-generales-vente'
+      path: '/conditions-generales-vente'
+      fullPath: '/conditions-generales-vente'
+      preLoaderRoute: typeof ConditionsGeneralesVenteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -278,6 +319,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ConditionsGeneralesVenteRoute: ConditionsGeneralesVenteRoute,
+  ContactRoute: ContactRoute,
   FavorisRoute: FavorisRoute,
   MontresConnecteesRoute: MontresConnecteesRoute,
   MontresCoupleRoute: MontresCoupleRoute,
