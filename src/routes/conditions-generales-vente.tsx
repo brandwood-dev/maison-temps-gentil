@@ -253,7 +253,7 @@ function Section({
 }) {
   return (
     <section id={id} className="scroll-mt-24 border-t border-[color:var(--color-border)] py-6 first:border-t-0 first:pt-0">
-      <h2 className="t-h3 mb-3 text-[color:var(--color-foreground)]">{title}</h2>
+      <h2 className="mb-3 text-lg font-semibold md:text-xl text-[color:var(--color-foreground)]">{title}</h2>
       <div className="space-y-3">{children}</div>
     </section>
   );
