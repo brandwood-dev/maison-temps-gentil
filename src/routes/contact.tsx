@@ -127,7 +127,8 @@ function ContactPage() {
 
             <div className="flex flex-col gap-2">
               <label htmlFor={emailId} className={labelClass}>
-                E-mail <span className="text-[color:var(--color-muted-foreground)]">(facultatif)</span>
+                E-mail{" "}
+                <span className="text-[color:var(--color-muted-foreground)]">(facultatif)</span>
               </label>
               <input
                 id={emailId}
@@ -220,11 +221,7 @@ function ContactPage() {
             </button>
           </form>
 
-          <div
-            id={errorSummaryId}
-            aria-live="polite"
-            className="mt-4 min-h-[1.5rem]"
-          >
+          <div id={errorSummaryId} aria-live="polite" className="mt-4 min-h-[1.5rem]">
             {notice ? (
               <p className="rounded-[var(--radius-md)] border border-[color:var(--color-border)] bg-[color:var(--color-background)] px-4 py-3 text-sm text-[color:var(--color-foreground)]">
                 {notice}

@@ -10,8 +10,7 @@ export const Route = createFileRoute("/conditions-generales-vente")({
       { title: "Conditions générales de vente | La Maison des Montres" },
       {
         name: "description",
-        content:
-          "Document provisoire des conditions générales de vente de La Maison des Montres.",
+        content: "Document provisoire des conditions générales de vente de La Maison des Montres.",
       },
       { name: "robots", content: "noindex,follow" },
     ],
@@ -68,8 +67,8 @@ function TermsPage() {
             role="note"
             className="mt-6 rounded-[var(--radius-md)] border border-[color:var(--color-gold)] bg-[color:var(--color-surface-cream)] p-4 text-sm text-[color:var(--color-foreground)]"
           >
-            <strong className="font-semibold">Document provisoire</strong> — informations
-            juridiques à compléter et à valider avant publication commerciale.
+            <strong className="font-semibold">Document provisoire</strong> — informations juridiques
+            à compléter et à valider avant publication commerciale.
           </div>
 
           <div className="mt-8 grid gap-10 lg:grid-cols-[240px_1fr]">
@@ -96,13 +95,27 @@ function TermsPage() {
             <article className="max-w-[70ch] text-[15px] leading-relaxed text-[color:var(--color-foreground)]">
               <Section id="identite" title="1. Identité du vendeur">
                 <ul className="ml-5 list-disc space-y-1">
-                  <li>Raison sociale : <Todo /></li>
-                  <li>Forme juridique : <Todo /></li>
-                  <li>Adresse : <Todo /></li>
-                  <li>Matricule fiscal : <Todo /></li>
-                  <li>Registre national des entreprises : <Todo /></li>
-                  <li>Téléphone : <Todo /></li>
-                  <li>E-mail : <Todo /></li>
+                  <li>
+                    Raison sociale : <Todo />
+                  </li>
+                  <li>
+                    Forme juridique : <Todo />
+                  </li>
+                  <li>
+                    Adresse : <Todo />
+                  </li>
+                  <li>
+                    Matricule fiscal : <Todo />
+                  </li>
+                  <li>
+                    Registre national des entreprises : <Todo />
+                  </li>
+                  <li>
+                    Téléphone : <Todo />
+                  </li>
+                  <li>
+                    E-mail : <Todo />
+                  </li>
                 </ul>
               </Section>
 
@@ -181,15 +194,25 @@ function TermsPage() {
 
               <Section id="retours" title="11. Retours et échanges">
                 <ul className="ml-5 list-disc space-y-1">
-                  <li>Droit et délai de rétractation : <Todo /></li>
-                  <li>Procédure de retour : <Todo /></li>
-                  <li>Frais de retour : <Todo /></li>
-                  <li>Procédure d’échange : <Todo /></li>
+                  <li>
+                    Droit et délai de rétractation : <Todo />
+                  </li>
+                  <li>
+                    Procédure de retour : <Todo />
+                  </li>
+                  <li>
+                    Frais de retour : <Todo />
+                  </li>
+                  <li>
+                    Procédure d’échange : <Todo />
+                  </li>
                 </ul>
               </Section>
 
               <Section id="garanties" title="12. Garanties">
-                <p>Politique de garantie générale : <Todo /></p>
+                <p>
+                  Politique de garantie générale : <Todo />
+                </p>
               </Section>
 
               <Section id="donnees" title="13. Données personnelles">
@@ -201,20 +224,26 @@ function TermsPage() {
               </Section>
 
               <Section id="responsabilite" title="14. Responsabilité">
-                <p>Responsabilités précises : <Todo /></p>
+                <p>
+                  Responsabilités précises : <Todo />
+                </p>
               </Section>
 
               <Section id="droit" title="15. Droit applicable et règlement des différends">
                 <ul className="ml-5 list-disc space-y-1">
-                  <li>Juridiction compétente : <Todo /></li>
-                  <li>Médiation : <Todo /></li>
+                  <li>
+                    Juridiction compétente : <Todo />
+                  </li>
+                  <li>
+                    Médiation : <Todo />
+                  </li>
                 </ul>
               </Section>
 
               <Section id="contact" title="16. Contact">
                 <p>
-                  Pour toute question relative aux présentes conditions, le formulaire de contact
-                  du site est disponible sur la page{" "}
+                  Pour toute question relative aux présentes conditions, le formulaire de contact du
+                  site est disponible sur la page{" "}
                   <a
                     href="/contact"
                     className="underline decoration-[color:var(--color-gold)] underline-offset-4 hover:text-[color:var(--color-gold)]"
@@ -252,8 +281,13 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} className="scroll-mt-24 border-t border-[color:var(--color-border)] py-6 first:border-t-0 first:pt-0">
-      <h2 className="mb-3 text-lg font-semibold md:text-xl text-[color:var(--color-foreground)]">{title}</h2>
+    <section
+      id={id}
+      className="scroll-mt-24 border-t border-[color:var(--color-border)] py-6 first:border-t-0 first:pt-0"
+    >
+      <h2 className="mb-3 text-lg font-semibold md:text-xl text-[color:var(--color-foreground)]">
+        {title}
+      </h2>
       <div className="space-y-3">{children}</div>
     </section>
   );
