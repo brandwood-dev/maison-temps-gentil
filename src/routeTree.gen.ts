@@ -15,6 +15,7 @@ import { Route as MontresFemmeRouteImport } from './routes/montres-femme'
 import { Route as MontresEnfantRouteImport } from './routes/montres-enfant'
 import { Route as MontresCoupleRouteImport } from './routes/montres-couple'
 import { Route as MontresConnecteesRouteImport } from './routes/montres-connectees'
+import { Route as FavorisRouteImport } from './routes/favoris'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MontresIndexRouteImport } from './routes/montres.index'
 import { Route as MontresSlugRouteImport } from './routes/montres.$slug'
@@ -50,6 +51,11 @@ const MontresConnecteesRoute = MontresConnecteesRouteImport.update({
   path: '/montres-connectees',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FavorisRoute = FavorisRouteImport.update({
+  id: '/favoris',
+  path: '/favoris',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -74,6 +80,7 @@ const CollectionsCoffretsCadeauxRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/favoris': typeof FavorisRoute
   '/montres-connectees': typeof MontresConnecteesRoute
   '/montres-couple': typeof MontresCoupleRoute
   '/montres-enfant': typeof MontresEnfantRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/favoris': typeof FavorisRoute
   '/montres-connectees': typeof MontresConnecteesRoute
   '/montres-couple': typeof MontresCoupleRoute
   '/montres-enfant': typeof MontresEnfantRoute
@@ -99,6 +107,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/favoris': typeof FavorisRoute
   '/montres-connectees': typeof MontresConnecteesRoute
   '/montres-couple': typeof MontresCoupleRoute
   '/montres-enfant': typeof MontresEnfantRoute
@@ -113,6 +122,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/favoris'
     | '/montres-connectees'
     | '/montres-couple'
     | '/montres-enfant'
@@ -125,6 +135,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/favoris'
     | '/montres-connectees'
     | '/montres-couple'
     | '/montres-enfant'
@@ -137,6 +148,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/favoris'
     | '/montres-connectees'
     | '/montres-couple'
     | '/montres-enfant'
@@ -150,6 +162,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  FavorisRoute: typeof FavorisRoute
   MontresConnecteesRoute: typeof MontresConnecteesRoute
   MontresCoupleRoute: typeof MontresCoupleRoute
   MontresEnfantRoute: typeof MontresEnfantRoute
@@ -205,6 +218,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MontresConnecteesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/favoris': {
+      id: '/favoris'
+      path: '/favoris'
+      fullPath: '/favoris'
+      preLoaderRoute: typeof FavorisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -238,6 +258,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  FavorisRoute: FavorisRoute,
   MontresConnecteesRoute: MontresConnecteesRoute,
   MontresCoupleRoute: MontresCoupleRoute,
   MontresEnfantRoute: MontresEnfantRoute,
@@ -251,13 +272,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
