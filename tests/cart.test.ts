@@ -135,6 +135,11 @@ console.log("\n== quantity validation ==");
     unbounded[0]?.quantity === Number.MAX_SAFE_INTEGER,
     "large finite integer has no arbitrary frontend cap",
   );
+  assert(
+    sanitizeCartItems([{ productId: "watch-1", quantity: Number.MAX_SAFE_INTEGER + 1 }]).length ===
+      0,
+    "integer above Number.MAX_SAFE_INTEGER is rejected",
+  );
 }
 
 console.log("\n== deduplication and safe merge ==");
@@ -148,13 +153,14 @@ console.log("\n== deduplication and safe merge ==");
   assert(merged[0]?.quantity === 5, "duplicate quantities are merged");
 
   const overflow = sanitizeCartItems([
-    { productId: "watch-1", quantity: Number.MAX_VALUE },
-    { productId: "watch-1", quantity: Number.MAX_VALUE },
+    { productId: "watch-1", quantity: Number.MAX_SAFE_INTEGER },
+    { productId: "watch-1", quantity: 1 },
   ]);
   assert(overflow.length === 1, "overflowing duplicate remains a single line");
   assert(
-    Number.isFinite(overflow[0]?.quantity),
-    "overflowing merge never creates a non-finite quantity",
+    overflow[0]?.quantity === Number.MAX_SAFE_INTEGER &&
+      Number.isSafeInteger(overflow[0]?.quantity),
+    "overflowing merge never creates an imprecise quantity",
   );
 }
 
@@ -176,6 +182,11 @@ console.log("\n== immutable cart operations ==");
     setCartItemQuantity(updated, "watch-1", 1.5) === updated,
     "invalid quantity update is a no-op",
   );
+
+  const invalidSnapshot = json(updated);
+  const invalidAdd = addCartItem(updated, "watch-1", Number.MAX_SAFE_INTEGER + 1);
+  assert(invalidAdd === updated, "invalid add preserves the same array reference");
+  assert(json(updated) === invalidSnapshot, "invalid add does not mutate the cart");
 
   const removed = removeCartItem(updated, " watch-1 ");
   assert(removed.length === 0, "product is removed using its normalized id");
@@ -201,6 +212,18 @@ console.log("\n== canonical serialization ==");
   assert(
     Object.is(input[1]?.quantity, snapshot[1]?.quantity),
     "serialization does not mutate supplied entries",
+  );
+
+  const frozenEntry = Object.freeze({ productId: " frozen-watch ", quantity: 2 });
+  const frozenInput = Object.freeze([frozenEntry]);
+  assert(
+    serializeCartItems(frozenInput) ===
+      '{"version":1,"items":[{"productId":"frozen-watch","quantity":2}]}',
+    "serialization accepts and normalizes a frozen input",
+  );
+  assert(
+    frozenEntry.productId === " frozen-watch ",
+    "normalization does not mutate a frozen entry",
   );
 }
 

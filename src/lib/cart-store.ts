@@ -36,7 +36,7 @@ function normalizeQuantity(value: unknown): number | null {
   if (
     typeof value !== "number" ||
     !Number.isFinite(value) ||
-    !Number.isInteger(value) ||
+    !Number.isSafeInteger(value) ||
     value < 1
   ) {
     return null;
@@ -139,41 +139,41 @@ export function writeCartStorage(storage: CartStorage | null, raw: unknown): voi
 }
 
 export function addCartItem(
-  current: readonly CartItem[],
+  current: CartItem[],
   productIdValue: unknown,
   quantityValue: unknown = 1,
 ): CartItem[] {
   const productId = normalizeProductId(productIdValue);
   const quantity = normalizeQuantity(quantityValue);
-  if (!productId || quantity === null) return current as CartItem[];
+  if (!productId || quantity === null) return current;
 
   const existing = current.find((item) => item.productId === productId);
   if (!existing) return [...current, { productId, quantity }];
 
   const merged = mergeQuantities(existing.quantity, quantity);
-  if (merged === null) return current as CartItem[];
+  if (merged === null) return current;
   return current.map((item) =>
     item.productId === productId ? { ...item, quantity: merged } : item,
   );
 }
 
 export function setCartItemQuantity(
-  current: readonly CartItem[],
+  current: CartItem[],
   productIdValue: unknown,
   quantityValue: unknown,
 ): CartItem[] {
   const productId = normalizeProductId(productIdValue);
   const quantity = normalizeQuantity(quantityValue);
   if (!productId || quantity === null || !current.some((item) => item.productId === productId)) {
-    return current as CartItem[];
+    return current;
   }
   return current.map((item) => (item.productId === productId ? { ...item, quantity } : item));
 }
 
-export function removeCartItem(current: readonly CartItem[], productIdValue: unknown): CartItem[] {
+export function removeCartItem(current: CartItem[], productIdValue: unknown): CartItem[] {
   const productId = normalizeProductId(productIdValue);
   if (!productId || !current.some((item) => item.productId === productId)) {
-    return current as CartItem[];
+    return current;
   }
   return current.filter((item) => item.productId !== productId);
 }
