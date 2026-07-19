@@ -9,17 +9,24 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SuiviCommandeRouteImport } from './routes/suivi-commande'
 import { Route as PanierRouteImport } from './routes/panier'
 import { Route as MontresHommeRouteImport } from './routes/montres-homme'
 import { Route as MontresFemmeRouteImport } from './routes/montres-femme'
 import { Route as MontresEnfantRouteImport } from './routes/montres-enfant'
 import { Route as MontresCoupleRouteImport } from './routes/montres-couple'
 import { Route as MontresConnecteesRouteImport } from './routes/montres-connectees'
+import { Route as FavorisRouteImport } from './routes/favoris'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MontresIndexRouteImport } from './routes/montres.index'
 import { Route as MontresSlugRouteImport } from './routes/montres.$slug'
 import { Route as CollectionsCoffretsCadeauxRouteImport } from './routes/collections.coffrets-cadeaux'
 
+const SuiviCommandeRoute = SuiviCommandeRouteImport.update({
+  id: '/suivi-commande',
+  path: '/suivi-commande',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PanierRoute = PanierRouteImport.update({
   id: '/panier',
   path: '/panier',
@@ -50,6 +57,11 @@ const MontresConnecteesRoute = MontresConnecteesRouteImport.update({
   path: '/montres-connectees',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FavorisRoute = FavorisRouteImport.update({
+  id: '/favoris',
+  path: '/favoris',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -74,24 +86,28 @@ const CollectionsCoffretsCadeauxRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/favoris': typeof FavorisRoute
   '/montres-connectees': typeof MontresConnecteesRoute
   '/montres-couple': typeof MontresCoupleRoute
   '/montres-enfant': typeof MontresEnfantRoute
   '/montres-femme': typeof MontresFemmeRoute
   '/montres-homme': typeof MontresHommeRoute
   '/panier': typeof PanierRoute
+  '/suivi-commande': typeof SuiviCommandeRoute
   '/collections/coffrets-cadeaux': typeof CollectionsCoffretsCadeauxRoute
   '/montres/$slug': typeof MontresSlugRoute
   '/montres/': typeof MontresIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/favoris': typeof FavorisRoute
   '/montres-connectees': typeof MontresConnecteesRoute
   '/montres-couple': typeof MontresCoupleRoute
   '/montres-enfant': typeof MontresEnfantRoute
   '/montres-femme': typeof MontresFemmeRoute
   '/montres-homme': typeof MontresHommeRoute
   '/panier': typeof PanierRoute
+  '/suivi-commande': typeof SuiviCommandeRoute
   '/collections/coffrets-cadeaux': typeof CollectionsCoffretsCadeauxRoute
   '/montres/$slug': typeof MontresSlugRoute
   '/montres': typeof MontresIndexRoute
@@ -99,12 +115,14 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/favoris': typeof FavorisRoute
   '/montres-connectees': typeof MontresConnecteesRoute
   '/montres-couple': typeof MontresCoupleRoute
   '/montres-enfant': typeof MontresEnfantRoute
   '/montres-femme': typeof MontresFemmeRoute
   '/montres-homme': typeof MontresHommeRoute
   '/panier': typeof PanierRoute
+  '/suivi-commande': typeof SuiviCommandeRoute
   '/collections/coffrets-cadeaux': typeof CollectionsCoffretsCadeauxRoute
   '/montres/$slug': typeof MontresSlugRoute
   '/montres/': typeof MontresIndexRoute
@@ -113,36 +131,42 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/favoris'
     | '/montres-connectees'
     | '/montres-couple'
     | '/montres-enfant'
     | '/montres-femme'
     | '/montres-homme'
     | '/panier'
+    | '/suivi-commande'
     | '/collections/coffrets-cadeaux'
     | '/montres/$slug'
     | '/montres/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/favoris'
     | '/montres-connectees'
     | '/montres-couple'
     | '/montres-enfant'
     | '/montres-femme'
     | '/montres-homme'
     | '/panier'
+    | '/suivi-commande'
     | '/collections/coffrets-cadeaux'
     | '/montres/$slug'
     | '/montres'
   id:
     | '__root__'
     | '/'
+    | '/favoris'
     | '/montres-connectees'
     | '/montres-couple'
     | '/montres-enfant'
     | '/montres-femme'
     | '/montres-homme'
     | '/panier'
+    | '/suivi-commande'
     | '/collections/coffrets-cadeaux'
     | '/montres/$slug'
     | '/montres/'
@@ -150,12 +174,14 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  FavorisRoute: typeof FavorisRoute
   MontresConnecteesRoute: typeof MontresConnecteesRoute
   MontresCoupleRoute: typeof MontresCoupleRoute
   MontresEnfantRoute: typeof MontresEnfantRoute
   MontresFemmeRoute: typeof MontresFemmeRoute
   MontresHommeRoute: typeof MontresHommeRoute
   PanierRoute: typeof PanierRoute
+  SuiviCommandeRoute: typeof SuiviCommandeRoute
   CollectionsCoffretsCadeauxRoute: typeof CollectionsCoffretsCadeauxRoute
   MontresSlugRoute: typeof MontresSlugRoute
   MontresIndexRoute: typeof MontresIndexRoute
@@ -163,6 +189,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/suivi-commande': {
+      id: '/suivi-commande'
+      path: '/suivi-commande'
+      fullPath: '/suivi-commande'
+      preLoaderRoute: typeof SuiviCommandeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/panier': {
       id: '/panier'
       path: '/panier'
@@ -205,6 +238,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MontresConnecteesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/favoris': {
+      id: '/favoris'
+      path: '/favoris'
+      fullPath: '/favoris'
+      preLoaderRoute: typeof FavorisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -238,12 +278,14 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  FavorisRoute: FavorisRoute,
   MontresConnecteesRoute: MontresConnecteesRoute,
   MontresCoupleRoute: MontresCoupleRoute,
   MontresEnfantRoute: MontresEnfantRoute,
   MontresFemmeRoute: MontresFemmeRoute,
   MontresHommeRoute: MontresHommeRoute,
   PanierRoute: PanierRoute,
+  SuiviCommandeRoute: SuiviCommandeRoute,
   CollectionsCoffretsCadeauxRoute: CollectionsCoffretsCadeauxRoute,
   MontresSlugRoute: MontresSlugRoute,
   MontresIndexRoute: MontresIndexRoute,
@@ -251,13 +293,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
