@@ -9,8 +9,13 @@ import { ProductGrid } from "@/components/product/ProductGrid";
 import { PRODUCTS } from "@/fixtures/products";
 import { useCart } from "@/lib/cart-store";
 import type { Product } from "@/types/product";
+import { absoluteUrl } from "@/config/site";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [{ property: "og:url", content: absoluteUrl() }],
+    links: [{ rel: "canonical", href: absoluteUrl() }],
+  }),
   component: HomePage,
 });
 

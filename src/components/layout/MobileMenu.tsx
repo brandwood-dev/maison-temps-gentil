@@ -2,14 +2,18 @@ import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/
 import { Logo } from "@/components/brand/Logo";
 import { NAV_LINKS, SECONDARY_LINKS } from "@/config/nav";
 
-type Props = { open: boolean; onClose: () => void };
+type Props = { open: boolean; onClose: () => void; restoreFocus: () => void };
 
-export function MobileMenu({ open, onClose }: Props) {
+export function MobileMenu({ open, onClose, restoreFocus }: Props) {
   return (
     <Sheet open={open} onOpenChange={(v) => !v && onClose()}>
       <SheetContent
         side="left"
         aria-label="Menu principal"
+        onCloseAutoFocus={(event) => {
+          event.preventDefault();
+          restoreFocus();
+        }}
         className="flex w-[86%] max-w-sm flex-col gap-0 border-r-0 bg-[color:var(--color-background)] p-0 shadow-[var(--shadow-soft)]"
       >
         <div className="sr-only">

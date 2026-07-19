@@ -120,7 +120,7 @@ export function ProductPurchasePanel({ product, onAddToCart }: Props) {
                 : `Produit indisponible : ${product.name}`
           }
           className={cn(
-            "inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-[var(--radius-md)] px-5 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-gold)]",
+            "inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-[var(--radius-md)] px-5 py-3 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-gold)]",
             cartEnabled
               ? "bg-[color:var(--color-foreground)] text-[color:var(--color-primary-foreground)] hover:bg-[#2a2928]"
               : "bg-[color:var(--color-surface-cream)] text-[color:var(--color-muted-foreground)] cursor-not-allowed",

@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CatalogPage } from "@/components/catalog/CatalogPage";
 import { PRODUCTS } from "@/fixtures/products";
+import { absoluteUrl } from "@/config/site";
 import { parseCatalogSearch } from "@/lib/catalog";
 
-const CANONICAL = "https://maison-temps-gentil.lovable.app/montres-homme";
+const CANONICAL = absoluteUrl("/montres-homme");
 const TITLE = "Montres Homme | La Maison des Montres";
 const DESC =
   "Notre sélection de montres pour homme : élégance intemporelle, mouvements soignés et bracelets premium.";

@@ -1,5 +1,5 @@
 import { Heart, Search, ShoppingBag, Truck } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Logo } from "@/components/brand/Logo";
 import { NAV_LINKS } from "@/config/nav";
 import { useCart } from "@/lib/cart-store";
@@ -8,7 +8,7 @@ import { MobileMenu } from "./MobileMenu";
 
 type IconLinkProps = {
   label: string;
-  onClick?: () => void;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   href?: string;
   badge?: number;
   children: React.ReactNode;
@@ -69,8 +69,19 @@ function DesktopNav() {
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const returnFocusRef = useRef<HTMLButtonElement | null>(null);
   const { totalQuantity } = useCart();
   const cartCount = totalQuantity;
+
+  const openMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+    returnFocusRef.current = event.currentTarget;
+    setMenuOpen(true);
+  };
+  const openSearch = (event: React.MouseEvent<HTMLButtonElement>) => {
+    returnFocusRef.current = event.currentTarget;
+    setSearchOpen(true);
+  };
+  const restoreFocus = () => returnFocusRef.current?.focus();
 
   return (
     <>
@@ -79,7 +90,7 @@ export function SiteHeader() {
         <div className="container-page grid h-14 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 lg:hidden">
           <button
             type="button"
-            onClick={() => setMenuOpen(true)}
+            onClick={openMenu}
             aria-label="Ouvrir le menu"
             aria-expanded={menuOpen}
             aria-haspopup="dialog"
@@ -95,7 +106,7 @@ export function SiteHeader() {
             <Logo variant="dark" height={26} priority />
           </a>
           <div className="flex shrink-0 items-center">
-            <IconAction label="Rechercher" onClick={() => setSearchOpen(true)}>
+            <IconAction label="Rechercher" onClick={openSearch}>
               <Search className="h-5 w-5" strokeWidth={1.75} />
             </IconAction>
             <IconAction label="Panier" href="/panier" badge={cartCount}>
@@ -115,7 +126,7 @@ export function SiteHeader() {
               <Logo variant="dark" height={32} priority />
             </a>
             <div className="flex shrink-0 items-center gap-1">
-              <IconAction label="Rechercher" onClick={() => setSearchOpen(true)}>
+              <IconAction label="Rechercher" onClick={openSearch}>
                 <Search className="h-5 w-5" strokeWidth={1.75} />
               </IconAction>
               <IconAction label="Favoris" href="/favoris">
@@ -148,7 +159,7 @@ export function SiteHeader() {
               <DesktopNav />
             </div>
             <div className="flex shrink-0 items-center gap-1">
-              <IconAction label="Rechercher" onClick={() => setSearchOpen(true)}>
+              <IconAction label="Rechercher" onClick={openSearch}>
                 <Search className="h-5 w-5" strokeWidth={1.75} />
               </IconAction>
               <IconAction label="Favoris" href="/favoris">
@@ -164,8 +175,12 @@ export function SiteHeader() {
           </div>
         </div>
       </header>
-      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
-      <SearchPanel open={searchOpen} onClose={() => setSearchOpen(false)} />
+      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} restoreFocus={restoreFocus} />
+      <SearchPanel
+        open={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        restoreFocus={restoreFocus}
+      />
     </>
   );
 }

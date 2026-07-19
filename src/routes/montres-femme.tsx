@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CatalogPage } from "@/components/catalog/CatalogPage";
 import { PRODUCTS } from "@/fixtures/products";
+import { absoluteUrl } from "@/config/site";
 import { parseCatalogSearch } from "@/lib/catalog";
 
-const CANONICAL = "https://maison-temps-gentil.lovable.app/montres-femme";
+const CANONICAL = absoluteUrl("/montres-femme");
 const TITLE = "Montres Femme | La Maison des Montres";
 const DESC =
   "Notre sélection de montres pour femme : lignes délicates, matériaux précieux et cadrans lumineux.";
