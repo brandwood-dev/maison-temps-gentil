@@ -69,10 +69,7 @@ function FavoritesPage() {
               {countLabel}
             </p>
             <div className="mt-8">
-              <ProductGrid
-                products={products}
-                onAddToCart={(p, q) => addItem(p.id, q)}
-              />
+              <ProductGrid products={products} onAddToCart={(p, q) => addItem(p.id, q)} />
             </div>
           </>
         )}
