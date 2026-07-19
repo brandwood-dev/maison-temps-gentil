@@ -1,15 +1,18 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, type SearchSchemaInput } from "@tanstack/react-router";
 import { CatalogPage } from "@/components/catalog/CatalogPage";
 import { PRODUCTS } from "@/fixtures/products";
+import { absoluteUrl } from "@/config/site";
 import { parseCatalogSearch } from "@/lib/catalog";
 
-const CANONICAL = "https://maison-temps-gentil.lovable.app/montres";
+const CANONICAL = absoluteUrl("/montres");
 const TITLE = "Montres | La Maison des Montres";
 const DESC =
   "Toute la sélection de montres La Maison des Montres : homme, femme, enfant, couple, connectées et coffrets cadeaux.";
 
+type CatalogSearchInput = SearchSchemaInput & Record<string, unknown>;
+
 export const Route = createFileRoute("/montres/")({
-  validateSearch: (raw) => parseCatalogSearch(raw as Record<string, unknown>),
+  validateSearch: (raw: CatalogSearchInput) => parseCatalogSearch(raw),
   head: () => ({
     meta: [
       { title: TITLE },

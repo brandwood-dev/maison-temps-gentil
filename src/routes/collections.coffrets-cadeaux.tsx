@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CatalogPage } from "@/components/catalog/CatalogPage";
 import { PRODUCTS } from "@/fixtures/products";
+import { absoluteUrl } from "@/config/site";
 import { parseCatalogSearch } from "@/lib/catalog";
 
-const CANONICAL = "https://maison-temps-gentil.lovable.app/collections/coffrets-cadeaux";
+const CANONICAL = absoluteUrl("/collections/coffrets-cadeaux");
 const TITLE = "Coffrets cadeaux | La Maison des Montres";
 const DESC = "Nos coffrets cadeaux : montres livrées dans un écrin, prêtes à offrir.";
 

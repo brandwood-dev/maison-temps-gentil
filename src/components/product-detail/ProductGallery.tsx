@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Expand } from "lucide-react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { cn } from "@/lib/utils";
@@ -15,6 +15,7 @@ export function ProductGallery({ product }: Props) {
     product.images.length > 0 ? [...product.images].sort((a, b) => a.position - b.position) : [];
   const [activeId, setActiveId] = useState<string | null>(images[0]?.id ?? null);
   const [zoomOpen, setZoomOpen] = useState(false);
+  const zoomTriggerRef = useRef<HTMLButtonElement>(null);
   const active: ProductImage | undefined = images.find((i) => i.id === activeId) ?? images[0];
 
   const zoomLabel = `Agrandir l'image de ${product.name}`;
@@ -40,6 +41,7 @@ export function ProductGallery({ product }: Props) {
 
         {active ? (
           <button
+            ref={zoomTriggerRef}
             type="button"
             onClick={() => setZoomOpen(true)}
             aria-label={zoomLabel}
@@ -85,7 +87,13 @@ export function ProductGallery({ product }: Props) {
       <DialogPrimitive.Root open={zoomOpen} onOpenChange={setZoomOpen}>
         <DialogPrimitive.Portal>
           <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/85 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
-          <DialogPrimitive.Content className="fixed inset-0 z-50 flex flex-col p-4 md:p-8 focus:outline-none">
+          <DialogPrimitive.Content
+            onCloseAutoFocus={(event) => {
+              event.preventDefault();
+              zoomTriggerRef.current?.focus();
+            }}
+            className="fixed inset-0 z-50 flex flex-col p-4 md:p-8 focus:outline-none"
+          >
             <DialogPrimitive.Title className="sr-only">{zoomLabel}</DialogPrimitive.Title>
             <DialogPrimitive.Description className="sr-only">
               {active?.alt ?? "Image du produit"}

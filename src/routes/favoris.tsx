@@ -55,6 +55,7 @@ function FavoritesPage() {
             </p>
             <Link
               to="/montres"
+              search={{}}
               className="mt-6 inline-flex h-12 items-center justify-center rounded-[var(--radius-md)] bg-[color:var(--color-foreground)] px-6 text-sm font-semibold text-[color:var(--color-primary-foreground)] transition-colors hover:bg-[#2a2928]"
             >
               Découvrir les montres

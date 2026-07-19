@@ -2,9 +2,9 @@ import { useRef } from "react";
 import { Search } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
-type Props = { open: boolean; onClose: () => void };
+type Props = { open: boolean; onClose: () => void; restoreFocus: () => void };
 
-export function SearchPanel({ open, onClose }: Props) {
+export function SearchPanel({ open, onClose, restoreFocus }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
@@ -14,6 +14,10 @@ export function SearchPanel({ open, onClose }: Props) {
         onOpenAutoFocus={(e) => {
           e.preventDefault();
           inputRef.current?.focus();
+        }}
+        onCloseAutoFocus={(event) => {
+          event.preventDefault();
+          restoreFocus();
         }}
         className="left-0 right-0 top-0 z-50 grid max-w-none translate-x-0 translate-y-0 gap-0 rounded-none border-0 border-b border-[color:var(--color-border)] bg-[color:var(--color-background)] p-0 shadow-[var(--shadow-soft)] data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top sm:rounded-none"
       >

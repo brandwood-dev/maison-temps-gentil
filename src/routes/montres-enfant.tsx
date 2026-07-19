@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CatalogPage } from "@/components/catalog/CatalogPage";
 import { PRODUCTS } from "@/fixtures/products";
+import { absoluteUrl } from "@/config/site";
 import { parseCatalogSearch } from "@/lib/catalog";
 
-const CANONICAL = "https://maison-temps-gentil.lovable.app/montres-enfant";
+const CANONICAL = absoluteUrl("/montres-enfant");
 const TITLE = "Montres Enfant | La Maison des Montres";
 const DESC = "Des montres colorées et robustes pour les enfants, faciles à lire et à porter.";
 

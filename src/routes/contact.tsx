@@ -4,6 +4,9 @@ import { useId, useState } from "react";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
+import { absoluteUrl } from "@/config/site";
+
+const CANONICAL = absoluteUrl("/contact");
 
 type FieldErrors = {
   name?: string;
@@ -30,9 +33,9 @@ export const Route = createFileRoute("/contact")({
           "Contactez La Maison des Montres pour toute question sur nos montres, commandes ou livraisons.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://maison-temps-gentil.lovable.app/contact" },
+      { property: "og:url", content: CANONICAL },
     ],
-    links: [{ rel: "canonical", href: "https://maison-temps-gentil.lovable.app/contact" }],
+    links: [{ rel: "canonical", href: CANONICAL }],
   }),
   component: ContactPage,
 });

@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CatalogPage } from "@/components/catalog/CatalogPage";
 import { PRODUCTS } from "@/fixtures/products";
+import { absoluteUrl } from "@/config/site";
 import { parseCatalogSearch } from "@/lib/catalog";
 
-const CANONICAL = "https://maison-temps-gentil.lovable.app/montres-connectees";
+const CANONICAL = absoluteUrl("/montres-connectees");
 const TITLE = "Montres Connectées | La Maison des Montres";
 const DESC =
   "Notre sélection de montres connectées, pour allier technologie et style au quotidien.";

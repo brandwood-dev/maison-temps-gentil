@@ -4,5 +4,13 @@
   "compatibility_date": "2026-07-19",
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": true,
-  "preview_urls": true
+  "preview_urls": true,
+  "env": {
+    "preview": {
+      "name": "la-maison-des-montres-preview"
+    },
+    "production": {
+      "name": "la-maison-des-montres"
+    }
+  }
 }

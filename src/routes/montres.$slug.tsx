@@ -3,8 +3,9 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { ProductDetailPage } from "@/components/product-detail/ProductDetailPage";
 import { PRODUCTS } from "@/fixtures/products";
 import { getPublicProductBySlug } from "@/lib/products";
+import { SITE_URL } from "@/config/site";
 
-const SITE = "https://maison-temps-gentil.lovable.app";
+const SITE = SITE_URL;
 
 export const Route = createFileRoute("/montres/$slug")({
   loader: ({ params }) => {
