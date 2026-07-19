@@ -10,8 +10,10 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
+    "typecheck": "tsc --noEmit",
     "test:catalog": "tsx tests/catalog.test.ts",
-    "test:product": "tsx tests/product.test.ts"
+    "test:product": "tsx tests/product.test.ts",
+    "test:cart": "tsx tests/cart.test.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
