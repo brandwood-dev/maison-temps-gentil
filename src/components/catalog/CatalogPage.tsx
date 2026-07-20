@@ -22,8 +22,6 @@ import { CatalogEmptyState } from "./CatalogEmptyState";
 type EmptyOverride = {
   title: string;
   description: string;
-  ctaLabel: string;
-  ctaHref: string;
 };
 
 type Props = {
