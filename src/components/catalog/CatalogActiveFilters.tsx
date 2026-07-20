@@ -8,12 +8,14 @@ type Props = {
   query: CatalogQuery;
   onChange: (patch: Partial<CatalogQuery>) => void;
   onReset: () => void;
+  /** Hide the "En promotion" chip (e.g. on the /promotions page). */
+  hidePromoChip?: boolean;
 };
 
-export function CatalogActiveFilters({ query, onChange, onReset }: Props) {
+export function CatalogActiveFilters({ query, onChange, onReset, hidePromoChip }: Props) {
   const chips: Chip[] = [];
 
-  if (query.promotionOnly) {
+  if (query.promotionOnly && !hidePromoChip) {
     chips.push({
       key: "promo",
       label: "En promotion",
