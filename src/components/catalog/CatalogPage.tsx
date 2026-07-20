@@ -154,9 +154,31 @@ export function CatalogPage({
                   activeFilterCount={activeFilterCount}
                 />
 
-                <CatalogActiveFilters query={query} onChange={applyPatch} onReset={resetFilters} />
+                <CatalogActiveFilters
+                  query={query}
+                  onChange={applyPatch}
+                  onReset={resetFilters}
+                  hidePromoChip={forcePromotionOnly}
+                />
 
-                {showNoResults ? (
+                {showEmptyOverride ? (
+                  <div className="pt-4">
+                    <div className="flex flex-col items-center justify-center gap-4 rounded-[var(--radius-lg)] border border-dashed border-[color:var(--color-border-strong)] bg-[color:var(--color-surface-cream)] px-6 py-16 text-center">
+                      <h2 className="text-lg font-semibold text-[color:var(--color-foreground)]">
+                        {emptyOverride!.title}
+                      </h2>
+                      <p className="max-w-md text-sm text-[color:var(--color-muted-foreground)]">
+                        {emptyOverride!.description}
+                      </p>
+                      <Link
+                        to={emptyOverride!.ctaHref}
+                        className="inline-flex h-11 items-center rounded-[var(--radius-md)] bg-[color:var(--color-foreground)] px-4 text-sm font-semibold text-[color:var(--color-primary-foreground)] hover:bg-[#2a2928]"
+                      >
+                        {emptyOverride!.ctaLabel}
+                      </Link>
+                    </div>
+                  </div>
+                ) : showNoResults ? (
                   <div className="pt-4">
                     <CatalogEmptyState variant={{ kind: "no-results", onReset: resetFilters }} />
                   </div>
