@@ -211,6 +211,7 @@ export function CatalogPage({
         totalItems={result.totalItems}
         onChange={applyPatch}
         onReset={resetFilters}
+        hidePromoFilter={forcePromotionOnly}
       />
     </div>
   );
