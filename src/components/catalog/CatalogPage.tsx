@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 
 import type { Product, ProductCategory } from "@/types/product";
 import type { CatalogQuery } from "@/types/catalog";
@@ -19,6 +19,11 @@ import { CatalogActiveFilters } from "./CatalogActiveFilters";
 import { CatalogPagination } from "./CatalogPagination";
 import { CatalogEmptyState } from "./CatalogEmptyState";
 
+type EmptyOverride = {
+  title: string;
+  description: string;
+};
+
 type Props = {
   basePath: string;
   title: string;
@@ -28,6 +33,10 @@ type Props = {
   query: CatalogQuery;
   fixedCategory?: ProductCategory;
   fixedCollection?: string;
+  /** When true: force `promotionOnly` server-side, hide the promo filter/chip. */
+  forcePromotionOnly?: boolean;
+  /** Custom empty state when no filters are active but the base scope is empty. */
+  emptyOverride?: EmptyOverride;
 };
 
 export function CatalogPage({
@@ -39,6 +48,8 @@ export function CatalogPage({
   query,
   fixedCategory,
   fixedCollection,
+  forcePromotionOnly = false,
+  emptyOverride,
 }: Props) {
   const navigate = useNavigate();
   const nowTs = useNow();
@@ -46,15 +57,16 @@ export function CatalogPage({
   const handleAddToCart = (p: Product, quantity: number) => addItem(p.id, quantity);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const result = useMemo(
-    () =>
-      getCatalogResult(products, query, {
-        fixedCategory,
-        fixedCollection,
-        now: new Date(nowTs),
-      }),
-    [products, query, fixedCategory, fixedCollection, nowTs],
-  );
+  const result = useMemo(() => {
+    const effectiveQuery: CatalogQuery = forcePromotionOnly
+      ? { ...query, promotionOnly: true }
+      : query;
+    return getCatalogResult(products, effectiveQuery, {
+      fixedCategory,
+      fixedCollection,
+      now: new Date(nowTs),
+    });
+  }, [products, query, forcePromotionOnly, fixedCategory, fixedCollection, nowTs]);
 
   const isCategoryEmpty = result.availableFilters.priceRange === null;
   const filtersActive = hasActiveFilters(query);
@@ -63,7 +75,7 @@ export function CatalogPage({
     query.dialColors.length +
     (query.minPriceMillimes != null ? 1 : 0) +
     (query.maxPriceMillimes != null ? 1 : 0) +
-    (query.promotionOnly ? 1 : 0);
+    (!forcePromotionOnly && query.promotionOnly ? 1 : 0);
 
   const applyPatch = (patch: Partial<CatalogQuery>) => {
     const merged: CatalogQuery = { ...query, ...patch };
@@ -83,6 +95,9 @@ export function CatalogPage({
   };
 
   const showNoResults = !isCategoryEmpty && result.totalItems === 0;
+  // On the promotions page, an empty result with no user filters means every
+  // promotion has expired — show a dedicated CTA instead of the reset one.
+  const showEmptyOverride = Boolean(emptyOverride) && showNoResults && !filtersActive;
 
   const baseSearchForPagination = useMemo(() => {
     const { page: _page, ...rest } = catalogQueryToSearch(query);
@@ -112,6 +127,7 @@ export function CatalogPage({
                   query={query}
                   availableFilters={result.availableFilters}
                   onChange={applyPatch}
+                  hidePromoFilter={forcePromotionOnly}
                 />
                 {filtersActive ? (
                   <button
@@ -133,9 +149,31 @@ export function CatalogPage({
                   activeFilterCount={activeFilterCount}
                 />
 
-                <CatalogActiveFilters query={query} onChange={applyPatch} onReset={resetFilters} />
+                <CatalogActiveFilters
+                  query={query}
+                  onChange={applyPatch}
+                  onReset={resetFilters}
+                  hidePromoChip={forcePromotionOnly}
+                />
 
-                {showNoResults ? (
+                {showEmptyOverride ? (
+                  <div className="pt-4">
+                    <div className="flex flex-col items-center justify-center gap-4 rounded-[var(--radius-lg)] border border-dashed border-[color:var(--color-border-strong)] bg-[color:var(--color-surface-cream)] px-6 py-16 text-center">
+                      <h2 className="text-lg font-semibold text-[color:var(--color-foreground)]">
+                        {emptyOverride!.title}
+                      </h2>
+                      <p className="max-w-md text-sm text-[color:var(--color-muted-foreground)]">
+                        {emptyOverride!.description}
+                      </p>
+                      <Link
+                        to="/montres"
+                        className="inline-flex h-11 items-center rounded-[var(--radius-md)] bg-[color:var(--color-foreground)] px-4 text-sm font-semibold text-[color:var(--color-primary-foreground)] hover:bg-[#2a2928]"
+                      >
+                        Voir toutes les montres
+                      </Link>
+                    </div>
+                  </div>
+                ) : showNoResults ? (
                   <div className="pt-4">
                     <CatalogEmptyState variant={{ kind: "no-results", onReset: resetFilters }} />
                   </div>
@@ -168,6 +206,7 @@ export function CatalogPage({
         totalItems={result.totalItems}
         onChange={applyPatch}
         onReset={resetFilters}
+        hidePromoFilter={forcePromotionOnly}
       />
     </div>
   );

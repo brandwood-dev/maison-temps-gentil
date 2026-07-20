@@ -8,12 +8,22 @@ type Props = {
   query: CatalogQuery;
   availableFilters: CatalogResult["availableFilters"];
   onChange: (patch: Partial<CatalogQuery>) => void;
+  /** Hide the "En promotion uniquement" toggle (e.g. on the /promotions page). */
+  hidePromoFilter?: boolean;
 };
 
-export function CatalogFilters({ idPrefix, query, availableFilters, onChange }: Props) {
+export function CatalogFilters({
+  idPrefix,
+  query,
+  availableFilters,
+  onChange,
+  hidePromoFilter,
+}: Props) {
   return (
     <div className="flex flex-col gap-6">
-      <PromoFilter idPrefix={idPrefix} value={query.promotionOnly} onChange={onChange} />
+      {hidePromoFilter ? null : (
+        <PromoFilter idPrefix={idPrefix} value={query.promotionOnly} onChange={onChange} />
+      )}
       {availableFilters.brands.length > 0 ? (
         <BrandsFilter
           idPrefix={idPrefix}
