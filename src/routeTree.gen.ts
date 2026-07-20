@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SuiviCommandeRouteImport } from './routes/suivi-commande'
+import { Route as PromotionsRouteImport } from './routes/promotions'
 import { Route as PanierRouteImport } from './routes/panier'
 import { Route as MontresHommeRouteImport } from './routes/montres-homme'
 import { Route as MontresFemmeRouteImport } from './routes/montres-femme'
@@ -27,6 +28,11 @@ import { Route as CollectionsCoffretsCadeauxRouteImport } from './routes/collect
 const SuiviCommandeRoute = SuiviCommandeRouteImport.update({
   id: '/suivi-commande',
   path: '/suivi-commande',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PromotionsRoute = PromotionsRouteImport.update({
+  id: '/promotions',
+  path: '/promotions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PanierRoute = PanierRouteImport.update({
@@ -108,6 +114,7 @@ export interface FileRoutesByFullPath {
   '/montres-femme': typeof MontresFemmeRoute
   '/montres-homme': typeof MontresHommeRoute
   '/panier': typeof PanierRoute
+  '/promotions': typeof PromotionsRoute
   '/suivi-commande': typeof SuiviCommandeRoute
   '/collections/coffrets-cadeaux': typeof CollectionsCoffretsCadeauxRoute
   '/montres/$slug': typeof MontresSlugRoute
@@ -124,6 +131,7 @@ export interface FileRoutesByTo {
   '/montres-femme': typeof MontresFemmeRoute
   '/montres-homme': typeof MontresHommeRoute
   '/panier': typeof PanierRoute
+  '/promotions': typeof PromotionsRoute
   '/suivi-commande': typeof SuiviCommandeRoute
   '/collections/coffrets-cadeaux': typeof CollectionsCoffretsCadeauxRoute
   '/montres/$slug': typeof MontresSlugRoute
@@ -141,6 +149,7 @@ export interface FileRoutesById {
   '/montres-femme': typeof MontresFemmeRoute
   '/montres-homme': typeof MontresHommeRoute
   '/panier': typeof PanierRoute
+  '/promotions': typeof PromotionsRoute
   '/suivi-commande': typeof SuiviCommandeRoute
   '/collections/coffrets-cadeaux': typeof CollectionsCoffretsCadeauxRoute
   '/montres/$slug': typeof MontresSlugRoute
@@ -159,6 +168,7 @@ export interface FileRouteTypes {
     | '/montres-femme'
     | '/montres-homme'
     | '/panier'
+    | '/promotions'
     | '/suivi-commande'
     | '/collections/coffrets-cadeaux'
     | '/montres/$slug'
@@ -175,6 +185,7 @@ export interface FileRouteTypes {
     | '/montres-femme'
     | '/montres-homme'
     | '/panier'
+    | '/promotions'
     | '/suivi-commande'
     | '/collections/coffrets-cadeaux'
     | '/montres/$slug'
@@ -191,6 +202,7 @@ export interface FileRouteTypes {
     | '/montres-femme'
     | '/montres-homme'
     | '/panier'
+    | '/promotions'
     | '/suivi-commande'
     | '/collections/coffrets-cadeaux'
     | '/montres/$slug'
@@ -208,6 +220,7 @@ export interface RootRouteChildren {
   MontresFemmeRoute: typeof MontresFemmeRoute
   MontresHommeRoute: typeof MontresHommeRoute
   PanierRoute: typeof PanierRoute
+  PromotionsRoute: typeof PromotionsRoute
   SuiviCommandeRoute: typeof SuiviCommandeRoute
   CollectionsCoffretsCadeauxRoute: typeof CollectionsCoffretsCadeauxRoute
   MontresSlugRoute: typeof MontresSlugRoute
@@ -221,6 +234,13 @@ declare module '@tanstack/react-router' {
       path: '/suivi-commande'
       fullPath: '/suivi-commande'
       preLoaderRoute: typeof SuiviCommandeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/promotions': {
+      id: '/promotions'
+      path: '/promotions'
+      fullPath: '/promotions'
+      preLoaderRoute: typeof PromotionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/panier': {
@@ -328,6 +348,7 @@ const rootRouteChildren: RootRouteChildren = {
   MontresFemmeRoute: MontresFemmeRoute,
   MontresHommeRoute: MontresHommeRoute,
   PanierRoute: PanierRoute,
+  PromotionsRoute: PromotionsRoute,
   SuiviCommandeRoute: SuiviCommandeRoute,
   CollectionsCoffretsCadeauxRoute: CollectionsCoffretsCadeauxRoute,
   MontresSlugRoute: MontresSlugRoute,
