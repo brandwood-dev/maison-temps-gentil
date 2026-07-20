@@ -10,6 +10,7 @@ type Props = {
   totalItems: number;
   onChange: (patch: Partial<CatalogQuery>) => void;
   onReset: () => void;
+  hidePromoFilter?: boolean;
 };
 
 export function CatalogMobileFilters({
@@ -20,6 +21,7 @@ export function CatalogMobileFilters({
   totalItems,
   onChange,
   onReset,
+  hidePromoFilter,
 }: Props) {
   return (
     <Sheet open={open} onOpenChange={(v) => !v && onClose()}>
@@ -40,6 +42,7 @@ export function CatalogMobileFilters({
             query={query}
             availableFilters={availableFilters}
             onChange={onChange}
+            hidePromoFilter={hidePromoFilter}
           />
         </div>
 
