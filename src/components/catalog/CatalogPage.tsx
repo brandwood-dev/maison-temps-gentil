@@ -19,6 +19,13 @@ import { CatalogActiveFilters } from "./CatalogActiveFilters";
 import { CatalogPagination } from "./CatalogPagination";
 import { CatalogEmptyState } from "./CatalogEmptyState";
 
+type EmptyOverride = {
+  title: string;
+  description: string;
+  ctaLabel: string;
+  ctaHref: string;
+};
+
 type Props = {
   basePath: string;
   title: string;
@@ -28,6 +35,10 @@ type Props = {
   query: CatalogQuery;
   fixedCategory?: ProductCategory;
   fixedCollection?: string;
+  /** When true: force `promotionOnly` server-side, hide the promo filter/chip. */
+  forcePromotionOnly?: boolean;
+  /** Custom empty state when no filters are active but the base scope is empty. */
+  emptyOverride?: EmptyOverride;
 };
 
 export function CatalogPage({
@@ -39,6 +50,8 @@ export function CatalogPage({
   query,
   fixedCategory,
   fixedCollection,
+  forcePromotionOnly = false,
+  emptyOverride,
 }: Props) {
   const navigate = useNavigate();
   const nowTs = useNow();
