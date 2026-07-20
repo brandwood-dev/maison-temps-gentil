@@ -132,6 +132,7 @@ export function CatalogPage({
                   query={query}
                   availableFilters={result.availableFilters}
                   onChange={applyPatch}
+                  hidePromoFilter={forcePromotionOnly}
                 />
                 {filtersActive ? (
                   <button
