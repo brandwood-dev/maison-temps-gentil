@@ -59,14 +59,18 @@ export function CatalogPage({
   const handleAddToCart = (p: Product, quantity: number) => addItem(p.id, quantity);
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  const effectiveQuery: CatalogQuery = forcePromotionOnly
+    ? { ...query, promotionOnly: true }
+    : query;
+
   const result = useMemo(
     () =>
-      getCatalogResult(products, query, {
+      getCatalogResult(products, effectiveQuery, {
         fixedCategory,
         fixedCollection,
         now: new Date(nowTs),
       }),
-    [products, query, fixedCategory, fixedCollection, nowTs],
+    [products, effectiveQuery, fixedCategory, fixedCollection, nowTs],
   );
 
   const isCategoryEmpty = result.availableFilters.priceRange === null;
@@ -76,7 +80,7 @@ export function CatalogPage({
     query.dialColors.length +
     (query.minPriceMillimes != null ? 1 : 0) +
     (query.maxPriceMillimes != null ? 1 : 0) +
-    (query.promotionOnly ? 1 : 0);
+    (!forcePromotionOnly && query.promotionOnly ? 1 : 0);
 
   const applyPatch = (patch: Partial<CatalogQuery>) => {
     const merged: CatalogQuery = { ...query, ...patch };
@@ -96,6 +100,9 @@ export function CatalogPage({
   };
 
   const showNoResults = !isCategoryEmpty && result.totalItems === 0;
+  // On the promotions page, an empty result with no user filters means every
+  // promotion has expired — show a dedicated CTA instead of the reset one.
+  const showEmptyOverride = Boolean(emptyOverride) && showNoResults && !filtersActive;
 
   const baseSearchForPagination = useMemo(() => {
     const { page: _page, ...rest } = catalogQueryToSearch(query);
