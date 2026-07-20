@@ -57,19 +57,16 @@ export function CatalogPage({
   const handleAddToCart = (p: Product, quantity: number) => addItem(p.id, quantity);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const effectiveQuery: CatalogQuery = forcePromotionOnly
-    ? { ...query, promotionOnly: true }
-    : query;
-
-  const result = useMemo(
-    () =>
-      getCatalogResult(products, effectiveQuery, {
-        fixedCategory,
-        fixedCollection,
-        now: new Date(nowTs),
-      }),
-    [products, effectiveQuery, fixedCategory, fixedCollection, nowTs],
-  );
+  const result = useMemo(() => {
+    const effectiveQuery: CatalogQuery = forcePromotionOnly
+      ? { ...query, promotionOnly: true }
+      : query;
+    return getCatalogResult(products, effectiveQuery, {
+      fixedCategory,
+      fixedCollection,
+      now: new Date(nowTs),
+    });
+  }, [products, query, forcePromotionOnly, fixedCategory, fixedCollection, nowTs]);
 
   const isCategoryEmpty = result.availableFilters.priceRange === null;
   const filtersActive = hasActiveFilters(query);
