@@ -169,10 +169,10 @@ export function CatalogPage({
                         {emptyOverride!.description}
                       </p>
                       <Link
-                        to={emptyOverride!.ctaHref}
+                        to="/montres"
                         className="inline-flex h-11 items-center rounded-[var(--radius-md)] bg-[color:var(--color-foreground)] px-4 text-sm font-semibold text-[color:var(--color-primary-foreground)] hover:bg-[#2a2928]"
                       >
-                        {emptyOverride!.ctaLabel}
+                        Voir toutes les montres
                       </Link>
                     </div>
                   </div>
