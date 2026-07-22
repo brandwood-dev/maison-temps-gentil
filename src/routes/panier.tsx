@@ -278,17 +278,16 @@ function Summary({ subtotalMillimes }: { subtotalMillimes: number }) {
       <p className="mt-2 text-xs text-[color:var(--color-muted-foreground)]">
         Livraison calculée lors de la commande.
       </p>
-      <button
-        type="button"
-        disabled
-        aria-disabled="true"
-        className="mt-5 inline-flex h-12 w-full items-center justify-center rounded-[var(--radius-md)] bg-[color:var(--color-surface-cream)] px-5 text-sm font-semibold text-[color:var(--color-muted-foreground)] ring-1 ring-[color:var(--color-border-strong)] cursor-not-allowed"
+      <Link
+        to="/commande"
+        className="mt-5 inline-flex h-12 w-full items-center justify-center rounded-[var(--radius-md)] bg-[color:var(--color-foreground)] px-5 text-sm font-semibold text-[color:var(--color-primary-foreground)] transition-colors hover:bg-[#2a2928]"
       >
         Passer la commande
-      </button>
+      </Link>
       <p className="mt-3 text-xs text-[color:var(--color-muted-foreground)]">
-        L’étape de commande sera connectée prochainement.
+        Paiement à la livraison, partout en Tunisie.
       </p>
+
     </div>
   );
 }
