@@ -284,9 +284,7 @@ function Confirmed({ order }: { order: OrderConfirmation }) {
             </div>
             {shipping ? (
               <address className="mt-3 not-italic text-sm leading-relaxed text-[color:var(--color-foreground)]">
-                {fullName ? (
-                  <p className="font-semibold">{fullName}</p>
-                ) : null}
+                {fullName ? <p className="font-semibold">{fullName}</p> : null}
                 <p>{shipping.address}</p>
                 <p>
                   {shipping.postalCode ? `${shipping.postalCode} ` : ""}
