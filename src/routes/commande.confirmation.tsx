@@ -87,7 +87,9 @@ function Confirmed({ order }: { order: OrderConfirmation }) {
         >
           <CheckCircle2 className="h-8 w-8" strokeWidth={1.75} />
         </span>
-        <h1 className="t-h1 mt-4 text-[color:var(--color-foreground)]">Merci pour votre commande</h1>
+        <h1 className="t-h1 mt-4 text-[color:var(--color-foreground)]">
+          Merci pour votre commande
+        </h1>
         <p className="mt-2 text-sm text-[color:var(--color-muted-foreground)]">
           Votre commande a bien été enregistrée. Nous vous contactons rapidement pour la confirmer.
         </p>

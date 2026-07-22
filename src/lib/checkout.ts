@@ -2,10 +2,7 @@ import { PRODUCTS } from "@/fixtures/products";
 import type { CartItem } from "@/lib/cart-store";
 import { getCurrentPriceMillimes, isPromotionActive } from "@/lib/product-pricing";
 import type { Product } from "@/types/product";
-import {
-  FREE_SHIPPING_THRESHOLD_MILLIMES,
-  SHIPPING_FEE_MILLIMES,
-} from "@/lib/checkout-config";
+import { FREE_SHIPPING_THRESHOLD_MILLIMES, SHIPPING_FEE_MILLIMES } from "@/lib/checkout-config";
 import { isTunisiaGovernorate, normalizeTunisiaPhone } from "@/lib/tunisia";
 
 export type CheckoutLine = {
@@ -33,9 +30,7 @@ export type CheckoutTotals = {
 export function computeCheckoutTotals(items: CartItem[], now: Date = new Date()): CheckoutTotals {
   const lines: CheckoutLine[] = [];
   for (const it of items) {
-    const product = PRODUCTS.find(
-      (p) => p.id === it.productId && p.availability === "available",
-    );
+    const product = PRODUCTS.find((p) => p.id === it.productId && p.availability === "available");
     if (!product) continue;
     const unit = getCurrentPriceMillimes(product, now);
     lines.push({

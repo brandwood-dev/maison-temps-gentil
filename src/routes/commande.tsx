@@ -17,10 +17,7 @@ import {
   type ShippingInput,
 } from "@/lib/checkout";
 import { TUNISIA_GOVERNORATES } from "@/lib/tunisia";
-import {
-  PAYMENT_METHOD_LABEL,
-  SHIPPING_DELAY_LABEL,
-} from "@/lib/checkout-config";
+import { PAYMENT_METHOD_LABEL, SHIPPING_DELAY_LABEL } from "@/lib/checkout-config";
 
 export const Route = createFileRoute("/commande")({
   head: () => ({
@@ -341,11 +338,7 @@ function ShippingForm({
   );
 }
 
-function OrderSummary({
-  totals,
-}: {
-  totals: ReturnType<typeof computeCheckoutTotals>;
-}) {
+function OrderSummary({ totals }: { totals: ReturnType<typeof computeCheckoutTotals> }) {
   return (
     <div className="rounded-[var(--radius-lg)] border border-[color:var(--color-border)] bg-[color:var(--color-surface-cream)] p-5">
       <h2 className="text-sm font-semibold uppercase tracking-[0.14em] text-[color:var(--color-foreground)]">

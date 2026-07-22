@@ -287,7 +287,6 @@ function Summary({ subtotalMillimes }: { subtotalMillimes: number }) {
       <p className="mt-3 text-xs text-[color:var(--color-muted-foreground)]">
         Paiement à la livraison, partout en Tunisie.
       </p>
-
     </div>
   );
 }

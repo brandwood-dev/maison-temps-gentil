@@ -63,7 +63,12 @@ console.log("→ Validation");
     city: "",
     address: "",
   });
-  assert(errs.firstName && errs.lastName && errs.phone && errs.governorate && errs.city && errs.address ? true : false, "champs obligatoires détectés");
+  assert(
+    errs.firstName && errs.lastName && errs.phone && errs.governorate && errs.city && errs.address
+      ? true
+      : false,
+    "champs obligatoires détectés",
+  );
 }
 {
   const errs = validateShipping({ ...validInput, phone: "12345" });
