@@ -4,11 +4,7 @@ import { useId, useState } from "react";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
-
-export type OrderTrackingRequest = {
-  orderReference: string;
-  phone: string;
-};
+export type { OrderTrackingRequest } from "@/types/order";
 
 export const Route = createFileRoute("/suivi-commande")({
   head: () => ({
