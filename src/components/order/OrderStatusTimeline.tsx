@@ -1,16 +1,8 @@
 import { Check, Package, Truck, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { OrderStatus } from "@/types/order";
 
-export type OrderTrackingStatus =
-  | "new"
-  | "to_confirm"
-  | "confirmed"
-  | "shipped"
-  | "delivered"
-  | "cancelled"
-  | "refused"
-  | "returned"
-  | "exchange_requested";
+export type OrderTrackingStatus = OrderStatus;
 
 type MainStep = {
   key: Extract<OrderTrackingStatus, "new" | "to_confirm" | "confirmed" | "shipped" | "delivered">;
