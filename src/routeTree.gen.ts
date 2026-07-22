@@ -20,9 +20,11 @@ import { Route as MontresConnecteesRouteImport } from './routes/montres-connecte
 import { Route as FavorisRouteImport } from './routes/favoris'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ConditionsGeneralesVenteRouteImport } from './routes/conditions-generales-vente'
+import { Route as CommandeRouteImport } from './routes/commande'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MontresIndexRouteImport } from './routes/montres.index'
 import { Route as MontresSlugRouteImport } from './routes/montres.$slug'
+import { Route as CommandeConfirmationRouteImport } from './routes/commande.confirmation'
 import { Route as CollectionsCoffretsCadeauxRouteImport } from './routes/collections.coffrets-cadeaux'
 
 const SuiviCommandeRoute = SuiviCommandeRouteImport.update({
@@ -81,6 +83,11 @@ const ConditionsGeneralesVenteRoute =
     path: '/conditions-generales-vente',
     getParentRoute: () => rootRouteImport,
   } as any)
+const CommandeRoute = CommandeRouteImport.update({
+  id: '/commande',
+  path: '/commande',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -96,6 +103,11 @@ const MontresSlugRoute = MontresSlugRouteImport.update({
   path: '/montres/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CommandeConfirmationRoute = CommandeConfirmationRouteImport.update({
+  id: '/confirmation',
+  path: '/confirmation',
+  getParentRoute: () => CommandeRoute,
+} as any)
 const CollectionsCoffretsCadeauxRoute =
   CollectionsCoffretsCadeauxRouteImport.update({
     id: '/collections/coffrets-cadeaux',
@@ -105,6 +117,7 @@ const CollectionsCoffretsCadeauxRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/commande': typeof CommandeRouteWithChildren
   '/conditions-generales-vente': typeof ConditionsGeneralesVenteRoute
   '/contact': typeof ContactRoute
   '/favoris': typeof FavorisRoute
@@ -117,11 +130,13 @@ export interface FileRoutesByFullPath {
   '/promotions': typeof PromotionsRoute
   '/suivi-commande': typeof SuiviCommandeRoute
   '/collections/coffrets-cadeaux': typeof CollectionsCoffretsCadeauxRoute
+  '/commande/confirmation': typeof CommandeConfirmationRoute
   '/montres/$slug': typeof MontresSlugRoute
   '/montres/': typeof MontresIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/commande': typeof CommandeRouteWithChildren
   '/conditions-generales-vente': typeof ConditionsGeneralesVenteRoute
   '/contact': typeof ContactRoute
   '/favoris': typeof FavorisRoute
@@ -134,12 +149,14 @@ export interface FileRoutesByTo {
   '/promotions': typeof PromotionsRoute
   '/suivi-commande': typeof SuiviCommandeRoute
   '/collections/coffrets-cadeaux': typeof CollectionsCoffretsCadeauxRoute
+  '/commande/confirmation': typeof CommandeConfirmationRoute
   '/montres/$slug': typeof MontresSlugRoute
   '/montres': typeof MontresIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/commande': typeof CommandeRouteWithChildren
   '/conditions-generales-vente': typeof ConditionsGeneralesVenteRoute
   '/contact': typeof ContactRoute
   '/favoris': typeof FavorisRoute
@@ -152,6 +169,7 @@ export interface FileRoutesById {
   '/promotions': typeof PromotionsRoute
   '/suivi-commande': typeof SuiviCommandeRoute
   '/collections/coffrets-cadeaux': typeof CollectionsCoffretsCadeauxRoute
+  '/commande/confirmation': typeof CommandeConfirmationRoute
   '/montres/$slug': typeof MontresSlugRoute
   '/montres/': typeof MontresIndexRoute
 }
@@ -159,6 +177,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/commande'
     | '/conditions-generales-vente'
     | '/contact'
     | '/favoris'
@@ -171,11 +190,13 @@ export interface FileRouteTypes {
     | '/promotions'
     | '/suivi-commande'
     | '/collections/coffrets-cadeaux'
+    | '/commande/confirmation'
     | '/montres/$slug'
     | '/montres/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/commande'
     | '/conditions-generales-vente'
     | '/contact'
     | '/favoris'
@@ -188,11 +209,13 @@ export interface FileRouteTypes {
     | '/promotions'
     | '/suivi-commande'
     | '/collections/coffrets-cadeaux'
+    | '/commande/confirmation'
     | '/montres/$slug'
     | '/montres'
   id:
     | '__root__'
     | '/'
+    | '/commande'
     | '/conditions-generales-vente'
     | '/contact'
     | '/favoris'
@@ -205,12 +228,14 @@ export interface FileRouteTypes {
     | '/promotions'
     | '/suivi-commande'
     | '/collections/coffrets-cadeaux'
+    | '/commande/confirmation'
     | '/montres/$slug'
     | '/montres/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CommandeRoute: typeof CommandeRouteWithChildren
   ConditionsGeneralesVenteRoute: typeof ConditionsGeneralesVenteRoute
   ContactRoute: typeof ContactRoute
   FavorisRoute: typeof FavorisRoute
@@ -306,6 +331,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConditionsGeneralesVenteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/commande': {
+      id: '/commande'
+      path: '/commande'
+      fullPath: '/commande'
+      preLoaderRoute: typeof CommandeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -327,6 +359,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MontresSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/commande/confirmation': {
+      id: '/commande/confirmation'
+      path: '/confirmation'
+      fullPath: '/commande/confirmation'
+      preLoaderRoute: typeof CommandeConfirmationRouteImport
+      parentRoute: typeof CommandeRoute
+    }
     '/collections/coffrets-cadeaux': {
       id: '/collections/coffrets-cadeaux'
       path: '/collections/coffrets-cadeaux'
@@ -337,8 +376,21 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface CommandeRouteChildren {
+  CommandeConfirmationRoute: typeof CommandeConfirmationRoute
+}
+
+const CommandeRouteChildren: CommandeRouteChildren = {
+  CommandeConfirmationRoute: CommandeConfirmationRoute,
+}
+
+const CommandeRouteWithChildren = CommandeRoute._addFileChildren(
+  CommandeRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CommandeRoute: CommandeRouteWithChildren,
   ConditionsGeneralesVenteRoute: ConditionsGeneralesVenteRoute,
   ContactRoute: ContactRoute,
   FavorisRoute: FavorisRoute,

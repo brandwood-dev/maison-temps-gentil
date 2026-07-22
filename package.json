@@ -15,6 +15,7 @@
     "test:catalog": "tsx tests/catalog.test.ts",
     "test:product": "tsx tests/product.test.ts",
     "test:cart": "tsx tests/cart.test.ts",
+    "test:checkout": "tsx tests/checkout.test.ts",
     "preview:worker": "wrangler dev --config .output/server/wrangler.json --env preview",
     "deploy:dry-run": "wrangler deploy --config .output/server/wrangler.json --env preview --dry-run",
     "deploy:preview": "wrangler deploy --config .output/server/wrangler.json --env preview",
@@ -77,7 +78,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
-    "@lovable.dev/vite-tanstack-config": "^2.7.6",
+    "@lovable.dev/vite-tanstack-config": "2.7.7",
     "@types/node": "^22.16.5",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
