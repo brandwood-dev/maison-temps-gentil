@@ -115,11 +115,36 @@ export type OrderSubmission = {
   paymentMethod: "cod";
 };
 
+export type OrderConfirmationItem = {
+  productId: string;
+  name: string;
+  brand: string;
+  reference: string;
+  slug: string;
+  imageUrl: string | null;
+  imageAlt: string;
+  quantity: number;
+  unitMillimes: number;
+  lineMillimes: number;
+};
+
+export type OrderConfirmationShipping = {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  governorate: string;
+  city: string;
+  address: string;
+  postalCode: string | null;
+};
+
 export type OrderConfirmation = {
   reference: string;
   createdAt: string;
   paymentMethod: "cod";
   shippingLabel: string; // "Gouvernorat — Ville" (sans PII sensible)
+  shipping?: OrderConfirmationShipping;
+  items?: OrderConfirmationItem[];
   totals: {
     subtotalMillimes: number;
     shippingMillimes: number;
