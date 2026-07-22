@@ -115,11 +115,36 @@ export type OrderSubmission = {
   paymentMethod: "cod";
 };
 
+export type OrderConfirmationItem = {
+  productId: string;
+  name: string;
+  brand: string;
+  reference: string;
+  slug: string;
+  imageUrl: string | null;
+  imageAlt: string;
+  quantity: number;
+  unitMillimes: number;
+  lineMillimes: number;
+};
+
+export type OrderConfirmationShipping = {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  governorate: string;
+  city: string;
+  address: string;
+  postalCode: string | null;
+};
+
 export type OrderConfirmation = {
   reference: string;
   createdAt: string;
   paymentMethod: "cod";
   shippingLabel: string; // "Gouvernorat — Ville" (sans PII sensible)
+  shipping?: OrderConfirmationShipping;
+  items?: OrderConfirmationItem[];
   totals: {
     subtotalMillimes: number;
     shippingMillimes: number;
@@ -172,6 +197,30 @@ export async function submitOrderMock(
     createdAt: new Date(now).toISOString(),
     paymentMethod: "cod",
     shippingLabel: `${submission.shipping.governorate} — ${submission.shipping.city}`,
+    shipping: {
+      firstName: submission.shipping.firstName,
+      lastName: submission.shipping.lastName,
+      phone: submission.shipping.phone,
+      governorate: submission.shipping.governorate,
+      city: submission.shipping.city,
+      address: submission.shipping.address,
+      postalCode: submission.shipping.postalCode,
+    },
+    items: totals.lines.map((l) => {
+      const img = l.product.images[0] ?? null;
+      return {
+        productId: l.productId,
+        name: l.product.name,
+        brand: l.product.brand,
+        reference: l.product.reference,
+        slug: l.product.slug,
+        imageUrl: img?.url ?? null,
+        imageAlt: img?.alt ?? l.product.name,
+        quantity: l.quantity,
+        unitMillimes: l.unitMillimes,
+        lineMillimes: l.lineMillimes,
+      };
+    }),
     totals: {
       subtotalMillimes: totals.subtotalMillimes,
       shippingMillimes: totals.shippingMillimes,
