@@ -6,7 +6,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { TrustStrip } from "@/components/layout/TrustStrip";
 import { LmmButton } from "@/components/brand/LmmButton";
 import { ProductGrid } from "@/components/product/ProductGrid";
-import { PRODUCTS } from "@/fixtures/products";
+import { useCatalogProducts } from "@/lib/catalog-products";
 import { useCart } from "@/lib/cart-store";
 import type { Product } from "@/types/product";
 import { absoluteUrl } from "@/config/site";
@@ -81,6 +81,7 @@ function Hero() {
 }
 
 function FeaturedProducts() {
+  const products = useCatalogProducts();
   const { addItem } = useCart();
   const handleAddToCart = (p: Product, quantity: number) => addItem(p.id, quantity);
   return (
@@ -89,7 +90,7 @@ function FeaturedProducts() {
         <p className="eyebrow">Sélection</p>
         <h2 className="t-h1 mt-2">Nos montres</h2>
       </div>
-      <ProductGrid products={PRODUCTS} onAddToCart={handleAddToCart} />
+      <ProductGrid products={products} onAddToCart={handleAddToCart} />
     </section>
   );
 }

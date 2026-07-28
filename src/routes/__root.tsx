@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { NowProvider } from "../lib/now-store";
+import { getPublicProducts } from "../lib/catalog-api";
 
 function NotFoundComponent() {
   return (
@@ -74,7 +75,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  loader: () => ({ initialNow: Date.now() }),
+  loader: async () => ({ initialNow: Date.now(), products: await getPublicProducts() }),
 
   head: () => ({
     meta: [

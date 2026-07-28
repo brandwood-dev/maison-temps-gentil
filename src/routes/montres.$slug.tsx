@@ -1,15 +1,15 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 
 import { ProductDetailPage } from "@/components/product-detail/ProductDetailPage";
-import { PRODUCTS } from "@/fixtures/products";
-import { getPublicProductBySlug } from "@/lib/products";
+import { useCatalogProducts } from "@/lib/catalog-products";
+import { getPublicProduct } from "@/lib/catalog-api";
 import { SITE_URL } from "@/config/site";
 
 const SITE = SITE_URL;
 
 export const Route = createFileRoute("/montres/$slug")({
-  loader: ({ params }) => {
-    const product = getPublicProductBySlug(PRODUCTS, params.slug);
+  loader: async ({ params }) => {
+    const product = await getPublicProduct({ data: { slug: params.slug } });
     if (!product) throw notFound();
     return { product };
   },
@@ -64,9 +64,10 @@ export const Route = createFileRoute("/montres/$slug")({
 
 function ProductDetailRoute() {
   const { product } = Route.useLoaderData();
+  const products = useCatalogProducts();
   const { slug } = Route.useParams();
   const canonicalUrl = `${SITE}/montres/${slug}`;
-  return <ProductDetailPage product={product} allProducts={PRODUCTS} canonicalUrl={canonicalUrl} />;
+  return <ProductDetailPage product={product} allProducts={products} canonicalUrl={canonicalUrl} />;
 }
 
 function ProductNotFound() {

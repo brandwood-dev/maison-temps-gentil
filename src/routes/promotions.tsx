@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CatalogPage } from "@/components/catalog/CatalogPage";
-import { PRODUCTS } from "@/fixtures/products";
+import { useCatalogProducts } from "@/lib/catalog-products";
 import { absoluteUrl } from "@/config/site";
 import { parseCatalogSearch } from "@/lib/catalog";
 
@@ -27,6 +27,7 @@ export const Route = createFileRoute("/promotions")({
 });
 
 function PromotionsPage() {
+  const products = useCatalogProducts();
   const query = Route.useSearch();
   return (
     <CatalogPage
@@ -34,7 +35,7 @@ function PromotionsPage() {
       title="Promotions"
       intro="Toutes les montres actuellement en promotion. Les offres disparaissent automatiquement à leur expiration."
       crumbs={[{ label: "Accueil", href: "/" }, { label: "Promotions" }]}
-      products={PRODUCTS}
+      products={products}
       query={query}
       forcePromotionOnly
       emptyOverride={{

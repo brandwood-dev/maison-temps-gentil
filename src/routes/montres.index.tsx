@@ -1,6 +1,6 @@
 import { createFileRoute, type SearchSchemaInput } from "@tanstack/react-router";
 import { CatalogPage } from "@/components/catalog/CatalogPage";
-import { PRODUCTS } from "@/fixtures/products";
+import { useCatalogProducts } from "@/lib/catalog-products";
 import { absoluteUrl } from "@/config/site";
 import { parseCatalogSearch } from "@/lib/catalog";
 
@@ -28,6 +28,7 @@ export const Route = createFileRoute("/montres/")({
 });
 
 function MontresPage() {
+  const products = useCatalogProducts();
   const query = Route.useSearch();
   return (
     <CatalogPage
@@ -35,7 +36,7 @@ function MontresPage() {
       title="Toutes les montres"
       intro="Découvrez l’intégralité de notre sélection, toutes catégories confondues."
       crumbs={[{ label: "Accueil", href: "/" }, { label: "Montres" }]}
-      products={PRODUCTS}
+      products={products}
       query={query}
     />
   );
