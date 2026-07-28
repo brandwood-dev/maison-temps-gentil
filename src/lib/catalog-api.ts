@@ -16,9 +16,18 @@ function apiUrl(path: string): string {
   return `${base}${path}`;
 }
 
+function apiHeaders(): HeadersInit {
+  const headers = new Headers({ accept: "application/json" });
+  const bypassSecret = process.env.API_PREVIEW_BYPASS_SECRET;
+  if (bypassSecret) {
+    headers.set("x-vercel-protection-bypass", bypassSecret);
+  }
+  return headers;
+}
+
 async function apiRequest<T>(path: string): Promise<T> {
   const response = await fetch(apiUrl(path), {
-    headers: { accept: "application/json" },
+    headers: apiHeaders(),
   });
   if (!response.ok) {
     throw new Error(`Catalogue API indisponible (${response.status})`);
@@ -38,7 +47,7 @@ export const getPublicProduct = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
     const slug = encodeURIComponent(data.slug);
     const response = await fetch(apiUrl(`/api/v1/public/products/${slug}`), {
-      headers: { accept: "application/json" },
+      headers: apiHeaders(),
     });
     if (response.status === 404) return null;
     if (!response.ok) {
