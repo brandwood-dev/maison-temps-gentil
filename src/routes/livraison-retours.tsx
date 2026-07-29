@@ -133,7 +133,9 @@ function ShippingReturnsPage() {
                   du checkout.
                 </p>
                 <ul className="ml-5 list-disc space-y-1">
-                  <li>Un seuil de livraison gratuite peut s’appliquer sur les commandes éligibles.</li>
+                  <li>
+                    Un seuil de livraison gratuite peut s’appliquer sur les commandes éligibles.
+                  </li>
                   <li>
                     Montant exact des frais et seuil en vigueur : <Todo />
                   </li>

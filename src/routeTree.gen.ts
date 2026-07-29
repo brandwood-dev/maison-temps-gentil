@@ -17,6 +17,7 @@ import { Route as MontresFemmeRouteImport } from './routes/montres-femme'
 import { Route as MontresEnfantRouteImport } from './routes/montres-enfant'
 import { Route as MontresCoupleRouteImport } from './routes/montres-couple'
 import { Route as MontresConnecteesRouteImport } from './routes/montres-connectees'
+import { Route as LivraisonRetoursRouteImport } from './routes/livraison-retours'
 import { Route as FavorisRouteImport } from './routes/favoris'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ConditionsGeneralesVenteRouteImport } from './routes/conditions-generales-vente'
@@ -65,6 +66,11 @@ const MontresCoupleRoute = MontresCoupleRouteImport.update({
 const MontresConnecteesRoute = MontresConnecteesRouteImport.update({
   id: '/montres-connectees',
   path: '/montres-connectees',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LivraisonRetoursRoute = LivraisonRetoursRouteImport.update({
+  id: '/livraison-retours',
+  path: '/livraison-retours',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FavorisRoute = FavorisRouteImport.update({
@@ -121,6 +127,7 @@ export interface FileRoutesByFullPath {
   '/conditions-generales-vente': typeof ConditionsGeneralesVenteRoute
   '/contact': typeof ContactRoute
   '/favoris': typeof FavorisRoute
+  '/livraison-retours': typeof LivraisonRetoursRoute
   '/montres-connectees': typeof MontresConnecteesRoute
   '/montres-couple': typeof MontresCoupleRoute
   '/montres-enfant': typeof MontresEnfantRoute
@@ -140,6 +147,7 @@ export interface FileRoutesByTo {
   '/conditions-generales-vente': typeof ConditionsGeneralesVenteRoute
   '/contact': typeof ContactRoute
   '/favoris': typeof FavorisRoute
+  '/livraison-retours': typeof LivraisonRetoursRoute
   '/montres-connectees': typeof MontresConnecteesRoute
   '/montres-couple': typeof MontresCoupleRoute
   '/montres-enfant': typeof MontresEnfantRoute
@@ -160,6 +168,7 @@ export interface FileRoutesById {
   '/conditions-generales-vente': typeof ConditionsGeneralesVenteRoute
   '/contact': typeof ContactRoute
   '/favoris': typeof FavorisRoute
+  '/livraison-retours': typeof LivraisonRetoursRoute
   '/montres-connectees': typeof MontresConnecteesRoute
   '/montres-couple': typeof MontresCoupleRoute
   '/montres-enfant': typeof MontresEnfantRoute
@@ -181,6 +190,7 @@ export interface FileRouteTypes {
     | '/conditions-generales-vente'
     | '/contact'
     | '/favoris'
+    | '/livraison-retours'
     | '/montres-connectees'
     | '/montres-couple'
     | '/montres-enfant'
@@ -200,6 +210,7 @@ export interface FileRouteTypes {
     | '/conditions-generales-vente'
     | '/contact'
     | '/favoris'
+    | '/livraison-retours'
     | '/montres-connectees'
     | '/montres-couple'
     | '/montres-enfant'
@@ -219,6 +230,7 @@ export interface FileRouteTypes {
     | '/conditions-generales-vente'
     | '/contact'
     | '/favoris'
+    | '/livraison-retours'
     | '/montres-connectees'
     | '/montres-couple'
     | '/montres-enfant'
@@ -239,6 +251,7 @@ export interface RootRouteChildren {
   ConditionsGeneralesVenteRoute: typeof ConditionsGeneralesVenteRoute
   ContactRoute: typeof ContactRoute
   FavorisRoute: typeof FavorisRoute
+  LivraisonRetoursRoute: typeof LivraisonRetoursRoute
   MontresConnecteesRoute: typeof MontresConnecteesRoute
   MontresCoupleRoute: typeof MontresCoupleRoute
   MontresEnfantRoute: typeof MontresEnfantRoute
@@ -308,6 +321,13 @@ declare module '@tanstack/react-router' {
       path: '/montres-connectees'
       fullPath: '/montres-connectees'
       preLoaderRoute: typeof MontresConnecteesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/livraison-retours': {
+      id: '/livraison-retours'
+      path: '/livraison-retours'
+      fullPath: '/livraison-retours'
+      preLoaderRoute: typeof LivraisonRetoursRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/favoris': {
@@ -394,6 +414,7 @@ const rootRouteChildren: RootRouteChildren = {
   ConditionsGeneralesVenteRoute: ConditionsGeneralesVenteRoute,
   ContactRoute: ContactRoute,
   FavorisRoute: FavorisRoute,
+  LivraisonRetoursRoute: LivraisonRetoursRoute,
   MontresConnecteesRoute: MontresConnecteesRoute,
   MontresCoupleRoute: MontresCoupleRoute,
   MontresEnfantRoute: MontresEnfantRoute,
