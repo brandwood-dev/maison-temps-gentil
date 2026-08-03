@@ -16,6 +16,7 @@ import {
   type ShippingInput,
 } from "@/lib/checkout";
 import { createPublicOrder } from "@/lib/catalog-api";
+import { useCatalogProducts } from "@/lib/catalog-products";
 import { trackInitiateCheckout, trackPurchase } from "@/lib/meta-pixel";
 import { TUNISIA_GOVERNORATES } from "@/lib/tunisia";
 import { PAYMENT_METHOD_LABEL, SHIPPING_DELAY_LABEL } from "@/lib/checkout-config";
@@ -49,9 +50,10 @@ const EMPTY_INPUT: ShippingInput = {
 
 function CheckoutPage() {
   const { items, hydrated, clearCart } = useCart();
+  const products = useCatalogProducts();
   const nowTs = useNow();
   const now = useMemo(() => new Date(nowTs), [nowTs]);
-  const totals = useMemo(() => computeCheckoutTotals(items, now), [items, now]);
+  const totals = useMemo(() => computeCheckoutTotals(items, now, products), [items, now, products]);
   const navigate = useNavigate();
 
   const [values, setValues] = useState<ShippingInput>(EMPTY_INPUT);

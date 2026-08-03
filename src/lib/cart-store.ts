@@ -2,7 +2,7 @@
  * Local cart store — SSR-safe, no dependency, backed by localStorage.
  * Only stores `{ productId, quantity }` pairs. Prices, product data and
  * promotions are never persisted; they are resolved at render time from
- * `PRODUCTS` and the shared `useNow()` clock.
+ * the catalog resolved by the current page and the shared `useNow()` clock.
  */
 import { useCallback, useSyncExternalStore } from "react";
 
