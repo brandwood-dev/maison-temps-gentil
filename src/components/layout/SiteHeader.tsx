@@ -1,8 +1,9 @@
 import { Heart, Search, ShoppingBag, Truck } from "lucide-react";
 import { useRef, useState } from "react";
 import { Logo } from "@/components/brand/Logo";
-import { NAV_LINKS } from "@/config/nav";
+import { getCategoryNavLinks } from "@/config/nav";
 import { useCart } from "@/lib/cart-store";
+import { useCatalogCategories } from "@/lib/catalog-products";
 import { SearchPanel } from "./SearchPanel";
 import { MobileMenu } from "./MobileMenu";
 
@@ -47,11 +48,11 @@ function IconAction({ label, onClick, href, badge, children }: IconLinkProps) {
   );
 }
 
-function DesktopNav() {
+function DesktopNav({ links }: { links: { label: string; href: string }[] }) {
   return (
     <nav aria-label="Navigation principale">
       <ul className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 xl:gap-x-7">
-        {NAV_LINKS.map((l) => (
+        {links.map((l) => (
           <li key={l.href}>
             <a
               href={l.href}
@@ -72,6 +73,8 @@ export function SiteHeader() {
   const returnFocusRef = useRef<HTMLButtonElement | null>(null);
   const { totalQuantity } = useCart();
   const cartCount = totalQuantity;
+  const categories = useCatalogCategories();
+  const navLinks = getCategoryNavLinks(categories);
 
   const openMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
     returnFocusRef.current = event.currentTarget;
@@ -141,7 +144,7 @@ export function SiteHeader() {
             </div>
           </div>
           <div className="border-t border-[color:var(--color-border)] py-2">
-            <DesktopNav />
+            <DesktopNav links={navLinks} />
           </div>
         </div>
 
@@ -156,7 +159,7 @@ export function SiteHeader() {
               <Logo variant="dark" height={36} priority />
             </a>
             <div className="min-w-0 flex-1">
-              <DesktopNav />
+              <DesktopNav links={navLinks} />
             </div>
             <div className="flex shrink-0 items-center gap-1">
               <IconAction label="Rechercher" onClick={openSearch}>
@@ -175,7 +178,12 @@ export function SiteHeader() {
           </div>
         </div>
       </header>
-      <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} restoreFocus={restoreFocus} />
+      <MobileMenu
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        restoreFocus={restoreFocus}
+        links={navLinks}
+      />
       <SearchPanel
         open={searchOpen}
         onClose={() => setSearchOpen(false)}

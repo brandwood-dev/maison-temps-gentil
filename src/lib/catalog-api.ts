@@ -10,6 +10,25 @@ type ProductPage = {
   total: number;
 };
 
+export type PublicCategory = {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  imageUrl?: string;
+  parentId?: string | null;
+  order: number;
+  active: boolean;
+  productsCount?: number;
+};
+
+type CategoryPage = {
+  data: PublicCategory[];
+  page: number;
+  pageSize: number;
+  total: number;
+};
+
 const DEFAULT_API_URL = "https://la-maison-des-montres-api.vercel.app";
 
 function apiUrl(path: string): string {
@@ -42,6 +61,24 @@ export const getPublicProducts = createServerFn({ method: "GET" }).handler(async
   );
   return page.data;
 });
+
+/** Public categories are resolved server-side so the storefront never talks directly to PostgreSQL. */
+export const getPublicCategories = createServerFn({ method: "GET" }).handler(async () => {
+  const page = await apiRequest<CategoryPage>(
+    "/api/v1/public/categories?page=1&pageSize=100&sortBy=order&sortOrder=asc",
+  );
+  return page.data.filter((category) => category.active);
+});
+
+/** Load products for one public category without trusting client-provided prices or status. */
+export const getPublicProductsByCategory = createServerFn({ method: "GET" })
+  .validator((input: { categoryId: string }) => input)
+  .handler(async ({ data }) => {
+    const page = await apiRequest<ProductPage>(
+      `/api/v1/public/products?page=1&pageSize=100&sortBy=createdAt&sortOrder=desc&categoryId=${encodeURIComponent(data.categoryId)}`,
+    );
+    return page.data;
+  });
 
 export const getPublicProduct = createServerFn({ method: "GET" })
   .validator((input: { slug: string }) => input)
