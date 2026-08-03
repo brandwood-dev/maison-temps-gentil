@@ -30,6 +30,7 @@ export type ProductAttribute = {
   code: string;
   label: string;
   type: "select" | "multiselect" | "color" | "boolean" | "text" | "number";
+  visibleInFilters?: boolean;
   values: ProductAttributeValue[];
 };
 

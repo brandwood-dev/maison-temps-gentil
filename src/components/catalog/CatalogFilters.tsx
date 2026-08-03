@@ -40,6 +40,16 @@ export function CatalogFilters({
           onChange={onChange}
         />
       ) : null}
+      {availableFilters.attributes.map((attribute) => (
+        <AttributesFilter
+          key={attribute.id}
+          idPrefix={idPrefix}
+          attribute={attribute}
+          selected={query.attributes[attribute.code] ?? []}
+          allSelected={query.attributes}
+          onChange={onChange}
+        />
+      ))}
       {availableFilters.priceRange ? (
         <PriceFilter
           idPrefix={idPrefix}
@@ -180,6 +190,65 @@ function ColorsFilter({
                   aria-label={`${o.count} produit${o.count > 1 ? "s" : ""}`}
                 >
                   ({o.count})
+                </span>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </Group>
+  );
+}
+
+function AttributesFilter({
+  idPrefix,
+  attribute,
+  selected,
+  allSelected,
+  onChange,
+}: {
+  idPrefix: string;
+  attribute: CatalogResult["availableFilters"]["attributes"][number];
+  selected: string[];
+  allSelected: Record<string, string[]>;
+  onChange: (patch: Partial<CatalogQuery>) => void;
+}) {
+  const toggle = (value: string) => {
+    const nextValues = selected.includes(value)
+      ? selected.filter((item) => item !== value)
+      : [...selected, value];
+    const nextAttributes = { ...allSelected };
+    if (nextValues.length > 0) nextAttributes[attribute.code] = nextValues;
+    else delete nextAttributes[attribute.code];
+    onChange({
+      attributes: nextAttributes,
+      page: 1,
+    });
+  };
+
+  return (
+    <Group title={attribute.label}>
+      <ul className="flex flex-col gap-1">
+        {attribute.options.map((option) => {
+          const id = `${idPrefix}-attribute-${attribute.code}-${option.value}`;
+          return (
+            <li key={option.value}>
+              <div className="flex min-h-11 items-center gap-2">
+                <input
+                  id={id}
+                  type="checkbox"
+                  checked={selected.includes(option.value)}
+                  onChange={() => toggle(option.value)}
+                  className="h-4 w-4 rounded border-[color:var(--color-border-strong)] accent-[color:var(--color-foreground)]"
+                />
+                <label htmlFor={id} className="flex-1 text-sm text-[color:var(--color-foreground)]">
+                  {option.label}
+                </label>
+                <span
+                  className="text-xs text-[color:var(--color-muted-foreground)]"
+                  aria-label={`${option.count} produit${option.count > 1 ? "s" : ""}`}
+                >
+                  ({option.count})
                 </span>
               </div>
             </li>

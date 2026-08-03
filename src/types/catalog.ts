@@ -15,6 +15,7 @@ export interface CatalogQuery {
   sort: CatalogSort;
   brands: string[];
   dialColors: string[];
+  attributes: Record<string, string[]>;
   minPriceMillimes?: number;
   maxPriceMillimes?: number;
   promotionOnly: boolean;
@@ -31,6 +32,14 @@ export interface CatalogPriceRange {
   maxMillimes: number;
 }
 
+export interface CatalogAttributeFilter {
+  id: string;
+  code: string;
+  label: string;
+  type: "select" | "multiselect" | "color" | "boolean" | "text" | "number";
+  options: CatalogFacetOption[];
+}
+
 export interface CatalogResult {
   items: Product[];
   totalItems: number;
@@ -40,12 +49,14 @@ export interface CatalogResult {
   availableFilters: {
     brands: CatalogFacetOption[];
     dialColors: CatalogFacetOption[];
+    attributes: CatalogAttributeFilter[];
     priceRange: CatalogPriceRange | null;
   };
 }
 
 export interface CatalogScope {
   fixedCategory?: ProductCategory;
+  attributes?: import("@/types/product").ProductAttribute[];
   /**
    * Reserved for the future backend: filters products belonging to a named
    * collection (e.g. "gift-boxes"). Products do not carry collection metadata

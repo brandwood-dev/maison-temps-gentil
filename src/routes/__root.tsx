@@ -13,7 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { NowProvider } from "../lib/now-store";
-import { getPublicCategories, getPublicProducts } from "../lib/catalog-api";
+import { getPublicAttributes, getPublicCategories, getPublicProducts } from "../lib/catalog-api";
 import { initMetaPixel, trackPageView } from "../lib/meta-pixel";
 
 function NotFoundComponent() {
@@ -78,11 +78,12 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   loader: async () => {
-    const [products, categories] = await Promise.all([
+    const [products, categories, attributes] = await Promise.all([
       getPublicProducts(),
       getPublicCategories().catch(() => []),
+      getPublicAttributes().catch(() => []),
     ]);
-    return { initialNow: Date.now(), products, categories };
+    return { initialNow: Date.now(), products, categories, attributes };
   },
 
   head: () => ({

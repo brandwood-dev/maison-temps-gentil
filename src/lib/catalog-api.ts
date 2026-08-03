@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 
-import type { Product } from "@/types/product";
+import type { Product, ProductAttribute } from "@/types/product";
 import type { OrderConfirmation, OrderSubmission } from "@/lib/checkout";
 
 type ProductPage = {
@@ -24,6 +24,13 @@ export type PublicCategory = {
 
 type CategoryPage = {
   data: PublicCategory[];
+  page: number;
+  pageSize: number;
+  total: number;
+};
+
+type AttributePage = {
+  data: ProductAttribute[];
   page: number;
   pageSize: number;
   total: number;
@@ -70,6 +77,14 @@ export const getPublicCategories = createServerFn({ method: "GET" }).handler(asy
   return page.data.filter((category) => category.active);
 });
 
+/** Public filter definitions; only active attributes marked for storefront filters are returned. */
+export const getPublicAttributes = createServerFn({ method: "GET" }).handler(async () => {
+  const page = await apiRequest<AttributePage>(
+    "/api/v1/public/attributes?page=1&pageSize=100&sortBy=order&sortOrder=asc",
+  );
+  return page.data;
+});
+
 /** Load products for one public category without trusting client-provided prices or status. */
 export const getPublicProductsByCategory = createServerFn({ method: "GET" })
   .validator((input: { categoryId: string }) => input)
@@ -106,9 +121,7 @@ export const createPublicOrder = createServerFn({ method: "POST" })
       body: JSON.stringify(data),
     });
     if (!response.ok) {
-      const body = (await response.json().catch(() => null)) as
-        | { message?: string }
-        | null;
+      const body = (await response.json().catch(() => null)) as { message?: string } | null;
       throw new Error(body?.message ?? `Commande impossible (${response.status})`);
     }
     return (await response.json()) as OrderConfirmation;

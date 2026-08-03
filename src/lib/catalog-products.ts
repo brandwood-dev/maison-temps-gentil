@@ -9,3 +9,7 @@ export function useCatalogProducts() {
 export function useCatalogCategories() {
   return rootRoute.useLoaderData().categories;
 }
+
+export function useCatalogAttributes() {
+  return rootRoute.useLoaderData().attributes;
+}
