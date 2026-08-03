@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -13,6 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { NowProvider } from "../lib/now-store";
 import { getPublicProducts } from "../lib/catalog-api";
+import { initMetaPixel, trackPageView } from "../lib/meta-pixel";
 
 function NotFoundComponent() {
   return (
@@ -154,9 +156,23 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <NowProvider initialNow={initialNow}>
+        <MetaPixelTracker />
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
       </NowProvider>
     </QueryClientProvider>
   );
+}
+
+function MetaPixelTracker() {
+  const pageKey = useRouterState({
+    select: (state) => `${state.location.pathname}${state.location.search}`,
+  });
+
+  useEffect(() => {
+    initMetaPixel();
+    trackPageView(pageKey);
+  }, [pageKey]);
+
+  return null;
 }

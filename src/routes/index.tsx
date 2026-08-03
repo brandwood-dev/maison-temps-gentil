@@ -8,6 +8,7 @@ import { LmmButton } from "@/components/brand/LmmButton";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { useCatalogProducts } from "@/lib/catalog-products";
 import { useCart } from "@/lib/cart-store";
+import { trackAddToCart } from "@/lib/meta-pixel";
 import type { Product } from "@/types/product";
 import { absoluteUrl } from "@/config/site";
 
@@ -83,7 +84,10 @@ function Hero() {
 function FeaturedProducts() {
   const products = useCatalogProducts();
   const { addItem } = useCart();
-  const handleAddToCart = (p: Product, quantity: number) => addItem(p.id, quantity);
+  const handleAddToCart = (p: Product, quantity: number) => {
+    addItem(p.id, quantity);
+    trackAddToCart(p, quantity);
+  };
   return (
     <section className="container-page py-12 md:py-16">
       <div className="mb-6 max-w-2xl md:mb-8">

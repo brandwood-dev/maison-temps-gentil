@@ -5,6 +5,7 @@ import type { Product, ProductCategory } from "@/types/product";
 import type { CatalogQuery } from "@/types/catalog";
 import { useNow } from "@/lib/now-store";
 import { useCart } from "@/lib/cart-store";
+import { trackAddToCart } from "@/lib/meta-pixel";
 import { catalogQueryToSearch, getCatalogResult, hasActiveFilters } from "@/lib/catalog";
 
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
@@ -54,7 +55,10 @@ export function CatalogPage({
   const navigate = useNavigate();
   const nowTs = useNow();
   const { addItem } = useCart();
-  const handleAddToCart = (p: Product, quantity: number) => addItem(p.id, quantity);
+  const handleAddToCart = (p: Product, quantity: number) => {
+    addItem(p.id, quantity);
+    trackAddToCart(p, quantity);
+  };
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const result = useMemo(() => {

@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useId, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -16,6 +16,7 @@ import {
   type ShippingInput,
 } from "@/lib/checkout";
 import { createPublicOrder } from "@/lib/catalog-api";
+import { trackInitiateCheckout, trackPurchase } from "@/lib/meta-pixel";
 import { TUNISIA_GOVERNORATES } from "@/lib/tunisia";
 import { PAYMENT_METHOD_LABEL, SHIPPING_DELAY_LABEL } from "@/lib/checkout-config";
 
@@ -58,6 +59,16 @@ function CheckoutPage() {
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const idempotencyKeyRef = useRef<string | null>(null);
+  const checkoutTrackedRef = useRef(false);
+
+  useEffect(() => {
+    if (!hydrated || checkoutTrackedRef.current || totals.lines.length === 0) return;
+    checkoutTrackedRef.current = true;
+    trackInitiateCheckout(
+      totals.totalMillimes,
+      totals.lines.map((line) => ({ productId: line.productId, quantity: line.quantity })),
+    );
+  }, [hydrated, totals.lines, totals.totalMillimes]);
 
   const set = <K extends keyof ShippingInput>(k: K, v: string) =>
     setValues((prev) => ({ ...prev, [k]: v }));
@@ -86,6 +97,7 @@ function CheckoutPage() {
     setServerError(null);
     try {
       const confirmation = await createPublicOrder({ data: submission });
+      trackPurchase(confirmation);
       saveConfirmation(confirmation);
       clearCart();
       await navigate({ to: "/commande/confirmation" });
