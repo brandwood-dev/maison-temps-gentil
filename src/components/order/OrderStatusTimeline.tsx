@@ -5,6 +5,7 @@ export type OrderTrackingStatus =
   | "new"
   | "to_confirm"
   | "confirmed"
+  | "preparing"
   | "shipped"
   | "delivered"
   | "cancelled"
@@ -13,7 +14,10 @@ export type OrderTrackingStatus =
   | "exchange_requested";
 
 type MainStep = {
-  key: Extract<OrderTrackingStatus, "new" | "to_confirm" | "confirmed" | "shipped" | "delivered">;
+  key: Extract<
+    OrderTrackingStatus,
+    "new" | "to_confirm" | "confirmed" | "preparing" | "shipped" | "delivered"
+  >;
   label: string;
 };
 
@@ -21,6 +25,7 @@ const MAIN_STEPS: MainStep[] = [
   { key: "new", label: "Commande reçue" },
   { key: "to_confirm", label: "À confirmer" },
   { key: "confirmed", label: "Confirmée" },
+  { key: "preparing", label: "En préparation" },
   { key: "shipped", label: "Expédiée" },
   { key: "delivered", label: "Livrée" },
 ];

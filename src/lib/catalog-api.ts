@@ -36,6 +36,42 @@ type AttributePage = {
   total: number;
 };
 
+export type PublicOrderTracking = {
+  id: string;
+  reference: string;
+  createdAt: string;
+  status:
+    | "new"
+    | "to_confirm"
+    | "confirmed"
+    | "preparing"
+    | "shipped"
+    | "delivered"
+    | "cancelled"
+    | "returned";
+  paymentMethod: "cod";
+  currency: "TND";
+  shippingLabel: string;
+  items: Array<{
+    productId: string;
+    name: string;
+    brand: string;
+    reference: string;
+    slug: string;
+    imageUrl: string | null;
+    imageAlt: string;
+    quantity: number;
+    unitMillimes: number;
+    lineMillimes: number;
+  }>;
+  totals: {
+    subtotalMillimes: number;
+    shippingMillimes: number;
+    totalMillimes: number;
+    itemCount: number;
+  };
+};
+
 const DEFAULT_API_URL = "https://la-maison-des-montres-api.vercel.app";
 
 function apiUrl(path: string): string {
@@ -125,4 +161,35 @@ export const createPublicOrder = createServerFn({ method: "POST" })
       throw new Error(body?.message ?? `Commande impossible (${response.status})`);
     }
     return (await response.json()) as OrderConfirmation;
+  });
+
+/** Look up one order without exposing address, email or other customer PII. */
+export const getPublicOrderTracking = createServerFn({ method: "GET" })
+  .validator((input: { reference: string; phone: string }) => input)
+  .handler(async ({ data }) => {
+    const params = new URLSearchParams({
+      reference: data.reference.trim(),
+      phone: data.phone.trim(),
+    });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10_000);
+    try {
+      const response = await fetch(apiUrl(`/api/v1/orders/track?${params.toString()}`), {
+        headers: apiHeaders(),
+        signal: controller.signal,
+      });
+      if (response.status === 404) return null;
+      if (!response.ok) {
+        const body = (await response.json().catch(() => null)) as { message?: string } | null;
+        throw new Error(body?.message ?? `Suivi indisponible (${response.status})`);
+      }
+      return (await response.json()) as PublicOrderTracking;
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        throw new Error("Le suivi prend trop de temps. Veuillez réessayer.");
+      }
+      throw error;
+    } finally {
+      clearTimeout(timeout);
+    }
   });
