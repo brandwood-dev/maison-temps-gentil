@@ -166,7 +166,9 @@ function RootComponent() {
 
 function MetaPixelTracker() {
   const pageKey = useRouterState({
-    select: (state) => `${state.location.pathname}${state.location.search}`,
+    // Keep the selector serializable during SSR. `location.search` is a
+    // router-owned object and cannot be interpolated safely on the server.
+    select: (state) => state.location.pathname,
   });
 
   useEffect(() => {
