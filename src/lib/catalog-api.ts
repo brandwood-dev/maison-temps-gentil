@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 
 import type { Product } from "@/types/product";
+import type { OrderConfirmation, OrderSubmission } from "@/lib/checkout";
 
 type ProductPage = {
   data: Product[];
@@ -54,4 +55,25 @@ export const getPublicProduct = createServerFn({ method: "GET" })
       throw new Error(`Catalogue API indisponible (${response.status})`);
     }
     return (await response.json()) as Product;
+  });
+
+export const createPublicOrder = createServerFn({ method: "POST" })
+  .validator((input: OrderSubmission) => input)
+  .handler(async ({ data }) => {
+    const response = await fetch(apiUrl("/api/v1/orders"), {
+      method: "POST",
+      headers: {
+        ...apiHeaders(),
+        "content-type": "application/json",
+        "idempotency-key": data.idempotencyKey,
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      const body = (await response.json().catch(() => null)) as
+        | { message?: string }
+        | null;
+      throw new Error(body?.message ?? `Commande impossible (${response.status})`);
+    }
+    return (await response.json()) as OrderConfirmation;
   });

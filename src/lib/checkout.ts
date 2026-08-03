@@ -100,6 +100,7 @@ export function validateShipping(input: ShippingInput): ShippingErrors {
 /* ---------------- Mock service ---------------- */
 
 export type OrderSubmission = {
+  idempotencyKey: string;
   items: { productId: string; quantity: number }[];
   shipping: {
     firstName: string;
@@ -237,10 +238,12 @@ export async function submitOrderMock(
 export function buildOrderSubmission(
   items: CartItem[],
   input: ShippingInput,
+  idempotencyKey = "local-idempotency-key",
 ): OrderSubmission | null {
   const phone = normalizeTunisiaPhone(input.phone);
   if (!phone) return null;
   return {
+    idempotencyKey,
     items: items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
     shipping: {
       firstName: input.firstName.trim(),

@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useId, useMemo, useState } from "react";
+import { useId, useMemo, useRef, useState } from "react";
 
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -11,11 +11,11 @@ import {
   buildOrderSubmission,
   computeCheckoutTotals,
   saveConfirmation,
-  submitOrderMock,
   validateShipping,
   type ShippingErrors,
   type ShippingInput,
 } from "@/lib/checkout";
+import { createPublicOrder } from "@/lib/catalog-api";
 import { TUNISIA_GOVERNORATES } from "@/lib/tunisia";
 import { PAYMENT_METHOD_LABEL, SHIPPING_DELAY_LABEL } from "@/lib/checkout-config";
 
@@ -57,6 +57,7 @@ function CheckoutPage() {
   const [errors, setErrors] = useState<ShippingErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const idempotencyKeyRef = useRef<string | null>(null);
 
   const set = <K extends keyof ShippingInput>(k: K, v: string) =>
     setValues((prev) => ({ ...prev, [k]: v }));
@@ -72,7 +73,11 @@ function CheckoutPage() {
       setServerError(null);
       return;
     }
-    const submission = buildOrderSubmission(items, values);
+    const idempotencyKey =
+      idempotencyKeyRef.current ??
+      (globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`);
+    idempotencyKeyRef.current = idempotencyKey;
+    const submission = buildOrderSubmission(items, values, idempotencyKey);
     if (!submission) {
       setServerError("Coordonnées invalides.");
       return;
@@ -80,7 +85,7 @@ function CheckoutPage() {
     setSubmitting(true);
     setServerError(null);
     try {
-      const confirmation = await submitOrderMock(submission, totals);
+      const confirmation = await createPublicOrder({ data: submission });
       saveConfirmation(confirmation);
       clearCart();
       await navigate({ to: "/commande/confirmation" });
