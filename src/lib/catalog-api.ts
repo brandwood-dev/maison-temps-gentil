@@ -60,13 +60,12 @@ export const getPublicProduct = createServerFn({ method: "GET" })
 export const createPublicOrder = createServerFn({ method: "POST" })
   .validator((input: OrderSubmission) => input)
   .handler(async ({ data }) => {
+    const headers = new Headers(apiHeaders());
+    headers.set("content-type", "application/json");
+    headers.set("idempotency-key", data.idempotencyKey);
     const response = await fetch(apiUrl("/api/v1/orders"), {
       method: "POST",
-      headers: {
-        ...apiHeaders(),
-        "content-type": "application/json",
-        "idempotency-key": data.idempotencyKey,
-      },
+      headers,
       body: JSON.stringify(data),
     });
     if (!response.ok) {
