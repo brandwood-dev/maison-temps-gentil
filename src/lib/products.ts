@@ -98,6 +98,10 @@ export function formatSpecifications(product: Product): Specification[] {
   push("brand", "Marque", product.brand);
   push("reference", "Référence", product.reference);
   push("category", "Catégorie", getCategoryLabel(product.category));
+  for (const attribute of product.attributes ?? []) {
+    const value = attribute.values.map((item) => item.label).join(", ");
+    push(`attribute:${attribute.id}`, attribute.label, value);
+  }
   push("movementType", "Mouvement", product.movementType);
   push("displayType", "Affichage", product.displayType);
   if (typeof product.diameterMm === "number" && Number.isFinite(product.diameterMm)) {
