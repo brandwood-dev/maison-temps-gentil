@@ -43,12 +43,15 @@ export function BrandLogosMarquee() {
 
   return (
     <section aria-labelledby="brands-featured" className="overflow-hidden py-12 md:py-16">
-      <div className="container-page mb-6 max-w-2xl md:mb-10">
-        <p className="eyebrow">Marques</p>
-        <h2 id="brands-featured" className="t-h1 mt-2">
-          Nos marques à la une
-        </h2>
+      <div className="container-page">
+        <div className="mb-6 max-w-2xl text-left md:mb-10">
+          <p className="eyebrow">Marques</p>
+          <h2 id="brands-featured" className="t-h1 mt-2">
+            Nos marques à la une
+          </h2>
+        </div>
       </div>
+
 
       <div className="brand-marquee-mask relative">
         <div className="brand-marquee-track marquee-track inline-flex items-center gap-8 sm:gap-12">
