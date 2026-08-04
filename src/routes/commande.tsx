@@ -145,7 +145,8 @@ function EmptyCart() {
 }
 
 const inputClass =
-  "h-12 rounded-[var(--radius-md)] border border-[color:var(--color-border-strong)] bg-[color:var(--color-background)] px-3 text-sm text-[color:var(--color-foreground)] outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-gold)] aria-[invalid=true]:border-[color:var(--color-foreground)]";
+  "h-12 w-full min-w-0 max-w-full rounded-[var(--radius-md)] border border-[color:var(--color-border-strong)] bg-[color:var(--color-background)] px-3 text-sm text-[color:var(--color-foreground)] outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-gold)] aria-[invalid=true]:border-[color:var(--color-foreground)]";
+
 const labelClass = "text-sm font-medium text-[color:var(--color-foreground)]";
 const errClass = "text-xs font-medium text-[color:var(--color-foreground)]";
 
