@@ -217,7 +217,6 @@
   }
 }
 
-
 @utility t-display {
   font-size: clamp(2rem, 5vw + 1rem, 3.75rem);
   line-height: 1.05;
