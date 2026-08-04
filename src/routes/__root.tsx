@@ -23,6 +23,12 @@ import { initMetaPixel, trackPageView } from "../lib/meta-pixel";
 import { CartDrawer } from "../components/cart/CartDrawer";
 import { ScrollToTop } from "../components/layout/ScrollToTop";
 
+const SITE_TITLE = "La Maison des Montres | Montres élégantes en Tunisie";
+const SITE_DESCRIPTION =
+  "Découvrez notre sélection de montres pour homme, femme, enfant et couple : marques soigneusement choisies, prix en TND, paiement à la livraison et livraison partout en Tunisie.";
+const SOCIAL_IMAGE =
+  "https://res.cloudinary.com/dxkxiy900/image/upload/v1785864404/LOGO_LA_MAISON_DES_MONTRES_BLANC_ibf5xs.png";
+
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -98,36 +104,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "La Maison des Montres — Le temps, avec élégance" },
-      {
-        name: "description",
-        content:
-          "La Maison des Montres — sélection de montres pour homme, femme, enfant, couple, connectées et coffrets cadeaux. Livraison rapide partout en Tunisie.",
-      },
-      { property: "og:title", content: "La Maison des Montres — Le temps, avec élégance" },
-      {
-        property: "og:description",
-        content:
-          "La Maison des Montres — sélection de montres pour homme, femme, enfant, couple, connectées et coffrets cadeaux. Livraison rapide partout en Tunisie.",
-      },
+      { title: SITE_TITLE },
+      { name: "description", content: SITE_DESCRIPTION },
+      { property: "og:site_name", content: "La Maison des Montres" },
+      { property: "og:title", content: SITE_TITLE },
+      { property: "og:description", content: SITE_DESCRIPTION },
       { property: "og:type", content: "website" },
+      { property: "og:locale", content: "fr_TN" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "La Maison des Montres — Le temps, avec élégance" },
-      {
-        name: "twitter:description",
-        content:
-          "La Maison des Montres — sélection de montres pour homme, femme, enfant, couple, connectées et coffrets cadeaux. Livraison rapide partout en Tunisie.",
-      },
-      {
-        property: "og:image",
-        content:
-          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/79aa588c-df41-40ec-bd1c-f919105298da/id-preview-b40db207--478dbe92-24eb-44b0-a280-6c7860f8618c.lovable.app-1784403349287.png",
-      },
-      {
-        name: "twitter:image",
-        content:
-          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/79aa588c-df41-40ec-bd1c-f919105298da/id-preview-b40db207--478dbe92-24eb-44b0-a280-6c7860f8618c.lovable.app-1784403349287.png",
-      },
+      { name: "twitter:title", content: SITE_TITLE },
+      { name: "twitter:description", content: SITE_DESCRIPTION },
+      { property: "og:image", content: SOCIAL_IMAGE },
+      { property: "og:image:alt", content: "Logo La Maison des Montres" },
+      { name: "twitter:image", content: SOCIAL_IMAGE },
+      { name: "twitter:image:alt", content: "Logo La Maison des Montres" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

@@ -1,10 +1,21 @@
 import type { Product } from "@/types/product";
 
+import logoCalvinKlein from "@/assets/logo-calvin-klein.png";
+import logoSwatch from "@/assets/logo-swatch.png";
+import logoTissot from "@/assets/logo-tissot.png";
+
 export type BrandSummary = {
   name: string;
   productCount: number;
   imageUrl: string;
   imageAlt: string;
+  logoUrl: string;
+};
+
+const BRAND_LOGOS: Record<string, string> = {
+  "Calvin Klein": logoCalvinKlein,
+  Swatch: logoSwatch,
+  Tissot: logoTissot,
 };
 
 /** Derive the brand list (name, cover image, count) from public products. */
@@ -24,6 +35,7 @@ export function getBrandSummaries(products: Product[]): BrandSummary[] {
       productCount: 1,
       imageUrl: cover?.url ?? "",
       imageAlt: cover?.alt ?? `Montre ${p.brand}`,
+      logoUrl: BRAND_LOGOS[p.brand] ?? "",
     });
   }
 

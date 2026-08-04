@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
@@ -33,7 +33,7 @@ export const Route = createFileRoute("/commande")({
       { name: "robots", content: "noindex" },
     ],
   }),
-  component: CheckoutPage,
+  component: CommandeRoute,
 });
 
 const EMPTY_INPUT: ShippingInput = {
@@ -47,6 +47,16 @@ const EMPTY_INPUT: ShippingInput = {
   postalCode: "",
   note: "",
 };
+
+/**
+ * `/commande/confirmation` is a child route of `/commande` in the generated
+ * TanStack route tree. Render the child outlet when it is active; otherwise
+ * keep the checkout page as the index content of `/commande`.
+ */
+function CommandeRoute() {
+  const { pathname } = useLocation();
+  return pathname === "/commande/confirmation" ? <Outlet /> : <CheckoutPage />;
+}
 
 function CheckoutPage() {
   const { items, hydrated, clearCart } = useCart();
