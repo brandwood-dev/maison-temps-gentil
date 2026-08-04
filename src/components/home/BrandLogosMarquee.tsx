@@ -9,16 +9,16 @@ function BrandLogo({ name, logoUrl }: { name: string; logoUrl: string }) {
       to="/montres"
       search={catalogQueryToSearch({ brands: [name] })}
       aria-label={`Voir les montres ${name}`}
-      className="group flex h-16 shrink-0 items-center justify-center px-6 transition-opacity duration-300 hover:opacity-70 focus-visible:opacity-70 motion-reduce:transition-none sm:h-20 sm:px-8"
+      className="group flex h-20 shrink-0 items-center justify-center px-8 transition-opacity duration-300 hover:opacity-60 focus-visible:opacity-60 motion-reduce:transition-none sm:h-24 sm:px-10"
     >
       {logoUrl ? (
         <img
           src={logoUrl}
           alt={name}
-          width={160}
-          height={48}
+          width={180}
+          height={56}
           loading="lazy"
-          className="h-6 w-auto max-w-[9rem] object-contain grayscale transition-all duration-300 group-hover:grayscale-0 sm:h-7 sm:max-w-[10rem]"
+          className="h-7 w-auto max-w-[10rem] object-contain opacity-90 transition-opacity duration-300 group-hover:opacity-100 sm:h-9 sm:max-w-[12rem]"
         />
       ) : (
         <span className="text-center text-[13px] leading-tight font-semibold tracking-[0.18em] text-[color:var(--color-foreground)] uppercase sm:text-sm">
