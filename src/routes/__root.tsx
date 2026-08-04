@@ -152,6 +152,7 @@ function RootComponent() {
       <NowProvider initialNow={initialNow}>
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
+        <CartDrawer />
       </NowProvider>
     </QueryClientProvider>
   );
