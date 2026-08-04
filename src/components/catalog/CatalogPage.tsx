@@ -111,7 +111,14 @@ export function CatalogPage({
       <SiteHeader />
 
       <main id="content">
-        <CatalogHeader crumbs={crumbs} title={title} intro={intro} totalItems={result.totalItems} />
+        <CatalogHeader
+          crumbs={crumbs}
+          title={title}
+          intro={intro}
+          totalItems={result.totalItems}
+          imageSrc={heroImage.src}
+          imageSrcSet={heroImage.srcSet}
+        />
 
         <div className="container-page py-6 md:py-8">
           {isCategoryEmpty ? (
