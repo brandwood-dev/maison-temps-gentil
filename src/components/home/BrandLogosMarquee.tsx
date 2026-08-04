@@ -45,7 +45,7 @@ export function BrandLogosMarquee() {
         </h2>
       </div>
 
-      <div className="marquee-mask relative">
+      <div className="brand-marquee-mask relative">
         <div className="marquee-track flex w-max items-center gap-8 sm:gap-12">
           <div className="flex w-max items-center gap-8 sm:gap-12">
             {track.map((b, i) => (
