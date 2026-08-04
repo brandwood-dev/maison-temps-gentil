@@ -10,6 +10,22 @@ type ProductPage = {
   total: number;
 };
 
+export type PublicBrand = {
+  id: string;
+  name: string;
+  slug: string;
+  logoUrl?: string;
+  active: boolean;
+  order: number;
+};
+
+type BrandPage = {
+  data: PublicBrand[];
+  page: number;
+  pageSize: number;
+  total: number;
+};
+
 export type PublicCategory = {
   id: string;
   name: string;
@@ -103,6 +119,14 @@ export const getPublicProducts = createServerFn({ method: "GET" }).handler(async
     "/api/v1/public/products?page=1&pageSize=100&sortBy=createdAt&sortOrder=desc",
   );
   return page.data;
+});
+
+/** Public featured-brand data is managed from the Admin catalogue. */
+export const getPublicBrands = createServerFn({ method: "GET" }).handler(async () => {
+  const page = await apiRequest<BrandPage>(
+    "/api/v1/public/brands?page=1&pageSize=100&sortBy=order&sortOrder=asc",
+  );
+  return page.data.filter((brand) => brand.active);
 });
 
 /** Public categories are resolved server-side so the storefront never talks directly to PostgreSQL. */

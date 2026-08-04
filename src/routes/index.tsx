@@ -4,6 +4,7 @@ import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { TrustStrip } from "@/components/layout/TrustStrip";
+import { BrandLogosMarquee } from "@/components/home/BrandLogosMarquee";
 import { LmmButton } from "@/components/brand/LmmButton";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { useCatalogProducts } from "@/lib/catalog-products";
@@ -54,6 +55,7 @@ function HomePage() {
         <Hero />
         <TrustStrip />
         <FeaturedProducts />
+        <BrandLogosMarquee />
       </main>
 
       <SiteFooter />

@@ -13,7 +13,12 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { NowProvider } from "../lib/now-store";
-import { getPublicAttributes, getPublicCategories, getPublicProducts } from "../lib/catalog-api";
+import {
+  getPublicAttributes,
+  getPublicBrands,
+  getPublicCategories,
+  getPublicProducts,
+} from "../lib/catalog-api";
 import { initMetaPixel, trackPageView } from "../lib/meta-pixel";
 import { CartDrawer } from "../components/cart/CartDrawer";
 import { ScrollToTop } from "../components/layout/ScrollToTop";
@@ -80,12 +85,13 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   loader: async () => {
-    const [products, categories, attributes] = await Promise.all([
+    const [products, brands, categories, attributes] = await Promise.all([
       getPublicProducts(),
+      getPublicBrands().catch(() => []),
       getPublicCategories().catch(() => []),
       getPublicAttributes().catch(() => []),
     ]);
-    return { initialNow: Date.now(), products, categories, attributes };
+    return { initialNow: Date.now(), products, brands, categories, attributes };
   },
 
   head: () => ({

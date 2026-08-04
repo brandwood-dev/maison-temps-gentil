@@ -6,6 +6,10 @@ export function useCatalogProducts() {
   return rootRoute.useLoaderData().products;
 }
 
+export function useCatalogBrands() {
+  return rootRoute.useLoaderData().brands;
+}
+
 export function useCatalogCategories() {
   return rootRoute.useLoaderData().categories;
 }
