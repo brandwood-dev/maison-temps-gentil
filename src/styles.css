@@ -174,6 +174,50 @@
   }
 }
 
+@keyframes lmm-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    /* deux pistes identiques séparées par un gap de 1.5rem */
+    transform: translate3d(calc(-50% - 0.75rem), 0, 0);
+  }
+}
+
+@utility marquee-track {
+  animation: lmm-marquee 26s linear infinite;
+  will-change: transform;
+}
+
+@utility marquee-mask {
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 2.5rem,
+    black calc(100% - 2.5rem),
+    transparent 100%
+  );
+}
+
+.marquee-mask:hover .marquee-track,
+.marquee-mask:active .marquee-track,
+.marquee-mask:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-mask {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .marquee-track {
+    animation: none !important;
+  }
+}
+
+
 @utility t-display {
   font-size: clamp(2rem, 5vw + 1rem, 3.75rem);
   line-height: 1.05;
