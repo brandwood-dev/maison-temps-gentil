@@ -321,3 +321,10 @@
   text-transform: uppercase;
   color: var(--color-muted-foreground);
 }
+
+/* Bouton retour en haut */
+@media (prefers-reduced-motion: reduce) {
+  .scroll-to-top {
+    transition: none !important;
+  }
+}
