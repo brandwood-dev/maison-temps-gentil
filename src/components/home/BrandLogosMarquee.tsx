@@ -46,7 +46,7 @@ export function BrandLogosMarquee() {
       </div>
 
       <div className="brand-marquee-mask relative">
-        <div className="marquee-track flex w-max items-center gap-8 sm:gap-12">
+        <div className="marquee-track inline-flex min-w-max flex-none items-center gap-8 sm:gap-12">
           <div className="inline-flex min-w-max flex-none items-center gap-8 sm:gap-12">
             {track.map((b, i) => (
               <BrandLogo key={`a-${b.name}-${i}`} name={b.name} logoUrl={b.logoUrl} />
