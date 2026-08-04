@@ -136,7 +136,17 @@ export function SiteFooter() {
 
         <div className="mt-10 flex flex-col items-start justify-between gap-2 border-t border-white/10 pt-6 text-xs text-white/50 md:flex-row md:items-center">
           <p>© {new Date().getFullYear()} La Maison des Montres. Tous droits réservés.</p>
-          <p>Coordonnées à renseigner — Tunisie</p>
+          <p>
+            Developed by{" "}
+            <a
+              href="https://www.brandwoodandco.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white/80 transition-colors hover:text-[color:var(--color-gold)]"
+            >
+              Brandwood & Co
+            </a>
+          </p>
         </div>
       </div>
     </footer>
