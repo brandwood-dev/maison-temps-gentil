@@ -32,7 +32,7 @@ export function ScrollToTop() {
       onClick={scrollToTop}
       aria-label="Retour en haut de la page"
       className={cn(
-        "scroll-to-top fixed right-4 bottom-4 z-40 inline-flex h-12 w-12 items-center justify-center rounded-full bg-[color:var(--color-primary)] text-[color:var(--color-primary-foreground)] shadow-soft transition-all duration-200 hover:bg-[#2a2928] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-gold)] md:right-6 md:bottom-6",
+        "scroll-to-top fixed right-4 bottom-4 z-40 inline-flex h-12 w-12 items-center justify-center rounded-full bg-[color:var(--color-primary)] text-[color:var(--color-primary-foreground)] shadow-soft transition-all duration-200 hover:bg-[#2a2928] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-gold)] md:right-8 md:bottom-8 lg:right-10 lg:bottom-10",
         visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0",
       )}
     >
