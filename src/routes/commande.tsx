@@ -192,7 +192,8 @@ function ShippingForm({
     const id = ids[key as keyof typeof ids];
     const err = errors[key];
     return (
-      <div className="flex flex-col gap-2">
+      <div className="flex min-w-0 flex-col gap-2">
+
         <label htmlFor={id} className={labelClass}>
           {label} {opts.required ? <span aria-hidden>*</span> : null}
         </label>
