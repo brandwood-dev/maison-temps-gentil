@@ -6,7 +6,7 @@ export const NAV_LINKS = [
   { label: "Femme", href: "/montres-femme" },
   { label: "Enfant", href: "/montres-enfant" },
   { label: "Couple", href: "/montres-couple" },
-  { label: "ConnectÃƒÂ©es", href: "/montres-connectees" },
+  { label: "Connectées", href: "/montres-connectees" },
   { label: "Coffrets cadeaux", href: "/collections/coffrets-cadeaux" },
   { label: "Promotions", href: "/promotions" },
   { label: "Marques", href: "/marques" },
@@ -52,7 +52,7 @@ export const FOOTER_SHOP_LINKS = [
   { label: "Femme", href: "/montres-femme" },
   { label: "Enfant", href: "/montres-enfant" },
   { label: "Couple", href: "/montres-couple" },
-  { label: "Montres connectÃƒÂ©es", href: "/montres-connectees" },
+  { label: "Montres connectées", href: "/montres-connectees" },
   { label: "Coffrets cadeaux", href: "/collections/coffrets-cadeaux" },
   { label: "Promotions", href: "/promotions" },
   { label: "Marques", href: "/marques" },
@@ -67,11 +67,11 @@ export const FOOTER_HELP_LINKS = [
 ] as const;
 
 export const FOOTER_INFO_LINKS = [
-  { label: "Ãƒâ‚¬ propos", href: "/a-propos" },
-  { label: "Conditions gÃƒÂ©nÃƒÂ©rales de vente", href: "/conditions-generales-vente" },
-  { label: "Politique de confidentialitÃƒÂ©", href: "/politique-confidentialite" },
+  { label: "À propos", href: "/a-propos" },
+  { label: "Conditions générales de vente", href: "/conditions-generales-vente" },
+  { label: "Politique de confidentialité", href: "/politique-confidentialite" },
   { label: "Politique de cookies", href: "/politique-cookies" },
-  { label: "Mentions lÃƒÂ©gales", href: "/mentions-legales" },
+  { label: "Mentions légales", href: "/mentions-legales" },
 ] as const;
 
 export const ANNOUNCEMENT_MESSAGES = [
