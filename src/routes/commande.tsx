@@ -291,7 +291,7 @@ function ShippingForm({
           })}
         </div>
         {field("address", "Adresse", { required: true, autoComplete: "street-address" })}
-        <div className="flex flex-col gap-2">
+        <div className="flex min-w-0 flex-col gap-2">
           <label htmlFor={ids.note} className={labelClass}>
             Note de livraison (facultatif)
           </label>
