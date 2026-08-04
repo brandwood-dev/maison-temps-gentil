@@ -229,9 +229,23 @@
   );
 }
 
+@utility brand-marquee-mask {
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 0.75rem,
+    black calc(100% - 0.75rem),
+    transparent 100%
+  );
+}
+
 .marquee-mask:hover .marquee-track,
 .marquee-mask:active .marquee-track,
-.marquee-mask:focus-within .marquee-track {
+.marquee-mask:focus-within .marquee-track,
+.brand-marquee-mask:hover .marquee-track,
+.brand-marquee-mask:active .marquee-track,
+.brand-marquee-mask:focus-within .marquee-track {
   animation-play-state: paused;
 }
 
