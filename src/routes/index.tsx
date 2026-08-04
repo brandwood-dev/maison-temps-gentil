@@ -55,6 +55,8 @@ function HomePage() {
       <main id="content">
         <Hero />
         <TrustStrip />
+        <CollectionsShowcase />
+
         <FeaturedProducts />
       </main>
 
