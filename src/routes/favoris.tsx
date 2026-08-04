@@ -5,7 +5,7 @@ import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { ProductGrid } from "@/components/product/ProductGrid";
-import { PRODUCTS } from "@/fixtures/products";
+import { useCatalogProducts } from "@/lib/catalog-products";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useCart } from "@/lib/cart-store";
 import { trackAddToCart } from "@/lib/meta-pixel";
@@ -27,15 +27,16 @@ export const Route = createFileRoute("/favoris")({
 
 function FavoritesPage() {
   const { ids, hydrated } = useFavorites();
+  const catalogProducts = useCatalogProducts();
   const { addItem } = useCart();
 
   const products = useMemo<Product[]>(() => {
     if (!hydrated) return [];
-    const byId = new Map(PRODUCTS.map((p) => [p.id, p]));
+    const byId = new Map(catalogProducts.map((p) => [p.id, p]));
     return ids
       .map((id) => byId.get(id))
       .filter((p): p is Product => Boolean(p) && p!.availability !== "hidden");
-  }, [ids, hydrated]);
+  }, [catalogProducts, ids, hydrated]);
 
   const count = products.length;
   const countLabel = count <= 1 ? "1 montre favorite" : `${count} montres favorites`;
