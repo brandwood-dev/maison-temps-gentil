@@ -208,6 +208,9 @@
 
 @utility marquee-track {
   --marquee-gap: 2rem;
+  width: max-content;
+  min-width: max-content;
+  flex: none;
   animation: lmm-marquee 26s linear infinite;
   will-change: transform;
 }
