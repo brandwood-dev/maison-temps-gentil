@@ -7,7 +7,13 @@ function countLabel(n: number): string {
   return n <= 1 ? "1 modèle" : `${n} modèles`;
 }
 
-export function BrandCard({ brand, priority = false }: { brand: BrandSummary; priority?: boolean }) {
+export function BrandCard({
+  brand,
+  priority = false,
+}: {
+  brand: BrandSummary;
+  priority?: boolean;
+}) {
   return (
     <Link
       to="/montres"

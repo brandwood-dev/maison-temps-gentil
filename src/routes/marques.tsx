@@ -41,7 +41,10 @@ function BrandsPage() {
             <nav aria-label="Fil d’Ariane" className="mb-4">
               <ol className="flex flex-wrap items-center gap-1 text-xs text-[color:var(--color-muted-foreground)]">
                 <li>
-                  <Link to="/" className="hover:text-[color:var(--color-foreground)] hover:underline">
+                  <Link
+                    to="/"
+                    className="hover:text-[color:var(--color-foreground)] hover:underline"
+                  >
                     Accueil
                   </Link>
                 </li>
