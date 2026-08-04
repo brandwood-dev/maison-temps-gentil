@@ -46,13 +46,13 @@ export function BrandLogosMarquee() {
       </div>
 
       <div className="brand-marquee-mask relative">
-        <div className="marquee-track inline-flex min-w-max flex-none items-center gap-8 sm:gap-12">
-          <div className="inline-flex min-w-max flex-none items-center gap-8 sm:gap-12">
+        <div className="brand-marquee-track marquee-track inline-flex items-center gap-8 sm:gap-12">
+          <div className="brand-marquee-group inline-flex items-center gap-8 sm:gap-12">
             {track.map((b, i) => (
               <BrandLogo key={`a-${b.name}-${i}`} name={b.name} logoUrl={b.logoUrl} />
             ))}
           </div>
-          <div aria-hidden className="inline-flex min-w-max flex-none items-center gap-8 sm:gap-12">
+          <div aria-hidden className="brand-marquee-group inline-flex items-center gap-8 sm:gap-12">
             {track.map((b, i) => (
               <BrandLogo key={`b-${b.name}-${i}`} name={b.name} logoUrl={b.logoUrl} />
             ))}

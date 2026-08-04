@@ -208,9 +208,6 @@
 
 @utility marquee-track {
   --marquee-gap: 2rem;
-  width: max-content;
-  min-width: max-content;
-  flex: none;
   animation: lmm-marquee 26s linear infinite;
   will-change: transform;
 }
@@ -241,6 +238,13 @@
     black calc(100% - 0.75rem),
     transparent 100%
   );
+}
+
+.brand-marquee-track,
+.brand-marquee-group {
+  width: max-content;
+  min-width: max-content;
+  flex: none;
 }
 
 .marquee-mask:hover .marquee-track,
