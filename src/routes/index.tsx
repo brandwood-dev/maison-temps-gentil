@@ -11,8 +11,7 @@ import { useCart } from "@/lib/cart-store";
 import type { Product } from "@/types/product";
 import { absoluteUrl } from "@/config/site";
 
-const HERO_BASE =
-  "https://res.cloudinary.com/dxkxiy900/image/upload/f_auto,q_auto,c_fill,g_auto";
+const HERO_BASE = "https://res.cloudinary.com/dxkxiy900/image/upload/f_auto,q_auto,c_fill,g_auto";
 const HERO_ASSET = "v1785813483/laurenz-heymann-al6s6JpnZis-unsplash_eemoes.jpg";
 
 const heroSrc = (width: number, height: number) =>
@@ -76,10 +75,7 @@ function Hero() {
         decoding="async"
         className="absolute inset-0 h-full w-full object-cover object-[68%_center] md:object-center"
       />
-      <div
-        aria-hidden
-        className="absolute inset-0 bg-[image:var(--hero-overlay)]"
-      />
+      <div aria-hidden className="absolute inset-0 bg-[image:var(--hero-overlay)]" />
 
       <div className="container-page relative flex min-h-[520px] flex-col justify-end py-14 sm:min-h-[560px] md:min-h-[620px] md:justify-center md:py-24 lg:min-h-[680px]">
         <div className="max-w-xl">
@@ -112,7 +108,6 @@ function Hero() {
     </section>
   );
 }
-
 
 function FeaturedProducts() {
   const { addItem } = useCart();
