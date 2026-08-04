@@ -279,7 +279,7 @@ function ShippingForm({
             </p>
           ) : null}
         </div>
-        <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_140px]">
+        <div className="grid min-w-0 gap-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,140px)]">
           {field("city", "Ville / Délégation", {
             required: true,
             autoComplete: "address-level2",
