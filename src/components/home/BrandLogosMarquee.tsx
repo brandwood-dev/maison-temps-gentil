@@ -9,7 +9,7 @@ function BrandTile({ name }: { name: string }) {
       to="/montres"
       search={catalogQueryToSearch({ brands: [name] })}
       aria-label={`Voir les montres ${name}`}
-      className="flex h-16 w-[9.5rem] shrink-0 items-center justify-center rounded-[var(--radius-lg)] border border-[color:var(--color-border)] bg-[color:var(--color-surface-cream)] px-4 transition-all duration-300 hover:border-[color:var(--color-gold)] focus-visible:border-[color:var(--color-gold)] motion-reduce:transition-none sm:h-20 sm:w-[12rem]"
+      className="flex h-16 w-[9.5rem] shrink-0 items-center justify-center rounded-[var(--radius-lg)] border border-[color:var(--color-border)] bg-transparent px-4 transition-all duration-300 hover:border-[color:var(--color-gold)] focus-visible:border-[color:var(--color-gold)] motion-reduce:transition-none sm:h-20 sm:w-[12rem]"
     >
       <span className="text-center text-[13px] leading-tight font-semibold tracking-[0.18em] text-[color:var(--color-foreground)] uppercase sm:text-sm">
         {name}
