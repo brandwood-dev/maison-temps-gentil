@@ -6,7 +6,10 @@ function Sequence({ messages, duplicate }: { messages: readonly string[]; duplic
   return (
     <ul aria-hidden={duplicate || undefined} className="flex shrink-0 items-center gap-8">
       {messages.map((m) => (
-        <li key={`${duplicate ? "dup-" : ""}${m}`} className="flex items-center gap-8 whitespace-nowrap">
+        <li
+          key={`${duplicate ? "dup-" : ""}${m}`}
+          className="flex items-center gap-8 whitespace-nowrap"
+        >
           <span>{m}</span>
           <span aria-hidden className="text-[color:var(--color-gold)]">
             •
