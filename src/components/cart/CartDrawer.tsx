@@ -1,9 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { ShoppingBag, Truck, X } from "lucide-react";
+import { ShoppingBag, Truck } from "lucide-react";
 import { useMemo } from "react";
 
 import { CartLineItem } from "@/components/cart/CartLineItem";
-import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { PRODUCTS } from "@/fixtures/products";
 import { useCart, useCartDrawer } from "@/lib/cart-store";
 import { useNow } from "@/lib/now-store";
@@ -60,12 +60,6 @@ export function CartDrawer() {
               </span>
             ) : null}
           </SheetTitle>
-          <SheetClose
-            aria-label="Fermer le panier"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)] text-[color:var(--color-muted-foreground)] transition-colors hover:bg-[color:var(--color-surface-cream)] hover:text-[color:var(--color-foreground)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-gold)]"
-          >
-            <X className="h-5 w-5" strokeWidth={1.75} aria-hidden />
-          </SheetClose>
         </div>
 
         <p aria-live="polite" className="sr-only">
