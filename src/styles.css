@@ -134,6 +134,14 @@
     text-rendering: optimizeLegibility;
   }
 
+  /* Filet de sécurité mobile : aucun défilement horizontal du document.
+     `clip` (et non `hidden`) préserve position: sticky. */
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
@@ -141,6 +149,14 @@
     font-weight: 400;
     font-feature-settings: "ss01", "cv11";
   }
+
+  /* Les champs natifs ne doivent jamais imposer leur largeur intrinsèque. */
+  input,
+  select,
+  textarea {
+    min-width: 0;
+  }
+
 
   h1,
   h2,
