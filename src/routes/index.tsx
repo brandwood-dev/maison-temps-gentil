@@ -4,6 +4,8 @@ import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { TrustStrip } from "@/components/layout/TrustStrip";
+import { CollectionsShowcase } from "@/components/home/CollectionsShowcase";
+
 import { LmmButton } from "@/components/brand/LmmButton";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { PRODUCTS } from "@/fixtures/products";
@@ -53,6 +55,8 @@ function HomePage() {
       <main id="content">
         <Hero />
         <TrustStrip />
+        <CollectionsShowcase />
+
         <FeaturedProducts />
       </main>
 
