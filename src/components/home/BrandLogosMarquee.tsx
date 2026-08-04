@@ -13,21 +13,23 @@ function BrandLogo({ brand }: { brand: PublicBrand }) {
       aria-label={`Voir les montres ${brand.name}`}
       className="group flex h-20 w-44 shrink-0 items-center justify-center px-4 transition-opacity duration-300 hover:opacity-60 focus-visible:opacity-60 motion-reduce:transition-none sm:h-24 sm:w-60 sm:px-6"
     >
-      {brand.logoUrl ? (
-        <img
-          src={brand.logoUrl}
-          alt={`Logo ${brand.name}`}
-          width={220}
-          height={64}
-          loading="lazy"
-          decoding="async"
-          className="h-8 w-full max-w-44 object-contain grayscale opacity-90 contrast-125 transition-opacity duration-300 group-hover:opacity-100 sm:h-10 sm:max-w-52"
-        />
-      ) : (
-        <span className="text-center text-[13px] leading-tight font-semibold tracking-[0.18em] text-[color:var(--color-foreground)] uppercase grayscale sm:text-sm">
-          {brand.name}
-        </span>
-      )}
+      <span className="brand-logo-slot" aria-label={brand.logoUrl ? undefined : brand.name}>
+        {brand.logoUrl ? (
+          <img
+            src={brand.logoUrl}
+            alt={`Logo ${brand.name}`}
+            width={220}
+            height={64}
+            loading="lazy"
+            decoding="async"
+            className="brand-logo-image grayscale opacity-90 contrast-125 transition-opacity duration-300 group-hover:opacity-100"
+          />
+        ) : (
+          <span className="text-center text-[13px] leading-tight font-semibold tracking-[0.18em] text-[color:var(--color-foreground)] uppercase sm:text-sm">
+            {brand.name}
+          </span>
+        )}
+      </span>
     </Link>
   );
 }
