@@ -1,63 +1,37 @@
-# Prompt pour Codex — Remplacement du favicon Lovable par le logo de La Maison des Montres
+# Correction du débordement horizontal sur mobile (/commande) + audit responsive du site
 
-## Contexte
-Le site « La Maison des Montres » est un e-commerce tunisien de montres, hébergé sur Lovable (TanStack Start + React + Tailwind v4). Actuellement, le favicon affiché dans les résultats Google est toujours le favicon par défaut de Lovable. Le logo de la marque existe déjà sous forme d’images PNG hébergées sur Cloudinary.
+## Diagnostic confirmé
+Sur `/commande` en 393 px, la page peut défiler horizontalement de ~35 px (bande blanche à droite). Mesures en direct dans l'aperçu :
 
-## État actuel à vérifier
-- `public/favicon.ico` : favicon par défaut de Lovable (20 Ko), à supprimer.
-- `src/routes/__root.tsx` : contient actuellement `{ rel: "icon", href: "/favicon.ico", type: "image/x-icon" }` dans `head().links`.
-- Logo de la marque (variante dark, adaptée aux fonds clairs comme Google) :
-  `https://res.cloudinary.com/dxkxiy900/image/upload/v1784391979/LOGO_VB_qf9hpa.png`
-- Logo variante light (fond sombre) :
-  `https://res.cloudinary.com/dxkxiy900/image/upload/v1784391979/LOGO_VW_eczfrh.png`
+- La colonne de la grille de commande mesure 342 px, mais le `<form>` de livraison mesure 393 px et dépasse.
+- Cause : les champs natifs (`<select>` des 24 gouvernorats, `<textarea>`, `<input>`) imposent une largeur minimale intrinsèque, et les éléments de grille/flex ont `min-width: auto` par défaut. Le formulaire refuse donc de se rétrécir sous la largeur de l'écran, ce qui étire toute la page.
+- Aucun autre débordement de document n'a été détecté sur les autres pages testées (accueil, catalogue, panier, promotions, favoris, contact, suivi, FAQ, livraison, marques, CGV, confirmation) en 320 et 375 px, mais l'audit sera refait après correction pour vérifier aussi les états remplis (panier non vide, filtres actifs, menus ouverts).
 
-## Objectif
-Remplacer le favicon Lovable par un favicon dérivé du logo de la marque, de sorte que Google finisse par afficher le logo de La Maison des Montres à côté du site dans les résultats de recherche.
+## Ce qui va changer
 
-## Instructions précises
+### 1. Page /commande (cause du bug)
+- Autoriser la colonne et le formulaire à se rétrécir (largeur minimale nulle) au lieu de suivre la largeur intrinsèque des champs.
+- Forcer tous les champs (`input`, `select`, `textarea`) à occuper 100 % de la largeur disponible sans largeur intrinsèque minimale.
+- Adapter la sous-grille « Ville / Code postal » pour qu'elle reste en une colonne sur petit écran et ne fixe pas une largeur rigide.
+- Vérifier que le bloc récapitulatif (noms de produits longs, prix) reste tronqué proprement.
 
-1. **Télécharger le logo source**
-   - Télécharger l’image dark (`LOGO_VB_qf9hpa.png`) depuis Cloudinary.
+### 2. Filet de sécurité global
+- Empêcher tout défilement horizontal accidentel du document sur l'ensemble du site, sans casser les carrousels internes (bandeau d'annonces, bandeau d'engagements) qui gardent leur propre défilement masqué.
+- Vérifier que les images, titres longs et champs de formulaire des autres pages (contact, suivi de commande, newsletter du footer, recherche) respectent la même règle de rétrécissement.
 
-2. **Générer le favicon**
-   - Convertir le logo en une image carrée de 64×64 px avec padding transparent pour conserver les proportions.
-   - Utiliser ImageMagick avec une commande équivalente à :
-     ```bash
-     magick LOGO_VB_qf9hpa.png -resize 64x64 -background none -gravity center -extent 64x64 public/favicon.png
-     ```
-   - Sauvegarder le résultat dans `public/favicon.png`.
-   - Vérifier visuellement que le logo reste lisible à 16×16, 32×32 et 64×64 px.
+### 3. Audit responsive complet
+- Passage automatisé de toutes les routes publiques aux largeurs 320 / 360 / 375 / 393 / 430 px, dans deux états : panier vide et panier rempli.
+- Contrôle pour chaque page : aucun défilement horizontal, aucun texte coupé, cibles tactiles ≥ 44 px, lisibilité des titres.
+- Correction ciblée de chaque écart trouvé, sans modification du design ni des fonctionnalités.
 
-3. **Mettre à jour `src/routes/__root.tsx`**
-   - Dans `head().links`, remplacer :
-     ```tsx
-     { rel: "icon", href: "/favicon.ico", type: "image/x-icon" }
-     ```
-     par :
-     ```tsx
-     { rel: "icon", type: "image/png", href: "/favicon.png" }
-     ```
-   - Ne modifier que cette ligne ; ne pas toucher aux autres balises `meta`, `links`, `scripts`.
+### 4. Bonus quiet fix
+Une erreur d'hydratation apparaît sur `/commande` (l'état « chargement » du panier diffère entre serveur et navigateur). Elle sera corrigée en même temps pour éviter un scintillement au chargement.
 
-4. **Supprimer l’ancien favicon**
-   - Supprimer `public/favicon.ico` pour éviter qu’il ne reste servi par certains navigateurs ou crawlers.
+## Détails techniques
+- `src/routes/commande.tsx` : ajout de `min-w-0` sur la colonne de grille et le formulaire, `w-full min-w-0` sur `inputClass`, adaptation de `sm:grid-cols-[minmax(0,1fr)_140px]` en `minmax(0,140px)`, `min-w-0`/`truncate` sur le récapitulatif.
+- `src/styles.css` : `html, body { overflow-x: clip; max-width: 100%; }` (clip plutôt que hidden pour préserver `position: sticky`).
+- Hydratation : rendu initial serveur/client aligné sur l'état non hydraté du panier.
+- Vérification : script Playwright multi-largeurs, `bun run lint` et build.
 
-5. **Vérifier le rendu**
-   - Lancer le serveur de développement (`bun run dev`).
-   - Vérifier que `http://localhost:8080/favicon.png` s’affiche correctement.
-   - Vérifier dans l’inspecteur que le `<link rel="icon">` pointe bien sur `/favicon.png`.
-   - S’assurer qu’il n’y a pas d’erreur de build (`bun run build` ou `bun run typecheck`).
-
-## Contraintes et bonnes pratiques
-- Ne pas embarquer d’image binaire dans `src/assets` ; le favicon doit être un vrai fichier dans `public/`.
-- Ne pas utiliser `lovable-assets` pour le favicon (exception connue : le favicon doit être un fichier réel dans `public/`).
-- Préserver le reste du code inchangé.
-- Mobile-first et responsive : le favicon étant une icône unique, sa taille 64×64 px suffit pour tous les appareils.
-
-## Livrables attendus
-- `public/favicon.png` (logo de la marque, 64×64 px, fond transparent si pertinent)
-- `src/routes/__root.tsx` avec le `<link rel="icon">` mis à jour
-- Suppression de `public/favicon.ico`
-
-## Note importante pour l’utilisateur
-Google met plusieurs jours à plusieurs semaines à répercuter un changement de favicon dans les résultats de recherche. Une fois le favicon publié, il est recommandé de demander une réindexation de la page d’accueil via Google Search Console. Aucune connexion Search Console n’est actuellement liée au projet Lovable.
+## Hors périmètre
+Aucun changement de contenu, de design visuel, de logique de prix ou de tunnel de commande.
