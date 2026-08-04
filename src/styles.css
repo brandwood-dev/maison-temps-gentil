@@ -201,14 +201,21 @@
     transform: translate3d(0, 0, 0);
   }
   to {
-    /* deux pistes identiques séparées par un gap de 1.5rem */
-    transform: translate3d(calc(-50% - 0.75rem), 0, 0);
+    /* deux pistes identiques séparées par --marquee-gap */
+    transform: translate3d(calc(-50% - calc(var(--marquee-gap) / 2)), 0, 0);
   }
 }
 
 @utility marquee-track {
+  --marquee-gap: 2rem;
   animation: lmm-marquee 26s linear infinite;
   will-change: transform;
+}
+
+@media (min-width: 640px) {
+  .marquee-track {
+    --marquee-gap: 3rem;
+  }
 }
 
 @utility marquee-mask {
