@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Heart, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -33,9 +33,28 @@ export function ProductCard({
   const [imgHover, setImgHover] = useState(false);
   const [mainLoaded, setMainLoaded] = useState(false);
   const [mainError, setMainError] = useState(false);
+  const [secondaryLoaded, setSecondaryLoaded] = useState(false);
+  const mainImageRef = useRef<HTMLImageElement>(null);
+  const secondaryImageRef = useRef<HTMLImageElement>(null);
 
   const primary = product.images.find((i) => i.position === 1) ?? product.images[0];
   const secondary = product.images.find((i) => i.position === 2) ?? null;
+
+  useEffect(() => {
+    setMainLoaded(false);
+    setMainError(false);
+    const image = mainImageRef.current;
+    if (!image || !primary?.url || !image.complete) return;
+    if (image.naturalWidth > 0) setMainLoaded(true);
+    else setMainError(true);
+  }, [primary?.url]);
+
+  useEffect(() => {
+    setSecondaryLoaded(false);
+    const image = secondaryImageRef.current;
+    if (!image || !secondary?.url || !image.complete) return;
+    setSecondaryLoaded(image.naturalWidth > 0);
+  }, [secondary?.url]);
 
   // Shared per-request clock: SSR and first client render agree on `nowTs`,
   // so `promoActive` matches the HTML sent by the server. After hydration the
@@ -69,6 +88,7 @@ export function ProductCard({
     >
       {primary && !mainError ? (
         <img
+          ref={mainImageRef}
           src={primary.url}
           alt={primary.alt}
           loading={mainLoading}
@@ -79,7 +99,7 @@ export function ProductCard({
           className={cn(
             "absolute inset-0 h-full w-full object-contain p-4 transition-opacity duration-300",
             mainLoaded ? "opacity-100" : "opacity-0",
-            imgHover && secondary ? "md:opacity-0" : "",
+            imgHover && secondaryLoaded ? "md:opacity-0" : "",
           )}
         />
       ) : (
@@ -89,6 +109,7 @@ export function ProductCard({
       )}
       {secondary ? (
         <img
+          ref={secondaryImageRef}
           src={secondary.url}
           alt={secondary.alt}
           loading="lazy"
@@ -96,9 +117,11 @@ export function ProductCard({
           decoding="async"
           className={cn(
             "absolute inset-0 hidden h-full w-full object-contain p-4 opacity-0 transition-opacity duration-300 md:block",
-            imgHover ? "opacity-100" : "",
+            imgHover && secondaryLoaded ? "opacity-100" : "",
           )}
-          aria-hidden={!imgHover}
+          onLoad={() => setSecondaryLoaded(true)}
+          onError={() => setSecondaryLoaded(false)}
+          aria-hidden={!imgHover || !secondaryLoaded}
         />
       ) : null}
 

@@ -17,6 +17,7 @@ type Props = {
 const defaultHref = (p: Product) => `/montres/${p.slug}`;
 
 export function ProductGrid({ products, className, onAddToCart, getHref = defaultHref }: Props) {
+  const firstImageIndex = products.findIndex((product) => product.images.length > 0);
   return (
     <ul
       className={cn(
@@ -32,7 +33,7 @@ export function ProductGrid({ products, className, onAddToCart, getHref = defaul
               product={p}
               href={href}
               onAddToCart={onAddToCart}
-              imagePriority={i === 0}
+              imagePriority={i === firstImageIndex}
               className="w-full"
             />
           </li>
