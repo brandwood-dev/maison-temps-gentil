@@ -9,7 +9,7 @@ function BrandLogo({ name, logoUrl }: { name: string; logoUrl: string }) {
       to="/montres"
       search={catalogQueryToSearch({ brands: [name] })}
       aria-label={`Voir les montres ${name}`}
-      className="group flex h-20 shrink-0 items-center justify-center px-8 transition-opacity duration-300 hover:opacity-60 focus-visible:opacity-60 motion-reduce:transition-none sm:h-24 sm:px-10"
+      className="group flex h-20 w-44 shrink-0 items-center justify-center px-4 transition-opacity duration-300 hover:opacity-60 focus-visible:opacity-60 motion-reduce:transition-none sm:h-24 sm:w-60 sm:px-6"
     >
       {logoUrl ? (
         <img
@@ -18,7 +18,7 @@ function BrandLogo({ name, logoUrl }: { name: string; logoUrl: string }) {
           width={180}
           height={56}
           loading="lazy"
-          className="h-7 w-auto max-w-[10rem] object-contain opacity-90 transition-opacity duration-300 group-hover:opacity-100 sm:h-9 sm:max-w-[12rem]"
+          className="h-7 w-full max-w-40 object-contain opacity-90 transition-opacity duration-300 group-hover:opacity-100 sm:h-9 sm:max-w-48"
         />
       ) : (
         <span className="text-center text-[13px] leading-tight font-semibold tracking-[0.18em] text-[color:var(--color-foreground)] uppercase sm:text-sm">
@@ -47,12 +47,12 @@ export function BrandLogosMarquee() {
 
       <div className="brand-marquee-mask relative">
         <div className="marquee-track flex w-max items-center gap-8 sm:gap-12">
-          <div className="flex w-max items-center gap-8 sm:gap-12">
+          <div className="flex w-max shrink-0 items-center gap-8 sm:gap-12">
             {track.map((b, i) => (
               <BrandLogo key={`a-${b.name}-${i}`} name={b.name} logoUrl={b.logoUrl} />
             ))}
           </div>
-          <div aria-hidden className="flex w-max items-center gap-8 sm:gap-12">
+          <div aria-hidden className="flex w-max shrink-0 items-center gap-8 sm:gap-12">
             {track.map((b, i) => (
               <BrandLogo key={`b-${b.name}-${i}`} name={b.name} logoUrl={b.logoUrl} />
             ))}
