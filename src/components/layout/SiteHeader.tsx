@@ -2,6 +2,7 @@ import { Heart, Search, ShoppingBag, Truck } from "lucide-react";
 import { useRef, useState } from "react";
 import { Logo } from "@/components/brand/Logo";
 import { getCategoryNavLinks } from "@/config/nav";
+import { useFavorites } from "@/hooks/useFavorites";
 import { useCart } from "@/lib/cart-store";
 import { useCatalogCategories } from "@/lib/catalog-products";
 import { SearchPanel } from "./SearchPanel";
@@ -73,6 +74,8 @@ export function SiteHeader() {
   const returnFocusRef = useRef<HTMLButtonElement | null>(null);
   const { totalQuantity } = useCart();
   const cartCount = totalQuantity;
+  const { ids: favoriteIds } = useFavorites();
+  const favoriteCount = favoriteIds.length;
   const categories = useCatalogCategories();
   const navLinks = getCategoryNavLinks(categories);
 
@@ -132,7 +135,7 @@ export function SiteHeader() {
               <IconAction label="Rechercher" onClick={openSearch}>
                 <Search className="h-5 w-5" strokeWidth={1.75} />
               </IconAction>
-              <IconAction label="Favoris" href="/favoris">
+              <IconAction label="Favoris" href="/favoris" badge={favoriteCount}>
                 <Heart className="h-5 w-5" strokeWidth={1.75} />
               </IconAction>
               <IconAction label="Suivre ma commande" href="/suivi-commande">
@@ -165,7 +168,7 @@ export function SiteHeader() {
               <IconAction label="Rechercher" onClick={openSearch}>
                 <Search className="h-5 w-5" strokeWidth={1.75} />
               </IconAction>
-              <IconAction label="Favoris" href="/favoris">
+              <IconAction label="Favoris" href="/favoris" badge={favoriteCount}>
                 <Heart className="h-5 w-5" strokeWidth={1.75} />
               </IconAction>
               <IconAction label="Suivre ma commande" href="/suivi-commande">
