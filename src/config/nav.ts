@@ -47,4 +47,12 @@ export const FOOTER_INFO_LINKS = [
   { label: "Mentions légales", href: "/mentions-legales" },
 ] as const;
 
-export const ANNOUNCEMENT_TEXT = "Livraison rapide partout en Tunisie sous 2 à 3 jours";
+export const ANNOUNCEMENT_MESSAGES = [
+  "Livraison rapide partout en Tunisie sous 2 à 3 jours",
+  "Paiement à la livraison disponible",
+  "Garantie sur toutes nos montres",
+  "Nouveautés chaque semaine — découvrez la collection",
+  "Une équipe à votre écoute du lundi au samedi",
+] as const;
+
+export const ANNOUNCEMENT_TEXT = ANNOUNCEMENT_MESSAGES[0];
