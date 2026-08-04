@@ -12,16 +12,26 @@ type Props = {
    * `/montres/{slug}` (the product detail page).
    */
   getHref?: (product: Product) => string | null | undefined;
+  /** Use the wider three-column layout for catalog pages with filters. */
+  density?: "default" | "catalog";
 };
 
 const defaultHref = (p: Product) => `/montres/${p.slug}`;
 
-export function ProductGrid({ products, className, onAddToCart, getHref = defaultHref }: Props) {
-  const firstImageIndex = products.findIndex((product) => product.images.length > 0);
+export function ProductGrid({
+  products,
+  className,
+  onAddToCart,
+  getHref = defaultHref,
+  density = "default",
+}: Props) {
   return (
     <ul
       className={cn(
-        "grid list-none grid-cols-1 gap-3 xs:grid-cols-2 md:grid-cols-3 md:gap-5 lg:grid-cols-4",
+        "grid list-none grid-cols-1 gap-3 xs:grid-cols-2",
+        density === "catalog"
+          ? "gap-4 sm:gap-5 lg:grid-cols-3 lg:gap-6"
+          : "md:grid-cols-3 md:gap-5 lg:grid-cols-4",
         className,
       )}
     >
@@ -33,7 +43,7 @@ export function ProductGrid({ products, className, onAddToCart, getHref = defaul
               product={p}
               href={href}
               onAddToCart={onAddToCart}
-              imagePriority={i === firstImageIndex}
+              imagePriority={i === 0}
               className="w-full"
             />
           </li>
