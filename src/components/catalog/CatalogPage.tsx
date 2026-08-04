@@ -6,6 +6,7 @@ import type { CatalogQuery } from "@/types/catalog";
 import { useNow } from "@/lib/now-store";
 import { useCart } from "@/lib/cart-store";
 import { catalogQueryToSearch, getCatalogResult, hasActiveFilters } from "@/lib/catalog";
+import { getCategoryHeroImage } from "@/config/category-hero";
 
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -56,6 +57,7 @@ export function CatalogPage({
   const { addItem } = useCart();
   const handleAddToCart = (p: Product, quantity: number) => addItem(p.id, quantity);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const heroImage = useMemo(() => getCategoryHeroImage(basePath), [basePath]);
 
   const result = useMemo(() => {
     const effectiveQuery: CatalogQuery = forcePromotionOnly
