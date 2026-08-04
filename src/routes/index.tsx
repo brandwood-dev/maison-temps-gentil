@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowRight, Clock } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
@@ -11,10 +11,35 @@ import { useCart } from "@/lib/cart-store";
 import type { Product } from "@/types/product";
 import { absoluteUrl } from "@/config/site";
 
+const HERO_BASE = "https://res.cloudinary.com/dxkxiy900/image/upload/f_auto,q_auto,c_fill,g_auto";
+const HERO_ASSET = "v1785813483/laurenz-heymann-al6s6JpnZis-unsplash_eemoes.jpg";
+
+const heroSrc = (width: number, height: number) =>
+  `${HERO_BASE},w_${width},h_${height}/${HERO_ASSET}`;
+
+const HERO_SRC = heroSrc(1600, 900);
+const HERO_SRCSET = [
+  `${heroSrc(640, 800)} 640w`,
+  `${heroSrc(960, 900)} 960w`,
+  `${heroSrc(1280, 720)} 1280w`,
+  `${heroSrc(1920, 900)} 1920w`,
+].join(", ");
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [{ property: "og:url", content: absoluteUrl() }],
-    links: [{ rel: "canonical", href: absoluteUrl() }],
+    links: [
+      { rel: "canonical", href: absoluteUrl() },
+      { rel: "preconnect", href: "https://res.cloudinary.com", crossOrigin: "anonymous" },
+      {
+        rel: "preload",
+        as: "image",
+        href: HERO_SRC,
+        imageSrcSet: HERO_SRCSET,
+        imageSizes: "100vw",
+        fetchPriority: "high",
+      },
+    ],
   }),
   component: HomePage,
 });
@@ -38,41 +63,45 @@ function HomePage() {
 
 function Hero() {
   return (
-    <section className="bg-[color:var(--color-surface-cream)]">
-      <div className="container-page grid items-center gap-10 py-12 md:grid-cols-2 md:gap-14 md:py-20 lg:py-24">
+    <section className="relative isolate overflow-hidden bg-[color:var(--color-primary)]">
+      <img
+        src={HERO_SRC}
+        srcSet={HERO_SRCSET}
+        sizes="100vw"
+        alt="Montre-bracelet élégante posée en gros plan, lumière tamisée"
+        width={1600}
+        height={900}
+        fetchPriority="high"
+        decoding="async"
+        className="absolute inset-0 h-full w-full object-cover object-[68%_center] md:object-center"
+      />
+      <div aria-hidden className="absolute inset-0 bg-[image:var(--hero-overlay)]" />
+
+      <div className="container-page relative flex min-h-[520px] flex-col justify-end py-14 sm:min-h-[560px] md:min-h-[620px] md:justify-center md:py-24 lg:min-h-[680px]">
         <div className="max-w-xl">
-          <p className="eyebrow">La Maison des Montres</p>
-          <h1 className="t-display mt-3 text-[color:var(--color-foreground)]">
+          <p className="eyebrow text-[color:var(--color-gold)]">La Maison des Montres</p>
+          <h1 className="t-display mt-3 text-[color:var(--color-on-image)]">
             Le temps, avec <em className="not-italic text-[color:var(--color-gold)]">élégance</em>.
           </h1>
-          <p className="mt-5 max-w-md text-base text-[color:var(--color-muted-foreground)] md:text-lg">
+          <p className="mt-5 max-w-md text-base text-[color:var(--color-on-image-muted)] md:text-lg">
             Découvrez une sélection de montres pour chaque style et chaque occasion.
           </p>
-          <div className="mt-8 flex flex-wrap items-center gap-3">
-            <LmmButton size="lg" rightIcon={<ArrowRight className="h-4 w-4" strokeWidth={1.75} />}>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            <LmmButton
+              size="lg"
+              variant="gold"
+              className="w-full sm:w-auto"
+              rightIcon={<ArrowRight className="h-4 w-4" strokeWidth={1.75} />}
+            >
               Découvrir la collection
             </LmmButton>
-            <LmmButton size="lg" variant="secondary">
+            <LmmButton
+              size="lg"
+              variant="ghost"
+              className="w-full border border-[color:var(--color-on-image-border)] bg-[color:var(--color-on-image-surface)] text-[color:var(--color-on-image)] backdrop-blur-sm hover:bg-[color:var(--color-on-image-border)] sm:w-auto"
+            >
               Voir les promotions
             </LmmButton>
-          </div>
-        </div>
-
-        <div className="relative">
-          <div
-            aria-hidden
-            className="relative aspect-[4/5] w-full overflow-hidden rounded-[var(--radius-lg)] border border-[color:var(--color-border)] bg-[color:var(--color-background)]"
-          >
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center">
-              <Clock className="h-10 w-10 text-[color:var(--color-gold)]" strokeWidth={1.25} />
-              <p className="text-xs font-medium tracking-[0.2em] text-[color:var(--color-muted-foreground)] uppercase">
-                Emplacement visuel
-              </p>
-              <p className="max-w-[220px] text-xs text-[color:var(--color-muted-foreground)]">
-                Photo de montre à renseigner ultérieurement.
-              </p>
-            </div>
-            <div className="absolute inset-x-6 bottom-6 h-px bg-[color:var(--color-border)]" />
           </div>
         </div>
       </div>

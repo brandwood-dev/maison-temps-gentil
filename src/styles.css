@@ -16,7 +16,6 @@
   /* Custom breakpoint used by ProductGrid (must sort before md:/lg:). */
   --breakpoint-xs: 380px;
 
-
   --radius-sm: 2px;
   --radius-md: 4px;
   --radius-lg: 6px;
@@ -40,6 +39,11 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-gold: var(--gold);
   --color-gold-foreground: var(--gold-foreground);
+  --color-on-image: var(--on-image);
+  --color-on-image-muted: var(--on-image-muted);
+  --color-on-image-border: var(--on-image-border);
+  --color-on-image-surface: var(--on-image-surface);
+
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-success: var(--success);
@@ -81,6 +85,25 @@
 
   --gold: #c89d54;
   --gold-foreground: #1c1b1b;
+
+  /* Texte et surfaces posés sur une photographie (contraste AA garanti par l'overlay) */
+  --on-image: #feffff;
+  --on-image-muted: #ece9e2;
+  --on-image-border: rgb(254 255 255 / 0.45);
+  --on-image-surface: rgb(254 255 255 / 0.12);
+  --hero-overlay:
+    linear-gradient(
+      to right,
+      rgb(16 15 15 / 0.86) 0%,
+      rgb(16 15 15 / 0.66) 45%,
+      rgb(16 15 15 / 0.34) 100%
+    ),
+    linear-gradient(
+      to top,
+      rgb(16 15 15 / 0.7) 0%,
+      rgb(16 15 15 / 0.18) 55%,
+      rgb(16 15 15 / 0.3) 100%
+    );
 
   --destructive: #b3261e;
   --destructive-foreground: #feffff;
