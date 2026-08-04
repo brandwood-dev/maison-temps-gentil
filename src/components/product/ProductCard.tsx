@@ -181,41 +181,45 @@ export function ProductCard({
   return (
     <article
       className={cn(
-        "group flex flex-col rounded-[var(--radius-md)] border border-[color:var(--color-border)] bg-[color:var(--color-background)]",
+        "group flex h-full flex-col overflow-hidden rounded-[var(--radius-md)] border border-[color:var(--color-border)] bg-[color:var(--color-background)]",
         unavailable && "opacity-90",
         className,
       )}
     >
       {href && !unavailable ? (
-        <Link to={href} className="block" aria-label={product.name}>
+        <Link to={href} className="block shrink-0" aria-label={product.name}>
           {Media}
         </Link>
       ) : (
         Media
       )}
 
-      <div className="flex flex-1 flex-col gap-1.5 p-3 md:p-4">
-        <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-[color:var(--color-muted-foreground)]">
+      <div className="flex flex-1 flex-col p-3 md:p-4">
+        <p className="flex min-h-[1.125rem] items-center text-[11px] font-medium uppercase tracking-[0.14em] text-[color:var(--color-muted-foreground)]">
           {product.brand}
         </p>
-        {href && !unavailable ? (
-          <Link
-            to={href}
-            className="line-clamp-2 text-sm font-semibold leading-snug text-[color:var(--color-foreground)] hover:text-[color:var(--color-gold)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-gold)]"
-          >
-            <h3 className="line-clamp-2">{product.name}</h3>
-          </Link>
-        ) : (
-          <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-[color:var(--color-foreground)]">
-            {product.name}
-          </h3>
-        )}
 
-        <div className="mt-1">
+        {/* Fixed two-line title box keeps every card's price row on the same baseline. */}
+        <div className="mt-1 min-h-[2.5rem]">
+          {href && !unavailable ? (
+            <Link
+              to={href}
+              className="block text-sm font-semibold leading-snug text-[color:var(--color-foreground)] hover:text-[color:var(--color-gold)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-gold)]"
+            >
+              <h3 className="line-clamp-2">{product.name}</h3>
+            </Link>
+          ) : (
+            <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-[color:var(--color-foreground)]">
+              {product.name}
+            </h3>
+          )}
+        </div>
+
+        <div className="mt-2 flex min-h-[2.25rem] items-center">
           <ProductPrice product={product} mode="compact" />
         </div>
 
-        <div className="mt-1 min-h-[1rem]">
+        <div className="mt-1 flex min-h-[1.25rem] items-center">
           {unavailable ? (
             <p className="text-xs font-medium text-[color:var(--color-muted-foreground)]">
               Indisponible
@@ -224,6 +228,7 @@ export function ProductCard({
             <PromotionCountdown endsAt={product.promotion.endsAt} />
           ) : null}
         </div>
+
 
         {/* Actions */}
         <div className="mt-auto flex items-stretch gap-2 pt-3">
