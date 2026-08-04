@@ -248,11 +248,12 @@ function ShippingForm({
         })}
       </fieldset>
 
-      <fieldset className="flex flex-col gap-4">
+      <fieldset className="flex min-w-0 flex-col gap-4">
         <legend className="text-sm font-semibold uppercase tracking-[0.14em] text-[color:var(--color-foreground)]">
           Adresse de livraison
         </legend>
-        <div className="flex flex-col gap-2">
+        <div className="flex min-w-0 flex-col gap-2">
+
           <label htmlFor={ids.governorate} className={labelClass}>
             Gouvernorat <span aria-hidden>*</span>
           </label>
