@@ -236,7 +236,9 @@ function setItems(next: CartItem[]) {
 
 export function addItem(productId: string, quantity = 1) {
   const next = addCartItem(items, productId, quantity);
-  if (next !== items) setItems(next);
+  if (next === items) return;
+  setItems(next);
+  openCartDrawer(productId);
 }
 
 export function setQuantity(productId: string, quantity: number) {
@@ -274,4 +276,57 @@ export function useCart() {
     removeItem: remove,
     clearCart: clear,
   };
+}
+
+/* ---------- cart drawer (mini-cart) UI store ---------- */
+
+type CartDrawerState = {
+  open: boolean;
+  lastAddedProductId: string | null;
+  /** Incremented on each add — lets the UI re-announce identical adds. */
+  addCount: number;
+};
+
+let drawerState: CartDrawerState = { open: false, lastAddedProductId: null, addCount: 0 };
+const drawerListeners = new Set<() => void>();
+const SERVER_DRAWER_STATE: CartDrawerState = {
+  open: false,
+  lastAddedProductId: null,
+  addCount: 0,
+};
+
+function setDrawerState(next: CartDrawerState) {
+  drawerState = next;
+  drawerListeners.forEach((listener) => listener());
+}
+
+function subscribeDrawer(listener: () => void) {
+  drawerListeners.add(listener);
+  return () => {
+    drawerListeners.delete(listener);
+  };
+}
+
+export function openCartDrawer(productId?: string) {
+  setDrawerState({
+    open: true,
+    lastAddedProductId: productId ?? null,
+    addCount: productId ? drawerState.addCount + 1 : drawerState.addCount,
+  });
+}
+
+export function closeCartDrawer() {
+  if (!drawerState.open) return;
+  setDrawerState({ ...drawerState, open: false });
+}
+
+export function useCartDrawer() {
+  const state = useSyncExternalStore(
+    subscribeDrawer,
+    () => drawerState,
+    () => SERVER_DRAWER_STATE,
+  );
+  const open = useCallback((productId?: string) => openCartDrawer(productId), []);
+  const close = useCallback(() => closeCartDrawer(), []);
+  return { ...state, openDrawer: open, closeDrawer: close };
 }

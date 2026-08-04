@@ -2,7 +2,7 @@ import { Heart, Search, ShoppingBag, Truck } from "lucide-react";
 import { useRef, useState } from "react";
 import { Logo } from "@/components/brand/Logo";
 import { NAV_LINKS } from "@/config/nav";
-import { useCart } from "@/lib/cart-store";
+import { useCart, useCartDrawer } from "@/lib/cart-store";
 import { SearchPanel } from "./SearchPanel";
 import { MobileMenu } from "./MobileMenu";
 
@@ -71,6 +71,7 @@ export function SiteHeader() {
   const [searchOpen, setSearchOpen] = useState(false);
   const returnFocusRef = useRef<HTMLButtonElement | null>(null);
   const { totalQuantity } = useCart();
+  const { openDrawer } = useCartDrawer();
   const cartCount = totalQuantity;
 
   const openMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -109,7 +110,7 @@ export function SiteHeader() {
             <IconAction label="Rechercher" onClick={openSearch}>
               <Search className="h-5 w-5" strokeWidth={1.75} />
             </IconAction>
-            <IconAction label="Panier" href="/panier" badge={cartCount}>
+            <IconAction label="Ouvrir mon panier" onClick={() => openDrawer()} badge={cartCount}>
               <ShoppingBag className="h-5 w-5" strokeWidth={1.75} />
             </IconAction>
           </div>
@@ -135,7 +136,7 @@ export function SiteHeader() {
               <IconAction label="Suivre ma commande" href="/suivi-commande">
                 <Truck className="h-5 w-5" strokeWidth={1.75} />
               </IconAction>
-              <IconAction label="Panier" href="/panier" badge={cartCount}>
+              <IconAction label="Ouvrir mon panier" onClick={() => openDrawer()} badge={cartCount}>
                 <ShoppingBag className="h-5 w-5" strokeWidth={1.75} />
               </IconAction>
             </div>
@@ -168,7 +169,7 @@ export function SiteHeader() {
               <IconAction label="Suivre ma commande" href="/suivi-commande">
                 <Truck className="h-5 w-5" strokeWidth={1.75} />
               </IconAction>
-              <IconAction label="Panier" href="/panier" badge={cartCount}>
+              <IconAction label="Ouvrir mon panier" onClick={() => openDrawer()} badge={cartCount}>
                 <ShoppingBag className="h-5 w-5" strokeWidth={1.75} />
               </IconAction>
             </div>
