@@ -34,10 +34,12 @@ export function BrandLogosMarquee() {
       </div>
 
       <div className="marquee-mask relative">
-        <div className="marquee-track flex w-max items-center gap-6 px-4">
-          {track.map((b, i) => (
-            <BrandTile key={`a-${b.name}-${i}`} name={b.name} />
-          ))}
+        <div className="marquee-track flex w-max items-center gap-6">
+          <div className="flex w-max items-center gap-6">
+            {track.map((b, i) => (
+              <BrandTile key={`a-${b.name}-${i}`} name={b.name} />
+            ))}
+          </div>
           <div aria-hidden className="flex w-max items-center gap-6">
             {track.map((b, i) => (
               <BrandTile key={`b-${b.name}-${i}`} name={b.name} />
