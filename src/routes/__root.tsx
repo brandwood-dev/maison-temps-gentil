@@ -15,6 +15,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { NowProvider } from "../lib/now-store";
 import { getPublicAttributes, getPublicCategories, getPublicProducts } from "../lib/catalog-api";
 import { initMetaPixel, trackPageView } from "../lib/meta-pixel";
+import { CartDrawer } from "../components/cart/CartDrawer";
 
 function NotFoundComponent() {
   return (
@@ -166,6 +167,7 @@ function RootComponent() {
         <MetaPixelTracker />
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
+        <CartDrawer />
       </NowProvider>
     </QueryClientProvider>
   );

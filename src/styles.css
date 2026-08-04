@@ -5,8 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * La Maison des Montres — Design System
- * Palette: Noir #1c1b1b, Blanc #FEFFFF, Crème #f4f3ed, Or #c89d54
+ * La Maison des Montres â€” Design System
+ * Palette: Noir #1c1b1b, Blanc #FEFFFF, CrÃ¨me #f4f3ed, Or #c89d54
  * Typographie: Manrope (400/500/600/700)
  */
 
@@ -15,7 +15,6 @@
 
   /* Custom breakpoint used by ProductGrid (must sort before md:/lg:). */
   --breakpoint-xs: 380px;
-
 
   --radius-sm: 2px;
   --radius-md: 4px;
@@ -40,6 +39,10 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-gold: var(--gold);
   --color-gold-foreground: var(--gold-foreground);
+  --color-on-image: var(--on-image);
+  --color-on-image-muted: var(--on-image-muted);
+  --color-on-image-border: var(--on-image-border);
+  --color-on-image-surface: var(--on-image-surface);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-success: var(--success);
@@ -81,6 +84,30 @@
 
   --gold: #c89d54;
   --gold-foreground: #1c1b1b;
+
+  --on-image: #feffff;
+  --on-image-muted: #ece9e2;
+  --on-image-border: rgb(254 255 255 / 0.45);
+  --on-image-surface: rgb(254 255 255 / 0.12);
+  --hero-overlay:
+    linear-gradient(
+      to right,
+      rgb(16 15 15 / 0.86) 0%,
+      rgb(16 15 15 / 0.66) 45%,
+      rgb(16 15 15 / 0.34) 100%
+    ),
+    linear-gradient(
+      to top,
+      rgb(16 15 15 / 0.7) 0%,
+      rgb(16 15 15 / 0.18) 55%,
+      rgb(16 15 15 / 0.3) 100%
+    );
+  --brand-card-overlay: linear-gradient(
+    to top,
+    rgb(16 15 15 / 0.78) 0%,
+    rgb(16 15 15 / 0.46) 50%,
+    rgb(16 15 15 / 0.38) 100%
+  );
 
   --destructive: #b3261e;
   --destructive-foreground: #feffff;
@@ -177,4 +204,105 @@
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--color-muted-foreground);
+}
+
+@keyframes lmm-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(calc(-50% - 0.75rem), 0, 0);
+  }
+}
+
+@utility marquee-track {
+  animation: lmm-marquee 26s linear infinite;
+  will-change: transform;
+}
+@utility marquee-mask {
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 2.5rem,
+    black calc(100% - 2.5rem),
+    transparent 100%
+  );
+}
+.marquee-mask:hover .marquee-track,
+.marquee-mask:active .marquee-track,
+.marquee-mask:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-mask {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .marquee-track {
+    animation: none !important;
+  }
+}
+
+@utility announce-track {
+  animation: lmm-marquee 22s linear infinite;
+  will-change: transform;
+}
+@utility announce-mask {
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 1.5rem,
+    black calc(100% - 1.5rem),
+    transparent 100%
+  );
+}
+@keyframes lmm-announce-fade {
+  0%,
+  4% {
+    opacity: 0;
+    transform: translate3d(0, 40%, 0);
+  }
+  8%,
+  18% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+  22%,
+  100% {
+    opacity: 0;
+    transform: translate3d(0, -40%, 0);
+  }
+}
+@utility announce-slide {
+  opacity: 0;
+  animation-name: lmm-announce-fade;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+.announce-mask:hover .announce-track,
+.announce-mask:active .announce-track,
+.announce-mask:focus-within .announce-track,
+.announce-fader:hover .announce-slide,
+.announce-fader:focus-within .announce-slide {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .announce-mask {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .announce-track,
+  .announce-slide {
+    animation: none !important;
+  }
+  .announce-slide {
+    opacity: 0;
+  }
+  .announce-slide:first-child {
+    opacity: 1;
+  }
 }

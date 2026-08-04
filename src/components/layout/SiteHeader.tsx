@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import { Logo } from "@/components/brand/Logo";
 import { getCategoryNavLinks } from "@/config/nav";
 import { useFavorites } from "@/hooks/useFavorites";
-import { useCart } from "@/lib/cart-store";
+import { useCart, useCartDrawer } from "@/lib/cart-store";
 import { useCatalogCategories } from "@/lib/catalog-products";
 import { SearchPanel } from "./SearchPanel";
 import { MobileMenu } from "./MobileMenu";
@@ -73,6 +73,7 @@ export function SiteHeader() {
   const [searchOpen, setSearchOpen] = useState(false);
   const returnFocusRef = useRef<HTMLButtonElement | null>(null);
   const { totalQuantity } = useCart();
+  const { openDrawer } = useCartDrawer();
   const cartCount = totalQuantity;
   const { ids: favoriteIds } = useFavorites();
   const favoriteCount = favoriteIds.length;
@@ -115,7 +116,7 @@ export function SiteHeader() {
             <IconAction label="Rechercher" onClick={openSearch}>
               <Search className="h-5 w-5" strokeWidth={1.75} />
             </IconAction>
-            <IconAction label="Panier" href="/panier" badge={cartCount}>
+            <IconAction label="Ouvrir mon panier" onClick={() => openDrawer()} badge={cartCount}>
               <ShoppingBag className="h-5 w-5" strokeWidth={1.75} />
             </IconAction>
           </div>
@@ -141,7 +142,7 @@ export function SiteHeader() {
               <IconAction label="Suivre ma commande" href="/suivi-commande">
                 <Truck className="h-5 w-5" strokeWidth={1.75} />
               </IconAction>
-              <IconAction label="Panier" href="/panier" badge={cartCount}>
+              <IconAction label="Ouvrir mon panier" onClick={() => openDrawer()} badge={cartCount}>
                 <ShoppingBag className="h-5 w-5" strokeWidth={1.75} />
               </IconAction>
             </div>
@@ -174,7 +175,7 @@ export function SiteHeader() {
               <IconAction label="Suivre ma commande" href="/suivi-commande">
                 <Truck className="h-5 w-5" strokeWidth={1.75} />
               </IconAction>
-              <IconAction label="Panier" href="/panier" badge={cartCount}>
+              <IconAction label="Ouvrir mon panier" onClick={() => openDrawer()} badge={cartCount}>
                 <ShoppingBag className="h-5 w-5" strokeWidth={1.75} />
               </IconAction>
             </div>

@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
 
 export type Crumb = { label: string; href?: string };
@@ -7,6 +8,8 @@ type Props = {
   title: string;
   intro?: string;
   totalItems: number;
+  imageSrc?: string;
+  imageSrcSet?: string;
 };
 
 function resultsLabel(total: number): string {
@@ -15,26 +18,40 @@ function resultsLabel(total: number): string {
   return `${total} montres`;
 }
 
-export function CatalogHeader({ crumbs, title, intro, totalItems }: Props) {
+export function CatalogHeader({ crumbs, title, intro, totalItems, imageSrc, imageSrcSet }: Props) {
   return (
-    <header className="border-b border-[color:var(--color-border)] bg-[color:var(--color-surface-cream)]">
-      <div className="container-page py-8 md:py-10">
-        <nav aria-label="Fil d’Ariane" className="mb-4">
-          <ol className="flex flex-wrap items-center gap-1 text-xs text-[color:var(--color-muted-foreground)]">
+    <header className="relative isolate overflow-hidden bg-[color:var(--color-primary)]">
+      {imageSrc ? (
+        <img
+          src={imageSrc}
+          srcSet={imageSrcSet}
+          sizes="100vw"
+          alt=""
+          aria-hidden
+          width={1600}
+          height={560}
+          decoding="async"
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
+      ) : null}
+      <div aria-hidden className="absolute inset-0 bg-[image:var(--hero-overlay)]" />
+      <div className="container-page relative py-12 text-center md:py-16">
+        <nav aria-label="Fil d’Ariane" className="mb-5">
+          <ol className="flex flex-wrap items-center justify-center gap-1 text-xs text-[color:var(--color-on-image-muted)]">
             {crumbs.map((c, i) => {
               const isLast = i === crumbs.length - 1;
               return (
                 <li key={`${c.label}-${i}`} className="inline-flex items-center gap-1">
                   {c.href && !isLast ? (
-                    <a
-                      href={c.href}
-                      className="hover:text-[color:var(--color-foreground)] hover:underline"
+                    <Link
+                      to={c.href}
+                      className="hover:text-[color:var(--color-on-image)] hover:underline"
                     >
                       {c.label}
-                    </a>
+                    </Link>
                   ) : (
                     <span
-                      className={isLast ? "text-[color:var(--color-foreground)]" : undefined}
+                      className={isLast ? "text-[color:var(--color-on-image)]" : undefined}
                       aria-current={isLast ? "page" : undefined}
                     >
                       {c.label}
@@ -46,13 +63,13 @@ export function CatalogHeader({ crumbs, title, intro, totalItems }: Props) {
             })}
           </ol>
         </nav>
-        <h1 className="t-h1">{title}</h1>
+        <h1 className="t-h1 text-[color:var(--color-on-image)]">{title}</h1>
         {intro ? (
-          <p className="mt-3 max-w-2xl text-sm text-[color:var(--color-muted-foreground)] md:text-base">
+          <p className="mx-auto mt-3 max-w-2xl text-sm text-[color:var(--color-on-image-muted)] md:text-base">
             {intro}
           </p>
         ) : null}
-        <p className="mt-3 text-xs font-medium tracking-wide text-[color:var(--color-muted-foreground)]">
+        <p className="mt-3 text-xs font-medium tracking-wide text-[color:var(--color-on-image-muted)]">
           {resultsLabel(totalItems)}
         </p>
       </div>

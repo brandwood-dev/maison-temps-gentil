@@ -6,7 +6,7 @@ export const NAV_LINKS = [
   { label: "Femme", href: "/montres-femme" },
   { label: "Enfant", href: "/montres-enfant" },
   { label: "Couple", href: "/montres-couple" },
-  { label: "Connectées", href: "/montres-connectees" },
+  { label: "ConnectÃƒÂ©es", href: "/montres-connectees" },
   { label: "Coffrets cadeaux", href: "/collections/coffrets-cadeaux" },
   { label: "Promotions", href: "/promotions" },
   { label: "Marques", href: "/marques" },
@@ -52,7 +52,7 @@ export const FOOTER_SHOP_LINKS = [
   { label: "Femme", href: "/montres-femme" },
   { label: "Enfant", href: "/montres-enfant" },
   { label: "Couple", href: "/montres-couple" },
-  { label: "Montres connectées", href: "/montres-connectees" },
+  { label: "Montres connectÃƒÂ©es", href: "/montres-connectees" },
   { label: "Coffrets cadeaux", href: "/collections/coffrets-cadeaux" },
   { label: "Promotions", href: "/promotions" },
   { label: "Marques", href: "/marques" },
@@ -67,11 +67,17 @@ export const FOOTER_HELP_LINKS = [
 ] as const;
 
 export const FOOTER_INFO_LINKS = [
-  { label: "À propos", href: "/a-propos" },
-  { label: "Conditions générales de vente", href: "/conditions-generales-vente" },
-  { label: "Politique de confidentialité", href: "/politique-confidentialite" },
+  { label: "Ãƒâ‚¬ propos", href: "/a-propos" },
+  { label: "Conditions gÃƒÂ©nÃƒÂ©rales de vente", href: "/conditions-generales-vente" },
+  { label: "Politique de confidentialitÃƒÂ©", href: "/politique-confidentialite" },
   { label: "Politique de cookies", href: "/politique-cookies" },
-  { label: "Mentions légales", href: "/mentions-legales" },
+  { label: "Mentions lÃƒÂ©gales", href: "/mentions-legales" },
 ] as const;
 
-export const ANNOUNCEMENT_TEXT = "Livraison rapide partout en Tunisie sous 2 à 3 jours";
+export const ANNOUNCEMENT_MESSAGES = [
+  "Livraison rapide partout en Tunisie sous 2 à 3 jours",
+  "Paiement à la livraison",
+  "Une sélection pensée pour durer",
+] as const;
+
+export const ANNOUNCEMENT_TEXT = ANNOUNCEMENT_MESSAGES[0];

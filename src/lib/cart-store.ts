@@ -236,7 +236,10 @@ function setItems(next: CartItem[]) {
 
 export function addItem(productId: string, quantity = 1) {
   const next = addCartItem(items, productId, quantity);
-  if (next !== items) setItems(next);
+  if (next !== items) {
+    setItems(next);
+    openCartDrawer(productId);
+  }
 }
 
 export function setQuantity(productId: string, quantity: number) {
@@ -274,4 +277,49 @@ export function useCart() {
     removeItem: remove,
     clearCart: clear,
   };
+}
+
+/* ---------- cart drawer state ---------- */
+
+type CartDrawerSnapshot = {
+  open: boolean;
+  focusProductId?: string;
+};
+
+const CLOSED_DRAWER: CartDrawerSnapshot = { open: false };
+let drawerSnapshot: CartDrawerSnapshot = CLOSED_DRAWER;
+const drawerListeners = new Set<() => void>();
+
+function emitDrawer() {
+  drawerListeners.forEach((listener) => listener());
+}
+
+function subscribeDrawer(listener: () => void) {
+  drawerListeners.add(listener);
+  return () => drawerListeners.delete(listener);
+}
+
+function getDrawerSnapshot() {
+  return drawerSnapshot;
+}
+
+function getDrawerServerSnapshot() {
+  return CLOSED_DRAWER;
+}
+
+export function openCartDrawer(focusProductId?: string) {
+  drawerSnapshot = { open: true, focusProductId };
+  emitDrawer();
+}
+
+export function closeCartDrawer() {
+  drawerSnapshot = CLOSED_DRAWER;
+  emitDrawer();
+}
+
+export function useCartDrawer() {
+  const current = useSyncExternalStore(subscribeDrawer, getDrawerSnapshot, getDrawerServerSnapshot);
+  const openDrawer = useCallback((focusProductId?: string) => openCartDrawer(focusProductId), []);
+  const closeDrawer = useCallback(() => closeCartDrawer(), []);
+  return { ...current, openDrawer, closeDrawer };
 }

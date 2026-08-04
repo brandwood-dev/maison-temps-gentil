@@ -5,6 +5,7 @@ import type { Product, ProductCategory } from "@/types/product";
 import type { CatalogQuery } from "@/types/catalog";
 import { useNow } from "@/lib/now-store";
 import { useCatalogAttributes } from "@/lib/catalog-products";
+import { getCategoryHeroImage } from "@/config/category-hero";
 import { useCart } from "@/lib/cart-store";
 import { trackAddToCart } from "@/lib/meta-pixel";
 import { catalogQueryToSearch, getCatalogResult, hasActiveFilters } from "@/lib/catalog";
@@ -62,6 +63,7 @@ export function CatalogPage({
     trackAddToCart(p, quantity);
   };
   const [mobileOpen, setMobileOpen] = useState(false);
+  const heroImage = useMemo(() => getCategoryHeroImage(basePath), [basePath]);
 
   const result = useMemo(() => {
     const effectiveQuery: CatalogQuery = forcePromotionOnly
@@ -127,7 +129,14 @@ export function CatalogPage({
       <SiteHeader />
 
       <main id="content">
-        <CatalogHeader crumbs={crumbs} title={title} intro={intro} totalItems={result.totalItems} />
+        <CatalogHeader
+          crumbs={crumbs}
+          title={title}
+          intro={intro}
+          totalItems={result.totalItems}
+          imageSrc={heroImage.src}
+          imageSrcSet={heroImage.srcSet}
+        />
 
         <div className="container-page py-6 md:py-8">
           {isCategoryEmpty ? (

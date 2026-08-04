@@ -11,13 +11,20 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SuiviCommandeRouteImport } from './routes/suivi-commande'
 import { Route as PromotionsRouteImport } from './routes/promotions'
+import { Route as PolitiqueCookiesRouteImport } from './routes/politique-cookies'
+import { Route as PolitiqueConfidentialiteRouteImport } from './routes/politique-confidentialite'
 import { Route as PanierRouteImport } from './routes/panier'
 import { Route as MontresHommeRouteImport } from './routes/montres-homme'
 import { Route as MontresFemmeRouteImport } from './routes/montres-femme'
 import { Route as MontresEnfantRouteImport } from './routes/montres-enfant'
 import { Route as MontresCoupleRouteImport } from './routes/montres-couple'
 import { Route as MontresConnecteesRouteImport } from './routes/montres-connectees'
+import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
+import { Route as MarquesRouteImport } from './routes/marques'
+import { Route as LivraisonRetoursRouteImport } from './routes/livraison-retours'
+import { Route as GarantieRouteImport } from './routes/garantie'
 import { Route as FavorisRouteImport } from './routes/favoris'
+import { Route as FaqRouteImport } from './routes/faq'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ConditionsGeneralesVenteRouteImport } from './routes/conditions-generales-vente'
 import { Route as CommandeRouteImport } from './routes/commande'
@@ -38,6 +45,17 @@ const PromotionsRoute = PromotionsRouteImport.update({
   path: '/promotions',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PolitiqueCookiesRoute = PolitiqueCookiesRouteImport.update({
+  id: '/politique-cookies',
+  path: '/politique-cookies',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PolitiqueConfidentialiteRoute =
+  PolitiqueConfidentialiteRouteImport.update({
+    id: '/politique-confidentialite',
+    path: '/politique-confidentialite',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const PanierRoute = PanierRouteImport.update({
   id: '/panier',
   path: '/panier',
@@ -68,9 +86,34 @@ const MontresConnecteesRoute = MontresConnecteesRouteImport.update({
   path: '/montres-connectees',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MentionsLegalesRoute = MentionsLegalesRouteImport.update({
+  id: '/mentions-legales',
+  path: '/mentions-legales',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarquesRoute = MarquesRouteImport.update({
+  id: '/marques',
+  path: '/marques',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LivraisonRetoursRoute = LivraisonRetoursRouteImport.update({
+  id: '/livraison-retours',
+  path: '/livraison-retours',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GarantieRoute = GarantieRouteImport.update({
+  id: '/garantie',
+  path: '/garantie',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FavorisRoute = FavorisRouteImport.update({
   id: '/favoris',
   path: '/favoris',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -126,13 +169,20 @@ export interface FileRoutesByFullPath {
   '/commande': typeof CommandeRouteWithChildren
   '/conditions-generales-vente': typeof ConditionsGeneralesVenteRoute
   '/contact': typeof ContactRoute
+  '/faq': typeof FaqRoute
   '/favoris': typeof FavorisRoute
+  '/garantie': typeof GarantieRoute
+  '/livraison-retours': typeof LivraisonRetoursRoute
+  '/marques': typeof MarquesRoute
+  '/mentions-legales': typeof MentionsLegalesRoute
   '/montres-connectees': typeof MontresConnecteesRoute
   '/montres-couple': typeof MontresCoupleRoute
   '/montres-enfant': typeof MontresEnfantRoute
   '/montres-femme': typeof MontresFemmeRoute
   '/montres-homme': typeof MontresHommeRoute
   '/panier': typeof PanierRoute
+  '/politique-confidentialite': typeof PolitiqueConfidentialiteRoute
+  '/politique-cookies': typeof PolitiqueCookiesRoute
   '/promotions': typeof PromotionsRoute
   '/suivi-commande': typeof SuiviCommandeRoute
   '/categories/$slug': typeof CategoriesSlugRoute
@@ -146,13 +196,20 @@ export interface FileRoutesByTo {
   '/commande': typeof CommandeRouteWithChildren
   '/conditions-generales-vente': typeof ConditionsGeneralesVenteRoute
   '/contact': typeof ContactRoute
+  '/faq': typeof FaqRoute
   '/favoris': typeof FavorisRoute
+  '/garantie': typeof GarantieRoute
+  '/livraison-retours': typeof LivraisonRetoursRoute
+  '/marques': typeof MarquesRoute
+  '/mentions-legales': typeof MentionsLegalesRoute
   '/montres-connectees': typeof MontresConnecteesRoute
   '/montres-couple': typeof MontresCoupleRoute
   '/montres-enfant': typeof MontresEnfantRoute
   '/montres-femme': typeof MontresFemmeRoute
   '/montres-homme': typeof MontresHommeRoute
   '/panier': typeof PanierRoute
+  '/politique-confidentialite': typeof PolitiqueConfidentialiteRoute
+  '/politique-cookies': typeof PolitiqueCookiesRoute
   '/promotions': typeof PromotionsRoute
   '/suivi-commande': typeof SuiviCommandeRoute
   '/categories/$slug': typeof CategoriesSlugRoute
@@ -167,13 +224,20 @@ export interface FileRoutesById {
   '/commande': typeof CommandeRouteWithChildren
   '/conditions-generales-vente': typeof ConditionsGeneralesVenteRoute
   '/contact': typeof ContactRoute
+  '/faq': typeof FaqRoute
   '/favoris': typeof FavorisRoute
+  '/garantie': typeof GarantieRoute
+  '/livraison-retours': typeof LivraisonRetoursRoute
+  '/marques': typeof MarquesRoute
+  '/mentions-legales': typeof MentionsLegalesRoute
   '/montres-connectees': typeof MontresConnecteesRoute
   '/montres-couple': typeof MontresCoupleRoute
   '/montres-enfant': typeof MontresEnfantRoute
   '/montres-femme': typeof MontresFemmeRoute
   '/montres-homme': typeof MontresHommeRoute
   '/panier': typeof PanierRoute
+  '/politique-confidentialite': typeof PolitiqueConfidentialiteRoute
+  '/politique-cookies': typeof PolitiqueCookiesRoute
   '/promotions': typeof PromotionsRoute
   '/suivi-commande': typeof SuiviCommandeRoute
   '/categories/$slug': typeof CategoriesSlugRoute
@@ -189,13 +253,20 @@ export interface FileRouteTypes {
     | '/commande'
     | '/conditions-generales-vente'
     | '/contact'
+    | '/faq'
     | '/favoris'
+    | '/garantie'
+    | '/livraison-retours'
+    | '/marques'
+    | '/mentions-legales'
     | '/montres-connectees'
     | '/montres-couple'
     | '/montres-enfant'
     | '/montres-femme'
     | '/montres-homme'
     | '/panier'
+    | '/politique-confidentialite'
+    | '/politique-cookies'
     | '/promotions'
     | '/suivi-commande'
     | '/categories/$slug'
@@ -209,13 +280,20 @@ export interface FileRouteTypes {
     | '/commande'
     | '/conditions-generales-vente'
     | '/contact'
+    | '/faq'
     | '/favoris'
+    | '/garantie'
+    | '/livraison-retours'
+    | '/marques'
+    | '/mentions-legales'
     | '/montres-connectees'
     | '/montres-couple'
     | '/montres-enfant'
     | '/montres-femme'
     | '/montres-homme'
     | '/panier'
+    | '/politique-confidentialite'
+    | '/politique-cookies'
     | '/promotions'
     | '/suivi-commande'
     | '/categories/$slug'
@@ -229,13 +307,20 @@ export interface FileRouteTypes {
     | '/commande'
     | '/conditions-generales-vente'
     | '/contact'
+    | '/faq'
     | '/favoris'
+    | '/garantie'
+    | '/livraison-retours'
+    | '/marques'
+    | '/mentions-legales'
     | '/montres-connectees'
     | '/montres-couple'
     | '/montres-enfant'
     | '/montres-femme'
     | '/montres-homme'
     | '/panier'
+    | '/politique-confidentialite'
+    | '/politique-cookies'
     | '/promotions'
     | '/suivi-commande'
     | '/categories/$slug'
@@ -250,13 +335,20 @@ export interface RootRouteChildren {
   CommandeRoute: typeof CommandeRouteWithChildren
   ConditionsGeneralesVenteRoute: typeof ConditionsGeneralesVenteRoute
   ContactRoute: typeof ContactRoute
+  FaqRoute: typeof FaqRoute
   FavorisRoute: typeof FavorisRoute
+  GarantieRoute: typeof GarantieRoute
+  LivraisonRetoursRoute: typeof LivraisonRetoursRoute
+  MarquesRoute: typeof MarquesRoute
+  MentionsLegalesRoute: typeof MentionsLegalesRoute
   MontresConnecteesRoute: typeof MontresConnecteesRoute
   MontresCoupleRoute: typeof MontresCoupleRoute
   MontresEnfantRoute: typeof MontresEnfantRoute
   MontresFemmeRoute: typeof MontresFemmeRoute
   MontresHommeRoute: typeof MontresHommeRoute
   PanierRoute: typeof PanierRoute
+  PolitiqueConfidentialiteRoute: typeof PolitiqueConfidentialiteRoute
+  PolitiqueCookiesRoute: typeof PolitiqueCookiesRoute
   PromotionsRoute: typeof PromotionsRoute
   SuiviCommandeRoute: typeof SuiviCommandeRoute
   CategoriesSlugRoute: typeof CategoriesSlugRoute
@@ -279,6 +371,20 @@ declare module '@tanstack/react-router' {
       path: '/promotions'
       fullPath: '/promotions'
       preLoaderRoute: typeof PromotionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/politique-cookies': {
+      id: '/politique-cookies'
+      path: '/politique-cookies'
+      fullPath: '/politique-cookies'
+      preLoaderRoute: typeof PolitiqueCookiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/politique-confidentialite': {
+      id: '/politique-confidentialite'
+      path: '/politique-confidentialite'
+      fullPath: '/politique-confidentialite'
+      preLoaderRoute: typeof PolitiqueConfidentialiteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/panier': {
@@ -323,11 +429,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MontresConnecteesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mentions-legales': {
+      id: '/mentions-legales'
+      path: '/mentions-legales'
+      fullPath: '/mentions-legales'
+      preLoaderRoute: typeof MentionsLegalesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marques': {
+      id: '/marques'
+      path: '/marques'
+      fullPath: '/marques'
+      preLoaderRoute: typeof MarquesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/livraison-retours': {
+      id: '/livraison-retours'
+      path: '/livraison-retours'
+      fullPath: '/livraison-retours'
+      preLoaderRoute: typeof LivraisonRetoursRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/garantie': {
+      id: '/garantie'
+      path: '/garantie'
+      fullPath: '/garantie'
+      preLoaderRoute: typeof GarantieRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/favoris': {
       id: '/favoris'
       path: '/favoris'
       fullPath: '/favoris'
       preLoaderRoute: typeof FavorisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -413,13 +554,20 @@ const rootRouteChildren: RootRouteChildren = {
   CommandeRoute: CommandeRouteWithChildren,
   ConditionsGeneralesVenteRoute: ConditionsGeneralesVenteRoute,
   ContactRoute: ContactRoute,
+  FaqRoute: FaqRoute,
   FavorisRoute: FavorisRoute,
+  GarantieRoute: GarantieRoute,
+  LivraisonRetoursRoute: LivraisonRetoursRoute,
+  MarquesRoute: MarquesRoute,
+  MentionsLegalesRoute: MentionsLegalesRoute,
   MontresConnecteesRoute: MontresConnecteesRoute,
   MontresCoupleRoute: MontresCoupleRoute,
   MontresEnfantRoute: MontresEnfantRoute,
   MontresFemmeRoute: MontresFemmeRoute,
   MontresHommeRoute: MontresHommeRoute,
   PanierRoute: PanierRoute,
+  PolitiqueConfidentialiteRoute: PolitiqueConfidentialiteRoute,
+  PolitiqueCookiesRoute: PolitiqueCookiesRoute,
   PromotionsRoute: PromotionsRoute,
   SuiviCommandeRoute: SuiviCommandeRoute,
   CategoriesSlugRoute: CategoriesSlugRoute,
