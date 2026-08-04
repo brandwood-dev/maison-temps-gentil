@@ -10,6 +10,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import { CartDrawer } from "../components/cart/CartDrawer";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { NowProvider } from "../lib/now-store";
 
