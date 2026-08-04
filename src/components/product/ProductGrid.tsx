@@ -12,18 +12,33 @@ type Props = {
    * `/montres/{slug}` (the product detail page).
    */
   getHref?: (product: Product) => string | null | undefined;
+  /**
+   * `catalog` caps the grid at 3 columns (pages with a filters sidebar),
+   * `default` keeps the denser 4-column layout used on the home page.
+   */
+  density?: "default" | "catalog";
 };
 
 const defaultHref = (p: Product) => `/montres/${p.slug}`;
 
-export function ProductGrid({ products, className, onAddToCart, getHref = defaultHref }: Props) {
+export function ProductGrid({
+  products,
+  className,
+  onAddToCart,
+  getHref = defaultHref,
+  density = "default",
+}: Props) {
   return (
     <ul
       className={cn(
-        "grid list-none grid-cols-1 gap-3 xs:grid-cols-2 md:grid-cols-3 md:gap-5 lg:grid-cols-4",
+        "grid list-none grid-cols-1 gap-3 xs:grid-cols-2",
+        density === "catalog"
+          ? "gap-4 sm:gap-5 lg:grid-cols-3 lg:gap-6"
+          : "md:grid-cols-3 md:gap-5 lg:grid-cols-4",
         className,
       )}
     >
+
       {products.map((p, i) => {
         const href = getHref(p) ?? undefined;
         return (
