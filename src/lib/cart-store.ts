@@ -236,7 +236,9 @@ function setItems(next: CartItem[]) {
 
 export function addItem(productId: string, quantity = 1) {
   const next = addCartItem(items, productId, quantity);
-  if (next !== items) setItems(next);
+  if (next === items) return;
+  setItems(next);
+  openCartDrawer(productId);
 }
 
 export function setQuantity(productId: string, quantity: number) {
