@@ -4,7 +4,7 @@
  * promotions are never persisted; they are resolved at render time from
  * `PRODUCTS` and the shared `useNow()` clock.
  */
-import { useCallback, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 
 const STORAGE_KEY = "lmm:cart:v1";
 const STORAGE_VERSION = 1 as const;
@@ -259,7 +259,11 @@ export function clearCart() {
 export function useCart() {
   const current = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const totalQuantity = current.reduce((sum, item) => sum + item.quantity, 0);
-  const isHydrated = current !== EMPTY || hydrated;
+  // `mounted` stays false on the first client render so SSR markup matches
+  // exactly; the real cart state is revealed in the effect that follows.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const isHydrated = mounted && (current !== EMPTY || hydrated);
   const add = useCallback((productId: string, quantity = 1) => addItem(productId, quantity), []);
   const set = useCallback(
     (productId: string, quantity: number) => setQuantity(productId, quantity),
