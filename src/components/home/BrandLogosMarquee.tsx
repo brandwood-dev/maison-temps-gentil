@@ -37,7 +37,7 @@ export function BrandLogosMarquee() {
   const track = brands.length < 6 ? [...brands, ...brands, ...brands] : brands;
 
   return (
-    <section aria-labelledby="brands-featured" className="section-padding overflow-hidden">
+    <section aria-labelledby="brands-featured" className="overflow-hidden py-12 md:py-16">
       <div className="container-page mb-6 max-w-2xl md:mb-10">
         <p className="eyebrow">Marques</p>
         <h2 id="brands-featured" className="t-h1 mt-2">
