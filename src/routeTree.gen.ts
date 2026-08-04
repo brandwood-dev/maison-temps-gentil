@@ -147,9 +147,9 @@ const MontresSlugRoute = MontresSlugRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const CommandeConfirmationRoute = CommandeConfirmationRouteImport.update({
-  id: '/confirmation',
-  path: '/confirmation',
-  getParentRoute: () => CommandeRoute,
+  id: '/commande/confirmation',
+  path: '/commande/confirmation',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const CollectionsCoffretsCadeauxRoute =
   CollectionsCoffretsCadeauxRouteImport.update({
@@ -339,6 +339,7 @@ export interface RootRouteChildren {
   PromotionsRoute: typeof PromotionsRoute
   SuiviCommandeRoute: typeof SuiviCommandeRoute
   CollectionsCoffretsCadeauxRoute: typeof CollectionsCoffretsCadeauxRoute
+  CommandeConfirmationRoute: typeof CommandeConfirmationRoute
   MontresSlugRoute: typeof MontresSlugRoute
   CommandeIndexRoute: typeof CommandeIndexRoute
   MontresIndexRoute: typeof MontresIndexRoute
@@ -502,10 +503,10 @@ declare module '@tanstack/react-router' {
     }
     '/commande/confirmation': {
       id: '/commande/confirmation'
-      path: '/confirmation'
+      path: '/commande/confirmation'
       fullPath: '/commande/confirmation'
       preLoaderRoute: typeof CommandeConfirmationRouteImport
-      parentRoute: typeof CommandeRoute
+      parentRoute: typeof rootRouteImport
     }
     '/collections/coffrets-cadeaux': {
       id: '/collections/coffrets-cadeaux'
@@ -538,6 +539,7 @@ const rootRouteChildren: RootRouteChildren = {
   PromotionsRoute: PromotionsRoute,
   SuiviCommandeRoute: SuiviCommandeRoute,
   CollectionsCoffretsCadeauxRoute: CollectionsCoffretsCadeauxRoute,
+  CommandeConfirmationRoute: CommandeConfirmationRoute,
   MontresSlugRoute: MontresSlugRoute,
   CommandeIndexRoute: CommandeIndexRoute,
   MontresIndexRoute: MontresIndexRoute,
@@ -545,13 +547,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
