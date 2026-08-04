@@ -106,7 +106,7 @@ function CheckoutPage() {
         ) : isEmpty ? (
           <EmptyCart />
         ) : (
-          <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-10">
+          <div className="mt-8 grid min-w-0 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,360px)] lg:gap-10">
             <ShippingForm
               values={values}
               errors={errors}
@@ -115,10 +115,11 @@ function CheckoutPage() {
               onChange={set}
               onSubmit={handleSubmit}
             />
-            <aside className="lg:sticky lg:top-24 lg:self-start">
+            <aside className="min-w-0 lg:sticky lg:top-24 lg:self-start">
               <OrderSummary totals={totals} />
             </aside>
           </div>
+
         )}
       </main>
       <SiteFooter />
