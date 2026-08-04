@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { CartDrawer } from "../components/cart/CartDrawer";
+import { ScrollToTop } from "../components/layout/ScrollToTop";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { NowProvider } from "../lib/now-store";
 
@@ -153,6 +154,7 @@ function RootComponent() {
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
         <CartDrawer />
+        <ScrollToTop />
       </NowProvider>
     </QueryClientProvider>
   );
