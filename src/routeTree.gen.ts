@@ -27,9 +27,9 @@ import { Route as FavorisRouteImport } from './routes/favoris'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ConditionsGeneralesVenteRouteImport } from './routes/conditions-generales-vente'
-import { Route as CommandeRouteImport } from './routes/commande'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MontresIndexRouteImport } from './routes/montres.index'
+import { Route as CommandeIndexRouteImport } from './routes/commande.index'
 import { Route as MontresSlugRouteImport } from './routes/montres.$slug'
 import { Route as CommandeConfirmationRouteImport } from './routes/commande.confirmation'
 import { Route as CollectionsCoffretsCadeauxRouteImport } from './routes/collections.coffrets-cadeaux'
@@ -126,11 +126,6 @@ const ConditionsGeneralesVenteRoute =
     path: '/conditions-generales-vente',
     getParentRoute: () => rootRouteImport,
   } as any)
-const CommandeRoute = CommandeRouteImport.update({
-  id: '/commande',
-  path: '/commande',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -141,15 +136,20 @@ const MontresIndexRoute = MontresIndexRouteImport.update({
   path: '/montres/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CommandeIndexRoute = CommandeIndexRouteImport.update({
+  id: '/commande/',
+  path: '/commande/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MontresSlugRoute = MontresSlugRouteImport.update({
   id: '/montres/$slug',
   path: '/montres/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CommandeConfirmationRoute = CommandeConfirmationRouteImport.update({
-  id: '/confirmation',
-  path: '/confirmation',
-  getParentRoute: () => CommandeRoute,
+  id: '/commande/confirmation',
+  path: '/commande/confirmation',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const CollectionsCoffretsCadeauxRoute =
   CollectionsCoffretsCadeauxRouteImport.update({
@@ -160,7 +160,6 @@ const CollectionsCoffretsCadeauxRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/commande': typeof CommandeRouteWithChildren
   '/conditions-generales-vente': typeof ConditionsGeneralesVenteRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
@@ -182,11 +181,11 @@ export interface FileRoutesByFullPath {
   '/collections/coffrets-cadeaux': typeof CollectionsCoffretsCadeauxRoute
   '/commande/confirmation': typeof CommandeConfirmationRoute
   '/montres/$slug': typeof MontresSlugRoute
+  '/commande/': typeof CommandeIndexRoute
   '/montres/': typeof MontresIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/commande': typeof CommandeRouteWithChildren
   '/conditions-generales-vente': typeof ConditionsGeneralesVenteRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
@@ -208,12 +207,12 @@ export interface FileRoutesByTo {
   '/collections/coffrets-cadeaux': typeof CollectionsCoffretsCadeauxRoute
   '/commande/confirmation': typeof CommandeConfirmationRoute
   '/montres/$slug': typeof MontresSlugRoute
+  '/commande': typeof CommandeIndexRoute
   '/montres': typeof MontresIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/commande': typeof CommandeRouteWithChildren
   '/conditions-generales-vente': typeof ConditionsGeneralesVenteRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
@@ -235,13 +234,13 @@ export interface FileRoutesById {
   '/collections/coffrets-cadeaux': typeof CollectionsCoffretsCadeauxRoute
   '/commande/confirmation': typeof CommandeConfirmationRoute
   '/montres/$slug': typeof MontresSlugRoute
+  '/commande/': typeof CommandeIndexRoute
   '/montres/': typeof MontresIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/commande'
     | '/conditions-generales-vente'
     | '/contact'
     | '/faq'
@@ -263,11 +262,11 @@ export interface FileRouteTypes {
     | '/collections/coffrets-cadeaux'
     | '/commande/confirmation'
     | '/montres/$slug'
+    | '/commande/'
     | '/montres/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/commande'
     | '/conditions-generales-vente'
     | '/contact'
     | '/faq'
@@ -289,11 +288,11 @@ export interface FileRouteTypes {
     | '/collections/coffrets-cadeaux'
     | '/commande/confirmation'
     | '/montres/$slug'
+    | '/commande'
     | '/montres'
   id:
     | '__root__'
     | '/'
-    | '/commande'
     | '/conditions-generales-vente'
     | '/contact'
     | '/faq'
@@ -315,12 +314,12 @@ export interface FileRouteTypes {
     | '/collections/coffrets-cadeaux'
     | '/commande/confirmation'
     | '/montres/$slug'
+    | '/commande/'
     | '/montres/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  CommandeRoute: typeof CommandeRouteWithChildren
   ConditionsGeneralesVenteRoute: typeof ConditionsGeneralesVenteRoute
   ContactRoute: typeof ContactRoute
   FaqRoute: typeof FaqRoute
@@ -340,7 +339,9 @@ export interface RootRouteChildren {
   PromotionsRoute: typeof PromotionsRoute
   SuiviCommandeRoute: typeof SuiviCommandeRoute
   CollectionsCoffretsCadeauxRoute: typeof CollectionsCoffretsCadeauxRoute
+  CommandeConfirmationRoute: typeof CommandeConfirmationRoute
   MontresSlugRoute: typeof MontresSlugRoute
+  CommandeIndexRoute: typeof CommandeIndexRoute
   MontresIndexRoute: typeof MontresIndexRoute
 }
 
@@ -472,13 +473,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConditionsGeneralesVenteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/commande': {
-      id: '/commande'
-      path: '/commande'
-      fullPath: '/commande'
-      preLoaderRoute: typeof CommandeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -493,6 +487,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MontresIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/commande/': {
+      id: '/commande/'
+      path: '/commande'
+      fullPath: '/commande/'
+      preLoaderRoute: typeof CommandeIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/montres/$slug': {
       id: '/montres/$slug'
       path: '/montres/$slug'
@@ -502,10 +503,10 @@ declare module '@tanstack/react-router' {
     }
     '/commande/confirmation': {
       id: '/commande/confirmation'
-      path: '/confirmation'
+      path: '/commande/confirmation'
       fullPath: '/commande/confirmation'
       preLoaderRoute: typeof CommandeConfirmationRouteImport
-      parentRoute: typeof CommandeRoute
+      parentRoute: typeof rootRouteImport
     }
     '/collections/coffrets-cadeaux': {
       id: '/collections/coffrets-cadeaux'
@@ -517,21 +518,8 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface CommandeRouteChildren {
-  CommandeConfirmationRoute: typeof CommandeConfirmationRoute
-}
-
-const CommandeRouteChildren: CommandeRouteChildren = {
-  CommandeConfirmationRoute: CommandeConfirmationRoute,
-}
-
-const CommandeRouteWithChildren = CommandeRoute._addFileChildren(
-  CommandeRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  CommandeRoute: CommandeRouteWithChildren,
   ConditionsGeneralesVenteRoute: ConditionsGeneralesVenteRoute,
   ContactRoute: ContactRoute,
   FaqRoute: FaqRoute,
@@ -551,19 +539,11 @@ const rootRouteChildren: RootRouteChildren = {
   PromotionsRoute: PromotionsRoute,
   SuiviCommandeRoute: SuiviCommandeRoute,
   CollectionsCoffretsCadeauxRoute: CollectionsCoffretsCadeauxRoute,
+  CommandeConfirmationRoute: CommandeConfirmationRoute,
   MontresSlugRoute: MontresSlugRoute,
+  CommandeIndexRoute: CommandeIndexRoute,
   MontresIndexRoute: MontresIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
