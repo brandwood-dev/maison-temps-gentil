@@ -223,13 +223,14 @@ function ShippingForm({
     <form
       onSubmit={onSubmit}
       noValidate
-      className="flex flex-col gap-6 rounded-[var(--radius-lg)] border border-[color:var(--color-border)] bg-[color:var(--color-surface-cream)] p-5 md:p-6"
+      className="flex min-w-0 flex-col gap-6 rounded-[var(--radius-lg)] border border-[color:var(--color-border)] bg-[color:var(--color-surface-cream)] p-4 sm:p-5 md:p-6"
     >
-      <fieldset className="flex flex-col gap-4">
+      <fieldset className="flex min-w-0 flex-col gap-4">
         <legend className="text-sm font-semibold uppercase tracking-[0.14em] text-[color:var(--color-foreground)]">
           Coordonnées
         </legend>
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid min-w-0 gap-4 sm:grid-cols-2">
+
           {field("firstName", "Prénom", { required: true, autoComplete: "given-name" })}
           {field("lastName", "Nom", { required: true, autoComplete: "family-name" })}
         </div>
