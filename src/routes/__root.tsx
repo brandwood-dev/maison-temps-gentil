@@ -16,6 +16,7 @@ import { NowProvider } from "../lib/now-store";
 import { getPublicAttributes, getPublicCategories, getPublicProducts } from "../lib/catalog-api";
 import { initMetaPixel, trackPageView } from "../lib/meta-pixel";
 import { CartDrawer } from "../components/cart/CartDrawer";
+import { ScrollToTop } from "../components/layout/ScrollToTop";
 
 function NotFoundComponent() {
   return (
@@ -174,6 +175,7 @@ function RootComponent() {
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
         <CartDrawer />
+        <ScrollToTop />
       </NowProvider>
     </QueryClientProvider>
   );

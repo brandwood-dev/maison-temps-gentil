@@ -132,12 +132,24 @@
     text-rendering: optimizeLegibility;
   }
 
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     font-weight: 400;
     font-feature-settings: "ss01", "cv11";
+  }
+
+  input,
+  select,
+  textarea {
+    min-width: 0;
   }
 
   h1,
@@ -204,6 +216,12 @@
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--color-muted-foreground);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-to-top {
+    transition: none !important;
+  }
 }
 
 @keyframes lmm-marquee {
