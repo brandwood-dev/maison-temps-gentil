@@ -264,8 +264,37 @@
 
   .marquee-track {
     animation: none !important;
+    will-change: auto;
+  }
+
+  /* Marques : affichage statique, centré et sans défilement */
+  .brand-marquee-mask {
+    overflow-x: visible;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+
+  .brand-marquee-track {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    transform: none !important;
+  }
+
+  .brand-marquee-group {
+    flex-wrap: wrap;
+    justify-content: center;
+    width: auto;
+    min-width: 0;
+  }
+
+  .brand-marquee-group[aria-hidden="true"] {
+    display: none;
   }
 }
+
 
 /* Bandeau d'annonces */
 @utility announce-track {
