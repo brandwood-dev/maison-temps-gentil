@@ -57,6 +57,7 @@ function HomePage() {
         <Hero />
         <TrustStrip />
         <CollectionsShowcase />
+        <BrandLogosMarquee />
 
         <FeaturedProducts />
       </main>
