@@ -17,6 +17,7 @@ import { Route as MontresFemmeRouteImport } from './routes/montres-femme'
 import { Route as MontresEnfantRouteImport } from './routes/montres-enfant'
 import { Route as MontresCoupleRouteImport } from './routes/montres-couple'
 import { Route as MontresConnecteesRouteImport } from './routes/montres-connectees'
+import { Route as MarquesRouteImport } from './routes/marques'
 import { Route as LivraisonRetoursRouteImport } from './routes/livraison-retours'
 import { Route as FavorisRouteImport } from './routes/favoris'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -66,6 +67,11 @@ const MontresCoupleRoute = MontresCoupleRouteImport.update({
 const MontresConnecteesRoute = MontresConnecteesRouteImport.update({
   id: '/montres-connectees',
   path: '/montres-connectees',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarquesRoute = MarquesRouteImport.update({
+  id: '/marques',
+  path: '/marques',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LivraisonRetoursRoute = LivraisonRetoursRouteImport.update({
@@ -128,6 +134,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/favoris': typeof FavorisRoute
   '/livraison-retours': typeof LivraisonRetoursRoute
+  '/marques': typeof MarquesRoute
   '/montres-connectees': typeof MontresConnecteesRoute
   '/montres-couple': typeof MontresCoupleRoute
   '/montres-enfant': typeof MontresEnfantRoute
@@ -148,6 +155,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/favoris': typeof FavorisRoute
   '/livraison-retours': typeof LivraisonRetoursRoute
+  '/marques': typeof MarquesRoute
   '/montres-connectees': typeof MontresConnecteesRoute
   '/montres-couple': typeof MontresCoupleRoute
   '/montres-enfant': typeof MontresEnfantRoute
@@ -169,6 +177,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/favoris': typeof FavorisRoute
   '/livraison-retours': typeof LivraisonRetoursRoute
+  '/marques': typeof MarquesRoute
   '/montres-connectees': typeof MontresConnecteesRoute
   '/montres-couple': typeof MontresCoupleRoute
   '/montres-enfant': typeof MontresEnfantRoute
@@ -191,6 +200,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/favoris'
     | '/livraison-retours'
+    | '/marques'
     | '/montres-connectees'
     | '/montres-couple'
     | '/montres-enfant'
@@ -211,6 +221,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/favoris'
     | '/livraison-retours'
+    | '/marques'
     | '/montres-connectees'
     | '/montres-couple'
     | '/montres-enfant'
@@ -231,6 +242,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/favoris'
     | '/livraison-retours'
+    | '/marques'
     | '/montres-connectees'
     | '/montres-couple'
     | '/montres-enfant'
@@ -252,6 +264,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   FavorisRoute: typeof FavorisRoute
   LivraisonRetoursRoute: typeof LivraisonRetoursRoute
+  MarquesRoute: typeof MarquesRoute
   MontresConnecteesRoute: typeof MontresConnecteesRoute
   MontresCoupleRoute: typeof MontresCoupleRoute
   MontresEnfantRoute: typeof MontresEnfantRoute
@@ -321,6 +334,13 @@ declare module '@tanstack/react-router' {
       path: '/montres-connectees'
       fullPath: '/montres-connectees'
       preLoaderRoute: typeof MontresConnecteesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marques': {
+      id: '/marques'
+      path: '/marques'
+      fullPath: '/marques'
+      preLoaderRoute: typeof MarquesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/livraison-retours': {
@@ -415,6 +435,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   FavorisRoute: FavorisRoute,
   LivraisonRetoursRoute: LivraisonRetoursRoute,
+  MarquesRoute: MarquesRoute,
   MontresConnecteesRoute: MontresConnecteesRoute,
   MontresCoupleRoute: MontresCoupleRoute,
   MontresEnfantRoute: MontresEnfantRoute,
