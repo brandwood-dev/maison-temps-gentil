@@ -106,7 +106,7 @@ function CheckoutPage() {
         ) : isEmpty ? (
           <EmptyCart />
         ) : (
-          <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-10">
+          <div className="mt-8 grid min-w-0 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,360px)] lg:gap-10">
             <ShippingForm
               values={values}
               errors={errors}
@@ -115,10 +115,11 @@ function CheckoutPage() {
               onChange={set}
               onSubmit={handleSubmit}
             />
-            <aside className="lg:sticky lg:top-24 lg:self-start">
+            <aside className="min-w-0 lg:sticky lg:top-24 lg:self-start">
               <OrderSummary totals={totals} />
             </aside>
           </div>
+
         )}
       </main>
       <SiteFooter />
@@ -144,7 +145,8 @@ function EmptyCart() {
 }
 
 const inputClass =
-  "h-12 rounded-[var(--radius-md)] border border-[color:var(--color-border-strong)] bg-[color:var(--color-background)] px-3 text-sm text-[color:var(--color-foreground)] outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-gold)] aria-[invalid=true]:border-[color:var(--color-foreground)]";
+  "h-12 w-full min-w-0 max-w-full rounded-[var(--radius-md)] border border-[color:var(--color-border-strong)] bg-[color:var(--color-background)] px-3 text-sm text-[color:var(--color-foreground)] outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-gold)] aria-[invalid=true]:border-[color:var(--color-foreground)]";
+
 const labelClass = "text-sm font-medium text-[color:var(--color-foreground)]";
 const errClass = "text-xs font-medium text-[color:var(--color-foreground)]";
 
@@ -190,7 +192,8 @@ function ShippingForm({
     const id = ids[key as keyof typeof ids];
     const err = errors[key];
     return (
-      <div className="flex flex-col gap-2">
+      <div className="flex min-w-0 flex-col gap-2">
+
         <label htmlFor={id} className={labelClass}>
           {label} {opts.required ? <span aria-hidden>*</span> : null}
         </label>
@@ -220,13 +223,14 @@ function ShippingForm({
     <form
       onSubmit={onSubmit}
       noValidate
-      className="flex flex-col gap-6 rounded-[var(--radius-lg)] border border-[color:var(--color-border)] bg-[color:var(--color-surface-cream)] p-5 md:p-6"
+      className="flex min-w-0 flex-col gap-6 rounded-[var(--radius-lg)] border border-[color:var(--color-border)] bg-[color:var(--color-surface-cream)] p-4 sm:p-5 md:p-6"
     >
-      <fieldset className="flex flex-col gap-4">
+      <fieldset className="flex min-w-0 flex-col gap-4">
         <legend className="text-sm font-semibold uppercase tracking-[0.14em] text-[color:var(--color-foreground)]">
           Coordonnées
         </legend>
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid min-w-0 gap-4 sm:grid-cols-2">
+
           {field("firstName", "Prénom", { required: true, autoComplete: "given-name" })}
           {field("lastName", "Nom", { required: true, autoComplete: "family-name" })}
         </div>
@@ -244,11 +248,12 @@ function ShippingForm({
         })}
       </fieldset>
 
-      <fieldset className="flex flex-col gap-4">
+      <fieldset className="flex min-w-0 flex-col gap-4">
         <legend className="text-sm font-semibold uppercase tracking-[0.14em] text-[color:var(--color-foreground)]">
           Adresse de livraison
         </legend>
-        <div className="flex flex-col gap-2">
+        <div className="flex min-w-0 flex-col gap-2">
+
           <label htmlFor={ids.governorate} className={labelClass}>
             Gouvernorat <span aria-hidden>*</span>
           </label>
@@ -274,7 +279,7 @@ function ShippingForm({
             </p>
           ) : null}
         </div>
-        <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_140px]">
+        <div className="grid min-w-0 gap-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,140px)]">
           {field("city", "Ville / Délégation", {
             required: true,
             autoComplete: "address-level2",
@@ -286,7 +291,7 @@ function ShippingForm({
           })}
         </div>
         {field("address", "Adresse", { required: true, autoComplete: "street-address" })}
-        <div className="flex flex-col gap-2">
+        <div className="flex min-w-0 flex-col gap-2">
           <label htmlFor={ids.note} className={labelClass}>
             Note de livraison (facultatif)
           </label>
