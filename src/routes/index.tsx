@@ -68,6 +68,7 @@ function Hero({ slides }: { slides: PublicHeroSlide[] }) {
   const allSlides = slides.length > 5 ? slides.slice(0, 5) : slides.length ? slides : [fallbackHero];
   const [currentIndex, setCurrentIndex] = useState(0);
   const [incomingIndex, setIncomingIndex] = useState<number | null>(null);
+  const [incomingReady, setIncomingReady] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [paused, setPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -84,6 +85,7 @@ function Hero({ slides }: { slides: PublicHeroSlide[] }) {
         return;
       }
 
+      setIncomingReady(false);
       setIncomingIndex(safeIndex);
     },
     [allSlides.length, currentIndex, incomingIndex, reducedMotion],
@@ -98,18 +100,26 @@ function Hero({ slides }: { slides: PublicHeroSlide[] }) {
   }, []);
 
   useEffect(() => {
-    if (incomingIndex === null) return;
+    if (incomingIndex === null || !incomingReady) return;
     const frame = window.requestAnimationFrame(() => setIsTransitioning(true));
+    let cleanupFrame: number | null = null;
     const timer = window.setTimeout(() => {
       setCurrentIndex(incomingIndex);
-      setIncomingIndex(null);
-      setIsTransitioning(false);
+      // Keep the already decoded incoming image visible while the hidden
+      // layer receives the new src. Reveal that layer on the next frame so
+      // React never exposes a blank image during reconciliation.
+      cleanupFrame = window.requestAnimationFrame(() => {
+        setIncomingIndex(null);
+        setIncomingReady(false);
+        setIsTransitioning(false);
+      });
     }, HERO_TRANSITION_MS);
     return () => {
       window.cancelAnimationFrame(frame);
+      if (cleanupFrame !== null) window.cancelAnimationFrame(cleanupFrame);
       window.clearTimeout(timer);
     };
-  }, [incomingIndex]);
+  }, [incomingIndex, incomingReady]);
 
   useEffect(() => {
     if (allSlides.length <= 1 || paused || reducedMotion || incomingIndex !== null) return;
@@ -153,7 +163,7 @@ function Hero({ slides }: { slides: PublicHeroSlide[] }) {
           loading="eager"
           fetchPriority={currentIndex === 0 ? "high" : "low"}
           decoding="async"
-          className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ease-out ${isTransitioning ? "opacity-0" : "opacity-100"}`}
+          className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ease-out will-change-[opacity] ${isTransitioning ? "opacity-0" : "opacity-100"}`}
         />
         {incomingSlide && (
           <img
@@ -166,7 +176,13 @@ function Hero({ slides }: { slides: PublicHeroSlide[] }) {
             fetchPriority="low"
             decoding="async"
             aria-hidden
-            className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ease-out ${isTransitioning ? "opacity-100" : "opacity-0"}`}
+            onLoad={() => setIncomingReady(true)}
+            onError={() => {
+              setIncomingIndex(null);
+              setIncomingReady(false);
+              setIsTransitioning(false);
+            }}
+            className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ease-out will-change-[opacity] ${isTransitioning ? "opacity-100" : "opacity-0"}`}
           />
         )}
       </div>
