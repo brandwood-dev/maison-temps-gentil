@@ -38,9 +38,7 @@ export function BrandLogosMarquee() {
 
   // Triple the track on small catalogs so the loop feels continuous.
   const track =
-    prefersReducedMotion || brands.length >= 6
-      ? brands
-      : [...brands, ...brands, ...brands];
+    prefersReducedMotion || brands.length >= 6 ? brands : [...brands, ...brands, ...brands];
 
   return (
     <section
@@ -48,11 +46,7 @@ export function BrandLogosMarquee() {
       className="section-deferred overflow-hidden bg-[color:var(--color-surface-cream)] py-12 md:py-16 lg:py-20"
     >
       <div className="container-page">
-        <SectionHeading
-          eyebrow="Marques"
-          title="Nos marques à la une"
-          titleId="brands-featured"
-        />
+        <SectionHeading eyebrow="Marques" title="Nos marques à la une" titleId="brands-featured" />
       </div>
 
       <div className="brand-marquee-mask rail-bleed relative">
@@ -63,11 +57,14 @@ export function BrandLogosMarquee() {
             ))}
           </div>
           {!prefersReducedMotion ? (
-          <div aria-hidden="true" className="brand-marquee-group inline-flex items-center gap-8 sm:gap-12">
-            {track.map((b, i) => (
-              <BrandLogo key={`b-${b.name}-${i}`} name={b.name} logoUrl={b.logoUrl} />
-            ))}
-          </div>
+            <div
+              aria-hidden="true"
+              className="brand-marquee-group inline-flex items-center gap-8 sm:gap-12"
+            >
+              {track.map((b, i) => (
+                <BrandLogo key={`b-${b.name}-${i}`} name={b.name} logoUrl={b.logoUrl} />
+              ))}
+            </div>
           ) : null}
         </div>
       </div>

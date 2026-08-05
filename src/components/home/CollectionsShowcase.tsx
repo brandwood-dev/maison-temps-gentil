@@ -77,10 +77,7 @@ function CollectionCard({ to, badge, title, subtitle, image, alt }: CollectionCa
 
 export function CollectionsShowcase() {
   return (
-    <section
-      aria-labelledby="collections-title"
-      className="container-page py-12 md:py-16 lg:py-20"
-    >
+    <section aria-labelledby="collections-title" className="container-page py-12 md:py-16 lg:py-20">
       <SectionHeading
         eyebrow="Collections"
         title="L'élégance intemporelle"

@@ -121,10 +121,7 @@ function FeaturedProducts() {
   const { addItem } = useCart();
   const handleAddToCart = (p: Product, quantity: number) => addItem(p.id, quantity);
   return (
-    <section
-      aria-labelledby="featured-title"
-      className="container-page py-12 md:py-16 lg:py-20"
-    >
+    <section aria-labelledby="featured-title" className="container-page py-12 md:py-16 lg:py-20">
       <SectionHeading eyebrow="Sélection" title="Nos montres" titleId="featured-title" />
       <ProductGrid products={PRODUCTS} onAddToCart={handleAddToCart} />
     </section>
