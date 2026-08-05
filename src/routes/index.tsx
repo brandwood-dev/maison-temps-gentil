@@ -9,6 +9,7 @@ import { BrandLogosMarquee } from "@/components/home/BrandLogosMarquee";
 import { TestimonialsMarquee } from "@/components/home/TestimonialsMarquee";
 
 import { LmmButton } from "@/components/brand/LmmButton";
+import { SectionHeading } from "@/components/brand/SectionHeading";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { PRODUCTS } from "@/fixtures/products";
 import { useCart } from "@/lib/cart-store";
@@ -120,11 +121,8 @@ function FeaturedProducts() {
   const { addItem } = useCart();
   const handleAddToCart = (p: Product, quantity: number) => addItem(p.id, quantity);
   return (
-    <section className="container-page py-12 md:py-16">
-      <div className="mb-6 max-w-2xl md:mb-8">
-        <p className="eyebrow">Sélection</p>
-        <h2 className="t-h1 mt-2">Nos montres</h2>
-      </div>
+    <section aria-labelledby="featured-title" className="container-page py-12 md:py-16 lg:py-20">
+      <SectionHeading eyebrow="Sélection" title="Nos montres" titleId="featured-title" />
       <ProductGrid products={PRODUCTS} onAddToCart={handleAddToCart} />
     </section>
   );

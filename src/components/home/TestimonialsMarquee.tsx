@@ -5,6 +5,7 @@ import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { PRODUCTS } from "@/fixtures/products";
 import { TESTIMONIALS, type Testimonial } from "@/fixtures/testimonials";
 import { getPublicProductBySlug } from "@/lib/products";
+import { SectionHeading } from "@/components/brand/SectionHeading";
 
 function Rating({ rating }: { rating: number }) {
   return (
@@ -63,18 +64,17 @@ export function TestimonialsMarquee() {
   return (
     <section
       aria-labelledby="testimonials-title"
-      className="overflow-hidden bg-[color:var(--color-surface-cream)] py-12 md:py-16"
+      className="section-deferred overflow-hidden bg-[color:var(--color-surface-cream)] py-12 md:py-16 lg:py-20"
     >
       <div className="container-page">
-        <div className="mb-6 max-w-2xl text-left md:mb-10">
-          <p className="eyebrow">Avis Clients</p>
-          <h2 id="testimonials-title" className="t-h1 mt-2">
-            Ils nous font confiance
-          </h2>
-        </div>
+        <SectionHeading
+          eyebrow="Avis Clients"
+          title="Ils nous font confiance"
+          titleId="testimonials-title"
+        />
       </div>
 
-      <div className="reviews-marquee-mask relative pl-4 md:pl-8">
+      <div className="reviews-marquee-mask rail-bleed relative">
         <div className="reviews-marquee-track marquee-track flex items-stretch gap-4 sm:gap-6">
           <ul className="reviews-marquee-group flex items-stretch gap-4 sm:gap-6">
             {TESTIMONIALS.map((t) => (

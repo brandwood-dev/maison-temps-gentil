@@ -196,6 +196,21 @@
   }
 }
 
+/* Rail pleine largeur dont le premier élément démarre exactement
+   sur la gouttière de container-page (débordement à droite seulement). */
+@utility rail-bleed {
+  padding-inline-start: max(1rem, calc((100% - var(--container-max)) / 2 + 1rem));
+  @media (min-width: 768px) {
+    padding-inline-start: max(2rem, calc((100% - var(--container-max)) / 2 + 2rem));
+  }
+}
+
+/* Sections sous la ligne de flottaison : évite layout/paint inutile. */
+@utility section-deferred {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 420px;
+}
+
 @keyframes lmm-marquee {
   from {
     transform: translate3d(0, 0, 0);
@@ -209,8 +224,8 @@
 @utility marquee-track {
   --marquee-gap: 2rem;
   animation: lmm-marquee 26s linear infinite;
-  will-change: transform;
 }
+
 
 @media (min-width: 640px) {
   .marquee-track {
@@ -304,9 +319,10 @@
 
   /* Marques : affichage statique, centré et sans défilement */
   .brand-marquee-mask {
-    overflow-x: visible;
+    overflow-x: hidden;
     mask-image: none;
     -webkit-mask-image: none;
+    padding-inline: 1rem;
   }
 
   .brand-marquee-track {
@@ -319,11 +335,14 @@
   }
 
   .brand-marquee-group {
+    flex: 1 1 auto;
     flex-wrap: wrap;
     justify-content: center;
     width: auto;
     min-width: 0;
+    max-width: 100%;
   }
+
 
   .brand-marquee-group[aria-hidden="true"] {
     display: none;

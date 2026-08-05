@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 
+import { SectionHeading } from "@/components/brand/SectionHeading";
 import femmeImage from "@/assets/collection-femme.jpg";
 import hommeImage from "@/assets/collection-homme.jpg";
 
@@ -76,11 +77,12 @@ function CollectionCard({ to, badge, title, subtitle, image, alt }: CollectionCa
 
 export function CollectionsShowcase() {
   return (
-    <section className="container-page py-12 md:py-16">
-      <div className="mb-6 max-w-2xl md:mb-10">
-        <p className="eyebrow">Collections</p>
-        <h2 className="t-h1 mt-2">L&apos;élégance intemporelle</h2>
-      </div>
+    <section aria-labelledby="collections-title" className="container-page py-12 md:py-16 lg:py-20">
+      <SectionHeading
+        eyebrow="Collections"
+        title="L'élégance intemporelle"
+        titleId="collections-title"
+      />
       <div className="grid gap-5 md:grid-cols-2 md:gap-6">
         {COLLECTIONS.map((c) => (
           <CollectionCard key={c.to} {...c} />

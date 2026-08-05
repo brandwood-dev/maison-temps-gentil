@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { catalogQueryToSearch } from "@/lib/catalog";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { getBrandSummaries } from "@/lib/brands";
+import { SectionHeading } from "@/components/brand/SectionHeading";
 
 function BrandLogo({ name, logoUrl }: { name: string; logoUrl: string }) {
   return (
@@ -37,23 +38,18 @@ export function BrandLogosMarquee() {
 
   // Triple the track on small catalogs so the loop feels continuous.
   const track =
-    prefersReducedMotion || brands.length >= 6
-      ? brands
-      : [...brands, ...brands, ...brands];
+    prefersReducedMotion || brands.length >= 6 ? brands : [...brands, ...brands, ...brands];
 
   return (
-    <section aria-labelledby="brands-featured" className="overflow-hidden py-12 md:py-16">
+    <section
+      aria-labelledby="brands-featured"
+      className="section-deferred overflow-hidden bg-[color:var(--color-surface-cream)] py-12 md:py-16 lg:py-20"
+    >
       <div className="container-page">
-        <div className="mb-6 max-w-2xl text-left md:mb-10">
-          <p className="eyebrow">Marques</p>
-          <h2 id="brands-featured" className="t-h1 mt-2">
-            Nos marques à la une
-          </h2>
-        </div>
+        <SectionHeading eyebrow="Marques" title="Nos marques à la une" titleId="brands-featured" />
       </div>
 
-
-      <div className="brand-marquee-mask relative">
+      <div className="brand-marquee-mask rail-bleed relative">
         <div className="brand-marquee-track marquee-track inline-flex items-center gap-8 sm:gap-12">
           <div className="brand-marquee-group inline-flex items-center gap-8 sm:gap-12">
             {track.map((b, i) => (
@@ -61,11 +57,14 @@ export function BrandLogosMarquee() {
             ))}
           </div>
           {!prefersReducedMotion ? (
-          <div aria-hidden="true" className="brand-marquee-group inline-flex items-center gap-8 sm:gap-12">
-            {track.map((b, i) => (
-              <BrandLogo key={`b-${b.name}-${i}`} name={b.name} logoUrl={b.logoUrl} />
-            ))}
-          </div>
+            <div
+              aria-hidden="true"
+              className="brand-marquee-group inline-flex items-center gap-8 sm:gap-12"
+            >
+              {track.map((b, i) => (
+                <BrandLogo key={`b-${b.name}-${i}`} name={b.name} logoUrl={b.logoUrl} />
+              ))}
+            </div>
           ) : null}
         </div>
       </div>
