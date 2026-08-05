@@ -3,9 +3,7 @@ import { Star } from "lucide-react";
 
 import { SectionHeading } from "@/components/brand/SectionHeading";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-import { TESTIMONIALS, type Testimonial } from "@/fixtures/testimonials";
-import { PRODUCTS } from "@/fixtures/products";
-import { getPublicProductBySlug } from "@/lib/products";
+import type { PublicTestimonial } from "@/lib/catalog-api";
 
 function Rating({ rating }: { rating: number }) {
   return (
@@ -26,9 +24,7 @@ function Rating({ rating }: { rating: number }) {
   );
 }
 
-function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
-  const product = getPublicProductBySlug(PRODUCTS, testimonial.productSlug);
-
+function TestimonialCard({ testimonial }: { testimonial: PublicTestimonial }) {
   return (
     <article className="flex h-full w-[78vw] max-w-[340px] shrink-0 flex-col justify-between gap-5 rounded-[var(--radius-lg)] border border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-5 sm:w-[340px] sm:p-6">
       <div className="space-y-3">
@@ -42,23 +38,27 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
         <p className="text-xs text-[color:var(--color-muted-foreground)]">
           {testimonial.governorate}, Tunisie
         </p>
-        {product ? (
+        {testimonial.productSlug && testimonial.productTitle ? (
           <Link
             to="/montres/$slug"
-            params={{ slug: product.slug }}
+            params={{ slug: testimonial.productSlug }}
             className="mt-1 inline-block text-xs font-semibold tracking-[0.06em] text-[color:var(--color-gold)] underline decoration-[color:var(--color-gold)]/40 underline-offset-4 hover:decoration-[color:var(--color-gold)]"
           >
-            {product.name}
+            {testimonial.productTitle}
           </Link>
+        ) : testimonial.productTitle ? (
+          <p className="text-xs text-[color:var(--color-muted-foreground)]">
+            {testimonial.productTitle}
+          </p>
         ) : null}
       </footer>
     </article>
   );
 }
 
-export function TestimonialsMarquee() {
+export function TestimonialsMarquee({ testimonials }: { testimonials: PublicTestimonial[] }) {
   const prefersReducedMotion = usePrefersReducedMotion();
-  if (TESTIMONIALS.length === 0) return null;
+  if (testimonials.length === 0) return null;
 
   return (
     <section
@@ -76,7 +76,7 @@ export function TestimonialsMarquee() {
       <div className="reviews-marquee-mask rail-bleed relative">
         <div className="reviews-marquee-track marquee-track flex items-stretch gap-4 sm:gap-6">
           <ul className="reviews-marquee-group flex items-stretch gap-4 sm:gap-6">
-            {TESTIMONIALS.map((testimonial) => (
+            {testimonials.map((testimonial) => (
               <li key={testimonial.id} className="flex">
                 <TestimonialCard testimonial={testimonial} />
               </li>
@@ -87,7 +87,7 @@ export function TestimonialsMarquee() {
               aria-hidden="true"
               className="reviews-marquee-group flex items-stretch gap-4 sm:gap-6"
             >
-              {TESTIMONIALS.map((testimonial) => (
+              {testimonials.map((testimonial) => (
                 <li key={`dup-${testimonial.id}`} className="flex">
                   <TestimonialCard testimonial={testimonial} />
                 </li>

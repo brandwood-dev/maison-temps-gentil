@@ -14,10 +14,17 @@ import { useCart } from "@/lib/cart-store";
 import { trackAddToCart } from "@/lib/meta-pixel";
 import type { Product } from "@/types/product";
 import { absoluteUrl } from "@/config/site";
-import { getPublicHeroSlides, type PublicHeroSlide } from "@/lib/catalog-api";
+import {
+  getPublicHeroSlides,
+  getPublicTestimonials,
+  type PublicHeroSlide,
+} from "@/lib/catalog-api";
 
 export const Route = createFileRoute("/")({
-  loader: async () => ({ heroSlides: await getPublicHeroSlides().catch(() => []) }),
+  loader: async () => ({
+    heroSlides: await getPublicHeroSlides().catch(() => []),
+    testimonials: await getPublicTestimonials().catch(() => []),
+  }),
   head: () => ({
     meta: [{ property: "og:url", content: absoluteUrl() }],
     links: [
@@ -29,7 +36,7 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-  const { heroSlides } = Route.useLoaderData();
+  const { heroSlides, testimonials } = Route.useLoaderData();
   return (
     <div className="min-h-screen bg-[color:var(--color-background)]">
       <AnnouncementBar />
@@ -41,7 +48,7 @@ function HomePage() {
         <CollectionsShowcase />
         <BrandLogosMarquee />
         <FeaturedProducts />
-        <TestimonialsMarquee />
+        <TestimonialsMarquee testimonials={testimonials} />
       </main>
 
       <SiteFooter />

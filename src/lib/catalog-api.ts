@@ -76,6 +76,26 @@ export type PublicPromoMessage = {
   active: boolean;
 };
 
+export type PublicTestimonial = {
+  id: string;
+  fullName: string;
+  message: string;
+  governorate: string;
+  rating: number;
+  productId?: string;
+  productTitle?: string;
+  productSlug?: string;
+  published: boolean;
+  sortOrder: number;
+};
+
+type TestimonialPage = {
+  data: PublicTestimonial[];
+  page: number;
+  pageSize: number;
+  total: number;
+};
+
 type PromoMessagePage = {
   data: PublicPromoMessage[];
   page: number;
@@ -188,6 +208,12 @@ export const getPublicPromoMessages = createServerFn({ method: "GET" }).handler(
     .filter((message) => message.active)
     .sort((a, b) => a.sortOrder - b.sortOrder)
     .map((message) => message.message);
+});
+
+/** Curated testimonials are public read-only content; drafts never leave the API. */
+export const getPublicTestimonials = createServerFn({ method: "GET" }).handler(async () => {
+  const page = await apiRequest<TestimonialPage>("/api/v1/public/testimonials");
+  return page.data.filter((item) => item.published).slice(0, 12);
 });
 
 /** Load products for one public category without trusting client-provided prices or status. */
