@@ -233,7 +233,6 @@ export function ProductCard({
           ) : null}
         </div>
 
-
         {/* Actions */}
         <div className="mt-auto flex items-stretch gap-2 pt-3">
           {ViewAction}
