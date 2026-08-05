@@ -21,7 +21,7 @@ export function CatalogFilters({
 }: Props) {
   return (
     <div className="flex flex-col gap-6">
-      {hidePromoFilter ? null : (
+      {hidePromoFilter || (availableFilters.promotionCount === 0 && !query.promotionOnly) ? null : (
         <PromoFilter idPrefix={idPrefix} value={query.promotionOnly} onChange={onChange} />
       )}
       {availableFilters.brands.length > 0 ? (

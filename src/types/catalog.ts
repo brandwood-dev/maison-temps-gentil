@@ -51,6 +51,8 @@ export interface CatalogResult {
     dialColors: CatalogFacetOption[];
     attributes: CatalogAttributeFilter[];
     priceRange: CatalogPriceRange | null;
+    /** Number of products matching the current scope and other filters that are on promotion. */
+    promotionCount: number;
   };
 }
 

@@ -149,6 +149,56 @@ console.log("\n== active vs expired promotion ==");
   );
 }
 
+console.log("\n== zero-count facet options are hidden ==");
+{
+  const attribute = {
+    id: "case-material",
+    code: "case_material",
+    label: "Matière du boîtier",
+    type: "select" as const,
+    visibleInFilters: true,
+    values: [
+      { id: "steel", label: "Acier" },
+      { id: "gold", label: "Or" },
+    ],
+  };
+  const products = [
+    make({
+      id: "steel-product",
+      attributes: [{ ...attribute, values: [{ id: "steel", label: "Acier" }] }],
+    }),
+  ];
+  const result = getCatalogResult(products, DEFAULT_CATALOG_QUERY, {
+    attributes: [attribute],
+    now,
+  });
+  assert(
+    result.availableFilters.attributes[0]?.options.map((option) => option.value).join(",") ===
+      "steel",
+    "attribute values with zero products are hidden",
+  );
+
+  const selected = getCatalogResult(
+    products,
+    { ...DEFAULT_CATALOG_QUERY, attributes: { case_material: ["gold"] } },
+    { attributes: [attribute], now },
+  );
+  assert(
+    selected.availableFilters.attributes[0]?.options.map((option) => option.value).join(",") ===
+      "steel,gold",
+    "a selected zero-count value remains visible so it can be cleared",
+  );
+}
+
+console.log("\n== empty promotion facet is hidden ==");
+{
+  const result = getCatalogResult([TEST_FIXTURES[0]], DEFAULT_CATALOG_QUERY, { now });
+  assert(
+    result.availableFilters.promotionCount === 0,
+    "promotion count is zero when no promotion matches",
+  );
+}
+
 console.log("\n== price sort ==");
 {
   const asc = getCatalogResult(

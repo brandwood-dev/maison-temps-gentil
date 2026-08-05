@@ -81,7 +81,12 @@ export function getCatalogResult(
   // Predicate builder used for both filtering and facet-count computation.
   const matches = (
     p: Product,
-    opts: { ignoreBrand?: boolean; ignoreColor?: boolean; ignoreAttribute?: string } = {},
+    opts: {
+      ignoreBrand?: boolean;
+      ignoreColor?: boolean;
+      ignoreAttribute?: string;
+      ignorePromotion?: boolean;
+    } = {},
   ): boolean => {
     if (!opts.ignoreBrand && query.brands.length && !query.brands.includes(p.brand)) return false;
     if (
@@ -103,7 +108,8 @@ export function getCatalogResult(
     const eff = effectivePriceMillimes(p, now);
     if (query.minPriceMillimes != null && eff < query.minPriceMillimes) return false;
     if (query.maxPriceMillimes != null && eff > query.maxPriceMillimes) return false;
-    if (query.promotionOnly && !isPromotionActive(p.promotion, now)) return false;
+    if (!opts.ignorePromotion && query.promotionOnly && !isPromotionActive(p.promotion, now))
+      return false;
     return true;
   };
 
@@ -133,44 +139,62 @@ export function getCatalogResult(
   const items = sorted.slice(start, start + query.pageSize);
 
   // Facets — always computed on the fixed scope, not on `filtered`.
-  const uniqueBrands = Array.from(new Set(scoped.map((p) => p.brand))).sort((a, b) =>
-    a.localeCompare(b, "fr"),
+  const uniqueBrands = Array.from(new Set([...scoped.map((p) => p.brand), ...query.brands])).sort(
+    (a, b) => a.localeCompare(b, "fr"),
   );
-  const brands: CatalogFacetOption[] = uniqueBrands.map((brand) => ({
-    value: brand,
-    label: brand,
-    count: scoped.filter((p) => p.brand === brand && matches(p, { ignoreBrand: true })).length,
-  }));
+  const brands: CatalogFacetOption[] = uniqueBrands
+    .map((brand) => ({
+      value: brand,
+      label: brand,
+      count: scoped.filter((p) => p.brand === brand && matches(p, { ignoreBrand: true })).length,
+    }))
+    .filter((option) => option.count > 0 || query.brands.includes(option.value));
 
   const uniqueColors = Array.from(
-    new Set(scoped.map((p) => p.dialColor?.label).filter((x): x is string => Boolean(x))),
+    new Set([
+      ...scoped.map((p) => p.dialColor?.label).filter((x): x is string => Boolean(x)),
+      ...query.dialColors,
+    ]),
   ).sort((a, b) => a.localeCompare(b, "fr"));
-  const dialColors: CatalogFacetOption[] = uniqueColors.map((label) => ({
-    value: label,
-    label,
-    count: scoped.filter((p) => p.dialColor?.label === label && matches(p, { ignoreColor: true }))
-      .length,
-  }));
+  const dialColors: CatalogFacetOption[] = uniqueColors
+    .map((label) => ({
+      value: label,
+      label,
+      count: scoped.filter((p) => p.dialColor?.label === label && matches(p, { ignoreColor: true }))
+        .length,
+    }))
+    .filter((option) => option.count > 0 || query.dialColors.includes(option.value));
 
   const attributes = (scope.attributes ?? [])
     .filter((attribute) => attribute.visibleInFilters !== false && attribute.values.length > 0)
-    .map((attribute) => ({
-      id: attribute.id,
-      code: attribute.code,
-      label: attribute.label,
-      type: attribute.type,
-      options: attribute.values.map((value) => ({
-        value: value.id,
-        label: value.label,
-        count: scoped.filter((product) => {
-          const assigned = product.attributes?.find((item) => item.code === attribute.code);
-          return Boolean(
-            assigned?.values.some((assignedValue) => assignedValue.id === value.id) &&
-            matches(product, { ignoreAttribute: attribute.code }),
-          );
-        }).length,
-      })),
-    }));
+    .map((attribute) => {
+      const selected = query.attributes[attribute.code] ?? [];
+      return {
+        id: attribute.id,
+        code: attribute.code,
+        label: attribute.label,
+        type: attribute.type,
+        options: attribute.values
+          .map((value) => ({
+            value: value.id,
+            label: value.label,
+            count: scoped.filter((product) => {
+              const assigned = product.attributes?.find((item) => item.code === attribute.code);
+              return Boolean(
+                assigned?.values.some((assignedValue) => assignedValue.id === value.id) &&
+                matches(product, { ignoreAttribute: attribute.code }),
+              );
+            }).length,
+          }))
+          .filter((option) => option.count > 0 || selected.includes(option.value)),
+      };
+    })
+    .filter((attribute) => attribute.options.length > 0);
+
+  const promotionCount = scoped.filter(
+    (product) =>
+      isPromotionActive(product.promotion, now) && matches(product, { ignorePromotion: true }),
+  ).length;
 
   let priceRange: CatalogResult["availableFilters"]["priceRange"] = null;
   if (scoped.length > 0) {
@@ -192,7 +216,7 @@ export function getCatalogResult(
     page,
     pageSize: query.pageSize,
     totalPages,
-    availableFilters: { brands, dialColors, attributes, priceRange },
+    availableFilters: { brands, dialColors, attributes, priceRange, promotionCount },
   };
 }
 
