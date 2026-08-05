@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
@@ -61,31 +61,115 @@ const fallbackHero: PublicHeroSlide = {
   active: true,
 };
 
+const HERO_AUTOPLAY_MS = 6500;
+const HERO_TRANSITION_MS = 700;
+
 function Hero({ slides }: { slides: PublicHeroSlide[] }) {
-  const allSlides = slides.length ? slides.slice(0, 5) : [fallbackHero];
-  const [activeIndex, setActiveIndex] = useState(0);
+  const allSlides = slides.length > 5 ? slides.slice(0, 5) : slides.length ? slides : [fallbackHero];
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [incomingIndex, setIncomingIndex] = useState<number | null>(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [paused, setPaused] = useState(false);
-  const slide = allSlides[activeIndex] ?? allSlides[0];
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const slide = allSlides[currentIndex] ?? allSlides[0];
+  const incomingSlide = incomingIndex === null ? null : allSlides[incomingIndex];
+
+  const goToSlide = useCallback(
+    (nextIndex: number) => {
+      const safeIndex = (nextIndex + allSlides.length) % allSlides.length;
+      if (safeIndex === currentIndex || incomingIndex !== null) return;
+
+      if (reducedMotion) {
+        setCurrentIndex(safeIndex);
+        return;
+      }
+
+      setIncomingIndex(safeIndex);
+    },
+    [allSlides.length, currentIndex, incomingIndex, reducedMotion],
+  );
 
   useEffect(() => {
-    if (paused || allSlides.length <= 1) return;
-    const timer = window.setInterval(() => setActiveIndex((index) => (index + 1) % allSlides.length), 6000);
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updateMotionPreference = () => setReducedMotion(mediaQuery.matches);
+    updateMotionPreference();
+    mediaQuery.addEventListener("change", updateMotionPreference);
+    return () => mediaQuery.removeEventListener("change", updateMotionPreference);
+  }, []);
+
+  useEffect(() => {
+    if (incomingIndex === null) return;
+    const frame = window.requestAnimationFrame(() => setIsTransitioning(true));
+    const timer = window.setTimeout(() => {
+      setCurrentIndex(incomingIndex);
+      setIncomingIndex(null);
+      setIsTransitioning(false);
+    }, HERO_TRANSITION_MS);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(timer);
+    };
+  }, [incomingIndex]);
+
+  useEffect(() => {
+    if (allSlides.length <= 1 || paused || reducedMotion || incomingIndex !== null) return;
+    const timer = window.setInterval(() => {
+      goToSlide(currentIndex + 1);
+    }, HERO_AUTOPLAY_MS);
     return () => window.clearInterval(timer);
-  }, [allSlides.length, paused]);
+  }, [allSlides.length, currentIndex, goToSlide, incomingIndex, paused, reducedMotion]);
+
+  useEffect(() => {
+    if (allSlides.length <= 1 || typeof window === "undefined") return;
+    const nextSlide = allSlides[(currentIndex + 1) % allSlides.length];
+    if (!nextSlide?.imageUrl) return;
+    const image = new Image();
+    image.decoding = "async";
+    image.src = nextSlide.imageUrl;
+  }, [allSlides, currentIndex]);
+
+  const activeDotIndex = incomingIndex ?? currentIndex;
 
   return (
-    <section className="relative isolate overflow-hidden bg-[color:var(--color-primary)]" aria-roledescription="carousel" aria-label="Présentation de la boutique" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocus={() => setPaused(true)} onBlur={() => setPaused(false)}>
-      <img
-        key={slide.id}
-        src={slide.imageUrl}
-        sizes="100vw"
-        alt={slide.imageAlt ?? slide.title}
-        width={1600}
-        height={900}
-        fetchPriority="high"
-        decoding="async"
-        className="absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-500"
-      />
+    <section
+      id="hero-carousel"
+      className="relative isolate overflow-hidden bg-[color:var(--color-primary)]"
+      aria-roledescription="carousel"
+      aria-label="Présentation de la boutique"
+      onPointerEnter={() => setPaused(true)}
+      onPointerLeave={() => setPaused(false)}
+      onFocus={() => setPaused(true)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setPaused(false);
+      }}
+    >
+      <div className="absolute inset-0" aria-live={paused ? "polite" : "off"}>
+        <img
+          src={slide.imageUrl}
+          sizes="100vw"
+          alt={slide.imageAlt ?? slide.title}
+          width={1600}
+          height={900}
+          loading="eager"
+          fetchPriority={currentIndex === 0 ? "high" : "low"}
+          decoding="async"
+          className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ease-out ${isTransitioning ? "opacity-0" : "opacity-100"}`}
+        />
+        {incomingSlide && (
+          <img
+            src={incomingSlide.imageUrl}
+            sizes="100vw"
+            alt={incomingSlide.imageAlt ?? incomingSlide.title}
+            width={1600}
+            height={900}
+            loading="eager"
+            fetchPriority="low"
+            decoding="async"
+            aria-hidden
+            className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ease-out ${isTransitioning ? "opacity-100" : "opacity-0"}`}
+          />
+        )}
+      </div>
       <div aria-hidden className="absolute inset-0 bg-[image:var(--hero-overlay)]" />
       <div className="container-page relative flex min-h-[520px] flex-col justify-end py-14 sm:min-h-[560px] md:min-h-[620px] md:justify-center md:py-24 lg:min-h-[680px]">
         <div className="max-w-xl">
@@ -102,7 +186,41 @@ function Hero({ slides }: { slides: PublicHeroSlide[] }) {
           </div>
         </div>
       </div>
-      {allSlides.length > 1 && <div className="absolute inset-x-0 bottom-5 z-10 flex items-center justify-center gap-2"><button type="button" aria-label="Slide précédente" className="rounded-full border border-white/40 p-2 text-white" onClick={() => setActiveIndex((index) => (index - 1 + allSlides.length) % allSlides.length)}><ArrowLeft className="h-4 w-4" /></button>{allSlides.map((item, index) => <button key={item.id} type="button" aria-label={`Afficher la slide ${index + 1}`} aria-current={index === activeIndex} className={`h-2 rounded-full transition-all ${index === activeIndex ? "w-7 bg-white" : "w-2 bg-white/50"}`} onClick={() => setActiveIndex(index)} />)}<button type="button" aria-label="Slide suivante" className="rounded-full border border-white/40 p-2 text-white" onClick={() => setActiveIndex((index) => (index + 1) % allSlides.length)}><ArrowRight className="h-4 w-4" /></button></div>}
+      {allSlides.length > 1 && (
+        <div className="absolute inset-x-0 bottom-5 z-10 flex items-center justify-center gap-1.5" role="group" aria-label="Contrôles du carrousel">
+          <button
+            type="button"
+            aria-label="Slide précédente"
+            aria-controls="hero-carousel"
+            className="hidden h-11 w-11 items-center justify-center rounded-full border border-white/40 text-white transition-colors hover:bg-white/15 md:inline-flex"
+            onClick={() => goToSlide(currentIndex - 1)}
+          >
+            <ArrowLeft className="h-4 w-4" aria-hidden />
+          </button>
+          {allSlides.map((item, index) => (
+            <button
+              key={item.id}
+              type="button"
+              aria-label={`Afficher la slide ${index + 1}`}
+              aria-current={index === activeDotIndex ? "true" : undefined}
+              aria-controls="hero-carousel"
+              className="group relative flex h-11 w-11 items-center justify-center"
+              onClick={() => goToSlide(index)}
+            >
+              <span className={`block h-1.5 rounded-full transition-all duration-300 ${index === activeDotIndex ? "w-7 bg-white" : "w-1.5 bg-white/50 group-hover:bg-white/80"}`} />
+            </button>
+          ))}
+          <button
+            type="button"
+            aria-label="Slide suivante"
+            aria-controls="hero-carousel"
+            className="hidden h-11 w-11 items-center justify-center rounded-full border border-white/40 text-white transition-colors hover:bg-white/15 md:inline-flex"
+            onClick={() => goToSlide(currentIndex + 1)}
+          >
+            <ArrowRight className="h-4 w-4" aria-hidden />
+          </button>
+        </div>
+      )}
     </section>
   );
 }
