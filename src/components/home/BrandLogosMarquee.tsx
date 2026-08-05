@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 
 import { catalogQueryToSearch } from "@/lib/catalog";
+import { SectionHeading } from "@/components/brand/SectionHeading";
 import type { PublicBrand } from "@/lib/catalog-api";
 import { useCatalogBrands } from "@/lib/catalog-products";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
@@ -44,9 +45,18 @@ export function BrandLogosMarquee() {
     prefersReducedMotion || brands.length >= 6 ? brands : [...brands, ...brands, ...brands];
 
   return (
-    <section aria-labelledby="brands-featured" className="overflow-hidden py-12 md:py-16">
+    <section
+      aria-labelledby="brands-featured"
+      className="section-deferred overflow-hidden bg-[color:var(--color-surface-cream)] py-12 md:py-16 lg:py-20"
+    >
       <div className="container-page">
-        <div className="mb-6 max-w-2xl text-left md:mb-10">
+        <SectionHeading
+          eyebrow="Marques"
+          title="Nos marques à la une"
+          titleId="brands-featured"
+          align="center"
+        />
+        <div className="hidden">
           <p className="eyebrow">Marques</p>
           <h2 id="brands-featured" className="t-h1 mt-2">
             Nos marques à la une
@@ -54,14 +64,11 @@ export function BrandLogosMarquee() {
         </div>
       </div>
 
-      <div className="brand-marquee-mask relative">
+      <div className="brand-marquee-mask rail-bleed relative">
         <div className="brand-marquee-track marquee-track inline-flex items-center gap-8 sm:gap-12">
           <div className="brand-marquee-group inline-flex items-center gap-8 sm:gap-12">
             {track.map((brand, index) => (
-              <BrandLogo
-                key={`primary-${brand.name}-${index}`}
-                brand={brand}
-              />
+              <BrandLogo key={`primary-${brand.name}-${index}`} brand={brand} />
             ))}
           </div>
           {!prefersReducedMotion ? (
@@ -70,10 +77,7 @@ export function BrandLogosMarquee() {
               className="brand-marquee-group inline-flex items-center gap-8 sm:gap-12"
             >
               {track.map((brand, index) => (
-                <BrandLogo
-                  key={`duplicate-${brand.name}-${index}`}
-                  brand={brand}
-                />
+                <BrandLogo key={`duplicate-${brand.name}-${index}`} brand={brand} />
               ))}
             </div>
           ) : null}

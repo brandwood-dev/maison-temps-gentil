@@ -7,6 +7,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { TrustStrip } from "@/components/layout/TrustStrip";
 import { CollectionsShowcase } from "@/components/home/CollectionsShowcase";
 import { BrandLogosMarquee } from "@/components/home/BrandLogosMarquee";
+import { TestimonialsMarquee } from "@/components/home/TestimonialsMarquee";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { useCatalogProducts } from "@/lib/catalog-products";
 import { useCart } from "@/lib/cart-store";
@@ -40,6 +41,7 @@ function HomePage() {
         <CollectionsShowcase />
         <BrandLogosMarquee />
         <FeaturedProducts />
+        <TestimonialsMarquee />
       </main>
 
       <SiteFooter />

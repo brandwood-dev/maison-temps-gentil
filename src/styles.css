@@ -190,6 +190,20 @@
   }
 }
 
+/* Full-width rails start on the same gutter as container-page and bleed right. */
+@utility rail-bleed {
+  padding-inline-start: max(1rem, calc((100% - var(--container-max)) / 2 + 1rem));
+  @media (min-width: 768px) {
+    padding-inline-start: max(2rem, calc((100% - var(--container-max)) / 2 + 2rem));
+  }
+}
+
+/* Defer below-the-fold rendering without changing the visual layout. */
+@utility section-deferred {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 420px;
+}
+
 @utility t-display {
   font-size: clamp(2rem, 5vw + 1rem, 3.75rem);
   line-height: 1.05;
@@ -257,10 +271,29 @@
 }
 
 .brand-marquee-track,
-.brand-marquee-group {
+.brand-marquee-group,
+.reviews-marquee-track,
+.reviews-marquee-group {
   width: max-content;
   min-width: max-content;
   flex: none;
+}
+
+.reviews-marquee-mask {
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 1rem,
+    black calc(100% - 2rem),
+    transparent 100%
+  );
+}
+
+.reviews-marquee-mask:hover .marquee-track,
+.reviews-marquee-mask:active .marquee-track,
+.reviews-marquee-mask:focus-within .marquee-track {
+  animation-play-state: paused;
 }
 
 .brand-logo-slot {
@@ -324,6 +357,19 @@
     overflow-x: visible;
     mask-image: none;
     -webkit-mask-image: none;
+  }
+
+  .reviews-marquee-mask {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+
+  .reviews-marquee-track {
+    animation: none !important;
+    transform: none !important;
+    will-change: auto;
   }
 
   .brand-marquee-track {
