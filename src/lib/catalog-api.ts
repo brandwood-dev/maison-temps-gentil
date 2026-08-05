@@ -69,6 +69,20 @@ export type PublicHeroSlide = {
 
 type HeroPage = { data: PublicHeroSlide[]; page: number; pageSize: number; total: number };
 
+export type PublicPromoMessage = {
+  id: string;
+  message: string;
+  sortOrder: number;
+  active: boolean;
+};
+
+type PromoMessagePage = {
+  data: PublicPromoMessage[];
+  page: number;
+  pageSize: number;
+  total: number;
+};
+
 export type PublicOrderTracking = {
   id: string;
   reference: string;
@@ -165,6 +179,15 @@ export const getPublicAttributes = createServerFn({ method: "GET" }).handler(asy
 export const getPublicHeroSlides = createServerFn({ method: "GET" }).handler(async () => {
   const page = await apiRequest<HeroPage>("/api/v1/public/hero-slides");
   return page.data.filter((slide) => slide.active).slice(0, 5);
+});
+
+/** Public announcement messages are managed in the Admin and returned active-only by the API. */
+export const getPublicPromoMessages = createServerFn({ method: "GET" }).handler(async () => {
+  const page = await apiRequest<PromoMessagePage>("/api/v1/public/promo-banner-messages");
+  return page.data
+    .filter((message) => message.active)
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .map((message) => message.message);
 });
 
 /** Load products for one public category without trusting client-provided prices or status. */

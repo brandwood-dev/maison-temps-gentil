@@ -17,11 +17,13 @@ import {
   getPublicAttributes,
   getPublicBrands,
   getPublicCategories,
+  getPublicPromoMessages,
   getPublicProducts,
 } from "../lib/catalog-api";
 import { initMetaPixel, trackPageView } from "../lib/meta-pixel";
 import { CartDrawer } from "../components/cart/CartDrawer";
 import { ScrollToTop } from "../components/layout/ScrollToTop";
+import { AnnouncementMessagesProvider } from "../components/layout/AnnouncementBar";
 
 const SITE_TITLE = "La Maison des Montres | Montres élégantes en Tunisie";
 const SITE_DESCRIPTION =
@@ -91,13 +93,14 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   loader: async () => {
-    const [products, brands, categories, attributes] = await Promise.all([
+    const [products, brands, categories, attributes, promoMessages] = await Promise.all([
       getPublicProducts(),
       getPublicBrands().catch(() => []),
       getPublicCategories().catch(() => []),
       getPublicAttributes().catch(() => []),
+      getPublicPromoMessages().catch(() => undefined),
     ]);
-    return { initialNow: Date.now(), products, brands, categories, attributes };
+    return { initialNow: Date.now(), products, brands, categories, attributes, promoMessages };
   },
 
   head: () => ({
@@ -162,17 +165,19 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const { initialNow } = Route.useLoaderData();
+  const { initialNow, promoMessages } = Route.useLoaderData();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <NowProvider initialNow={initialNow}>
-        <MetaPixelTracker />
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <Outlet />
-        <CartDrawer />
-        <ScrollToTop />
-      </NowProvider>
+      <AnnouncementMessagesProvider messages={promoMessages}>
+        <NowProvider initialNow={initialNow}>
+          <MetaPixelTracker />
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+          <CartDrawer />
+          <ScrollToTop />
+        </NowProvider>
+      </AnnouncementMessagesProvider>
     </QueryClientProvider>
   );
 }

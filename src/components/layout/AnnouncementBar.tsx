@@ -1,6 +1,23 @@
+import { createContext, useContext, type ReactNode } from "react";
 import { ANNOUNCEMENT_MESSAGES } from "@/config/nav";
 
 type Props = { messages?: readonly string[] };
+
+const AnnouncementMessagesContext = createContext<readonly string[] | undefined>(undefined);
+
+export function AnnouncementMessagesProvider({
+  messages,
+  children,
+}: {
+  messages?: readonly string[];
+  children: ReactNode;
+}) {
+  return (
+    <AnnouncementMessagesContext.Provider value={messages}>
+      {children}
+    </AnnouncementMessagesContext.Provider>
+  );
+}
 
 function Sequence({ messages, duplicate }: { messages: readonly string[]; duplicate?: boolean }) {
   return (
@@ -20,8 +37,10 @@ function Sequence({ messages, duplicate }: { messages: readonly string[]; duplic
   );
 }
 
-export function AnnouncementBar({ messages = ANNOUNCEMENT_MESSAGES }: Props) {
-  const list = messages.length > 0 ? messages : ANNOUNCEMENT_MESSAGES;
+export function AnnouncementBar({ messages }: Props) {
+  const contextMessages = useContext(AnnouncementMessagesContext);
+  const list = messages ?? contextMessages ?? ANNOUNCEMENT_MESSAGES;
+  if (list.length === 0) return null;
 
   return (
     <div
