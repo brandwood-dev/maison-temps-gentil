@@ -89,6 +89,26 @@ export type PublicTestimonial = {
   sortOrder: number;
 };
 
+export type PublicStoreSettings = {
+  identity: {
+    name: string;
+    tagline?: string;
+    logoUrl?: string;
+    currency: "TND";
+  };
+  support: {
+    email: string;
+    phone: string;
+    whatsapp: string;
+    address?: string;
+  };
+  seo: {
+    defaultTitle: string;
+    defaultDescription: string;
+  };
+  updatedAt: string;
+};
+
 type TestimonialPage = {
   data: PublicTestimonial[];
   page: number;
@@ -214,6 +234,10 @@ export const getPublicPromoMessages = createServerFn({ method: "GET" }).handler(
 export const getPublicTestimonials = createServerFn({ method: "GET" }).handler(async () => {
   const page = await apiRequest<TestimonialPage>("/api/v1/public/testimonials");
   return page.data.filter((item) => item.published).slice(0, 12);
+});
+
+export const getPublicSettings = createServerFn({ method: "GET" }).handler(async () => {
+  return apiRequest<PublicStoreSettings>("/api/v1/public/settings");
 });
 
 /** Load products for one public category without trusting client-provided prices or status. */

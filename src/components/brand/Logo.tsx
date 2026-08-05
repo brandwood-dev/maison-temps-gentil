@@ -10,14 +10,23 @@ type LogoProps = {
   className?: string;
   height?: number;
   priority?: boolean;
+  src?: string;
+  alt?: string;
 };
 
-export function Logo({ variant = "dark", className, height = 40, priority = false }: LogoProps) {
-  const src = variant === "light" ? SRC_LIGHT : SRC_DARK;
+export function Logo({
+  variant = "dark",
+  className,
+  height = 40,
+  priority = false,
+  src: customSrc,
+  alt = "La Maison des Montres",
+}: LogoProps) {
+  const src = customSrc ?? (variant === "light" ? SRC_LIGHT : SRC_DARK);
   return (
     <img
       src={src}
-      alt="La Maison des Montres"
+      alt={alt}
       height={height}
       width={height * 3}
       loading={priority ? "eager" : "lazy"}

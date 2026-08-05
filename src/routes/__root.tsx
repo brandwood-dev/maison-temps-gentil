@@ -19,11 +19,13 @@ import {
   getPublicCategories,
   getPublicPromoMessages,
   getPublicProducts,
+  getPublicSettings,
 } from "../lib/catalog-api";
 import { initMetaPixel, trackPageView } from "../lib/meta-pixel";
 import { CartDrawer } from "../components/cart/CartDrawer";
 import { ScrollToTop } from "../components/layout/ScrollToTop";
 import { AnnouncementMessagesProvider } from "../components/layout/AnnouncementBar";
+import { SiteSettingsProvider } from "../lib/site-settings";
 
 const SITE_TITLE = "La Maison des Montres | Montres élégantes en Tunisie";
 const SITE_DESCRIPTION =
@@ -93,30 +95,36 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   loader: async () => {
-    const [products, brands, categories, attributes, promoMessages] = await Promise.all([
+    const [products, brands, categories, attributes, promoMessages, settings] = await Promise.all([
       getPublicProducts(),
       getPublicBrands().catch(() => []),
       getPublicCategories().catch(() => []),
       getPublicAttributes().catch(() => []),
       getPublicPromoMessages().catch(() => undefined),
+      getPublicSettings().catch(() => null),
     ]);
-    return { initialNow: Date.now(), products, brands, categories, attributes, promoMessages };
+    return { initialNow: Date.now(), products, brands, categories, attributes, promoMessages, settings };
   },
 
-  head: () => ({
+  head: ({ loaderData }) => {
+    const settings = loaderData?.settings;
+    const title = settings?.seo.defaultTitle || SITE_TITLE;
+    const description = settings?.seo.defaultDescription || SITE_DESCRIPTION;
+    const siteName = settings?.identity.name || "La Maison des Montres";
+    return {
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: SITE_TITLE },
-      { name: "description", content: SITE_DESCRIPTION },
-      { property: "og:site_name", content: "La Maison des Montres" },
-      { property: "og:title", content: SITE_TITLE },
-      { property: "og:description", content: SITE_DESCRIPTION },
+      { title },
+      { name: "description", content: description },
+      { property: "og:site_name", content: siteName },
+      { property: "og:title", content: title },
+      { property: "og:description", content: description },
       { property: "og:type", content: "website" },
       { property: "og:locale", content: "fr_TN" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: SITE_TITLE },
-      { name: "twitter:description", content: SITE_DESCRIPTION },
+      { name: "twitter:title", content: title },
+      { name: "twitter:description", content: description },
       { property: "og:image", content: SOCIAL_IMAGE },
       { property: "og:image:alt", content: "Logo La Maison des Montres" },
       { name: "twitter:image", content: SOCIAL_IMAGE },
@@ -142,7 +150,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap",
       },
     ],
-  }),
+    };
+  },
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
@@ -165,19 +174,21 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const { initialNow, promoMessages } = Route.useLoaderData();
+  const { initialNow, promoMessages, settings } = Route.useLoaderData();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AnnouncementMessagesProvider messages={promoMessages}>
-        <NowProvider initialNow={initialNow}>
-          <MetaPixelTracker />
-          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-          <Outlet />
-          <CartDrawer />
-          <ScrollToTop />
-        </NowProvider>
-      </AnnouncementMessagesProvider>
+      <SiteSettingsProvider settings={settings}>
+        <AnnouncementMessagesProvider messages={promoMessages}>
+          <NowProvider initialNow={initialNow}>
+            <MetaPixelTracker />
+            {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+            <Outlet />
+            <CartDrawer />
+            <ScrollToTop />
+          </NowProvider>
+        </AnnouncementMessagesProvider>
+      </SiteSettingsProvider>
     </QueryClientProvider>
   );
 }

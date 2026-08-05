@@ -7,6 +7,7 @@ import { useCart, useCartDrawer } from "@/lib/cart-store";
 import { useCatalogCategories } from "@/lib/catalog-products";
 import { SearchPanel } from "./SearchPanel";
 import { MobileMenu } from "./MobileMenu";
+import { useSiteSettings } from "@/lib/site-settings";
 
 type IconLinkProps = {
   label: string;
@@ -77,6 +78,7 @@ export function SiteHeader() {
   const cartCount = totalQuantity;
   const { ids: favoriteIds } = useFavorites();
   const favoriteCount = favoriteIds.length;
+  const { identity } = useSiteSettings();
   const categories = useCatalogCategories();
   const navLinks = getCategoryNavLinks(categories);
 
@@ -110,7 +112,7 @@ export function SiteHeader() {
             aria-label="La Maison des Montres — Accueil"
             className="inline-flex min-w-0 items-center justify-center"
           >
-            <Logo variant="dark" height={26} priority />
+            <Logo variant="dark" height={26} priority src={identity.logoUrl} alt={identity.name} />
           </a>
           <div className="flex shrink-0 items-center">
             <IconAction label="Rechercher" onClick={openSearch}>
@@ -130,7 +132,7 @@ export function SiteHeader() {
               aria-label="La Maison des Montres — Accueil"
               className="inline-flex shrink-0"
             >
-              <Logo variant="dark" height={32} priority />
+              <Logo variant="dark" height={32} priority src={identity.logoUrl} alt={identity.name} />
             </a>
             <div className="flex shrink-0 items-center gap-1">
               <IconAction label="Rechercher" onClick={openSearch}>
@@ -160,7 +162,7 @@ export function SiteHeader() {
               aria-label="La Maison des Montres — Accueil"
               className="inline-flex shrink-0"
             >
-              <Logo variant="dark" height={36} priority />
+              <Logo variant="dark" height={36} priority src={identity.logoUrl} alt={identity.name} />
             </a>
             <div className="min-w-0 flex-1">
               <DesktopNav links={navLinks} />
