@@ -46,7 +46,12 @@ export function BrandLogosMarquee() {
       className="section-deferred overflow-hidden bg-[color:var(--color-surface-cream)] py-12 md:py-16 lg:py-20"
     >
       <div className="container-page">
-        <SectionHeading eyebrow="Marques" title="Nos marques à la une" titleId="brands-featured" align="center" />
+        <SectionHeading
+          eyebrow="Marques"
+          title="Nos marques à la une"
+          titleId="brands-featured"
+          align="center"
+        />
       </div>
 
       <div className="brand-marquee-mask rail-bleed relative">

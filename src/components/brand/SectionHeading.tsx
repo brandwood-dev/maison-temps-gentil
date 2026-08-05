@@ -20,8 +20,7 @@ export function SectionHeading({
   align = "left",
   className,
 }: SectionHeadingProps) {
-  const alignmentClasses =
-    align === "center" ? "mx-auto text-center" : "text-left";
+  const alignmentClasses = align === "center" ? "mx-auto text-center" : "text-left";
 
   return (
     <div className={`mb-6 max-w-2xl md:mb-10 ${alignmentClasses} ${className ?? ""}`}>
