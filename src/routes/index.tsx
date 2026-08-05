@@ -163,7 +163,7 @@ function Hero({ slides }: { slides: PublicHeroSlide[] }) {
           loading="eager"
           fetchPriority={currentIndex === 0 ? "high" : "low"}
           decoding="async"
-          className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ease-out will-change-[opacity] ${isTransitioning ? "opacity-0" : "opacity-100"}`}
+          className={`absolute inset-0 h-full w-full object-cover object-center will-change-[opacity] ${isTransitioning ? "opacity-0 transition-opacity duration-700 ease-out" : "opacity-100 transition-none"}`}
         />
         {incomingSlide && (
           <img
