@@ -47,6 +47,7 @@ function HomePage() {
         <TrustStrip />
         <CollectionsShowcase />
         <BrandLogosMarquee />
+        <MerchandisingSections />
         <FeaturedProducts />
         <TestimonialsMarquee testimonials={testimonials} />
       </main>
@@ -286,5 +287,39 @@ function FeaturedProducts() {
       </div>
       <ProductGrid products={products} onAddToCart={handleAddToCart} />
     </section>
+  );
+}
+
+function MerchandisingSections() {
+  const products = useCatalogProducts();
+  const bestSellers = products.filter((product) => product.isBestSeller).slice(0, 8);
+  const newArrivals = products.filter((product) => product.isNew).slice(0, 8);
+  const { addItem } = useCart();
+  const handleAddToCart = (product: Product, quantity: number) => {
+    addItem(product.id, quantity);
+    trackAddToCart(product, quantity);
+  };
+
+  return (
+    <>
+      {bestSellers.length > 0 && (
+        <section className="container-page py-12 md:py-16">
+          <div className="mb-6 max-w-2xl md:mb-8">
+            <p className="eyebrow">Les préférées</p>
+            <h2 className="t-h1 mt-2">Meilleures Ventes</h2>
+          </div>
+          <ProductGrid products={bestSellers} onAddToCart={handleAddToCart} />
+        </section>
+      )}
+      {newArrivals.length > 0 && (
+        <section className="container-page py-12 md:py-16">
+          <div className="mb-6 max-w-2xl md:mb-8">
+            <p className="eyebrow">À découvrir</p>
+            <h2 className="t-h1 mt-2">Nouvelles Arrivées</h2>
+          </div>
+          <ProductGrid products={newArrivals} onAddToCart={handleAddToCart} />
+        </section>
+      )}
+    </>
   );
 }
