@@ -6,6 +6,8 @@ export const DEFAULT_SITE_SETTINGS: PublicStoreSettings = {
   identity: {
     name: "La Maison des Montres",
     tagline: "L'horlogerie de caractère",
+    logoLightUrl:
+      "https://res.cloudinary.com/dxkxiy900/image/upload/v1784391979/LOGO_VW_eczfrh.png",
     currency: "TND",
   },
   support: {

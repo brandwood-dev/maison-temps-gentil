@@ -94,6 +94,7 @@ export type PublicStoreSettings = {
     name: string;
     tagline?: string;
     logoUrl?: string;
+    logoLightUrl?: string;
     currency: "TND";
   };
   support: {

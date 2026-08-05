@@ -9,6 +9,9 @@ import {
 import { useCatalogCategories } from "@/lib/catalog-products";
 import { useSiteSettings } from "@/lib/site-settings";
 
+const FOOTER_LOGO_FALLBACK =
+  "https://res.cloudinary.com/dxkxiy900/image/upload/v1784391979/LOGO_VW_eczfrh.png";
+
 type Col = { title: string; links: readonly { readonly label: string; readonly href: string }[] };
 
 function LinkList({ links }: { links: Col["links"] }) {
@@ -69,7 +72,12 @@ export function SiteFooter() {
       <div className="container-page py-10 md:py-14">
         <div className="grid gap-10 md:grid-cols-[1.2fr_2.4fr_1.4fr] md:gap-12">
           <div>
-            <Logo variant="light" height={36} src={identity.logoUrl} alt={identity.name} />
+            <Logo
+              variant="light"
+              height={36}
+              src={identity.logoLightUrl ?? FOOTER_LOGO_FALLBACK}
+              alt={identity.name}
+            />
             <p className="mt-4 max-w-xs text-sm text-white/70">
               {identity.name} — {tagline}
               <br />
