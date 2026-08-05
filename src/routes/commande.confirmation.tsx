@@ -1,13 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-  ArrowRight,
-  Check,
-  Copy,
-  MapPin,
-  Package,
-  ShieldCheck,
-  Truck,
-} from "lucide-react";
+import { ArrowRight, Check, Copy, MapPin, Package, ShieldCheck, Truck } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
@@ -70,7 +62,8 @@ const primaryBtn =
 const ghostBtn =
   "inline-flex h-12 w-full items-center justify-center gap-2 rounded-[var(--radius-md)] border border-[color:var(--color-border-strong)] px-6 text-sm font-semibold text-[color:var(--color-foreground)] transition-colors hover:bg-[color:var(--color-surface-cream)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-gold)] sm:w-auto";
 
-const sectionTitle = "text-sm font-semibold uppercase tracking-[0.16em] text-[color:var(--color-foreground)]";
+const sectionTitle =
+  "text-sm font-semibold uppercase tracking-[0.16em] text-[color:var(--color-foreground)]";
 
 /* ---------------- empty state ---------------- */
 
@@ -83,9 +76,7 @@ function NoOrder() {
       >
         <Package className="h-6 w-6" strokeWidth={1.5} />
       </span>
-      <h1 className="t-h1 mt-6 text-[color:var(--color-foreground)]">
-        Aucune commande à afficher
-      </h1>
+      <h1 className="t-h1 mt-6 text-[color:var(--color-foreground)]">Aucune commande à afficher</h1>
       <p className="mx-auto mt-3 max-w-md text-sm text-[color:var(--color-muted-foreground)]">
         Cette page n’est accessible qu’à la suite d’une commande validée dans ce navigateur.
       </p>
@@ -134,13 +125,7 @@ function Confirmed({ order }: { order: OrderConfirmation }) {
   );
 }
 
-function ThankYouHero({
-  firstName,
-  itemCount,
-}: {
-  firstName: string | null;
-  itemCount: number;
-}) {
+function ThankYouHero({ firstName, itemCount }: { firstName: string | null; itemCount: number }) {
   return (
     <section className="text-center">
       <span

@@ -17,6 +17,23 @@ export type ProductImage = {
   position: number;
 };
 
+export type ProductAttributeValue = {
+  id: string;
+  label: string;
+  slug?: string;
+  swatch?: string;
+  imageUrl?: string;
+};
+
+export type ProductAttribute = {
+  id: string;
+  code: string;
+  label: string;
+  type: "select" | "multiselect" | "color" | "boolean" | "text" | "number";
+  visibleInFilters?: boolean;
+  values: ProductAttributeValue[];
+};
+
 export type ProductPromotion = {
   regularPriceMillimes: number;
   salePriceMillimes: number;
@@ -43,6 +60,8 @@ export type Product = {
   promotion: ProductPromotion | null;
   availability: ProductAvailability;
   images: ProductImage[];
+  /** Dynamic attributes configured in the Admin catalogue. */
+  attributes?: ProductAttribute[];
   shortDescription: string;
   dialColor: ProductDialColor | null;
   braceletMaterial: string | null;

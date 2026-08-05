@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { SectionHeading } from "@/components/brand/SectionHeading";
 import femmeImage from "@/assets/collection-femme.jpg";
 import hommeImage from "@/assets/collection-homme.jpg";
+import { DEFAULT_CATALOG_QUERY } from "@/lib/catalog";
 
 type CollectionCardProps = {
   to: "/montres-femme" | "/montres-homme";
@@ -37,7 +38,7 @@ function CollectionCard({ to, badge, title, subtitle, image, alt }: CollectionCa
   return (
     <Link
       to={to}
-      search={{}}
+      search={DEFAULT_CATALOG_QUERY}
       aria-label={`${title} — voir la collection`}
       className="group relative block min-w-0 overflow-hidden rounded-[var(--radius-lg)] border border-[color:var(--color-border)]"
     >
@@ -83,9 +84,13 @@ export function CollectionsShowcase() {
         title="L'élégance intemporelle"
         titleId="collections-title"
       />
+      <div className="hidden">
+        <p className="eyebrow">Collections</p>
+        <h2 className="t-h1 mt-2">L&apos;élégance intemporelle</h2>
+      </div>
       <div className="grid gap-5 md:grid-cols-2 md:gap-6">
-        {COLLECTIONS.map((c) => (
-          <CollectionCard key={c.to} {...c} />
+        {COLLECTIONS.map((collection) => (
+          <CollectionCard key={collection.to} {...collection} />
         ))}
       </div>
     </section>

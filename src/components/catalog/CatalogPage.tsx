@@ -4,9 +4,11 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import type { Product, ProductCategory } from "@/types/product";
 import type { CatalogQuery } from "@/types/catalog";
 import { useNow } from "@/lib/now-store";
-import { useCart } from "@/lib/cart-store";
-import { catalogQueryToSearch, getCatalogResult, hasActiveFilters } from "@/lib/catalog";
+import { useCatalogAttributes } from "@/lib/catalog-products";
 import { getCategoryHeroImage } from "@/config/category-hero";
+import { useCart } from "@/lib/cart-store";
+import { trackAddToCart } from "@/lib/meta-pixel";
+import { catalogQueryToSearch, getCatalogResult, hasActiveFilters } from "@/lib/catalog";
 
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -54,8 +56,12 @@ export function CatalogPage({
 }: Props) {
   const navigate = useNavigate();
   const nowTs = useNow();
+  const catalogAttributes = useCatalogAttributes();
   const { addItem } = useCart();
-  const handleAddToCart = (p: Product, quantity: number) => addItem(p.id, quantity);
+  const handleAddToCart = (p: Product, quantity: number) => {
+    addItem(p.id, quantity);
+    trackAddToCart(p, quantity);
+  };
   const [mobileOpen, setMobileOpen] = useState(false);
   const heroImage = useMemo(() => getCategoryHeroImage(basePath), [basePath]);
 
@@ -66,15 +72,25 @@ export function CatalogPage({
     return getCatalogResult(products, effectiveQuery, {
       fixedCategory,
       fixedCollection,
+      attributes: catalogAttributes,
       now: new Date(nowTs),
     });
-  }, [products, query, forcePromotionOnly, fixedCategory, fixedCollection, nowTs]);
+  }, [
+    products,
+    query,
+    forcePromotionOnly,
+    fixedCategory,
+    fixedCollection,
+    catalogAttributes,
+    nowTs,
+  ]);
 
   const isCategoryEmpty = result.availableFilters.priceRange === null;
   const filtersActive = hasActiveFilters(query);
   const activeFilterCount =
     query.brands.length +
     query.dialColors.length +
+    Object.values(query.attributes).reduce((count, values) => count + values.length, 0) +
     (query.minPriceMillimes != null ? 1 : 0) +
     (query.maxPriceMillimes != null ? 1 : 0) +
     (!forcePromotionOnly && query.promotionOnly ? 1 : 0);
@@ -162,6 +178,7 @@ export function CatalogPage({
                   query={query}
                   onChange={applyPatch}
                   onReset={resetFilters}
+                  availableFilters={result.availableFilters}
                   hidePromoChip={forcePromotionOnly}
                 />
 
@@ -194,7 +211,6 @@ export function CatalogPage({
                         onAddToCart={handleAddToCart}
                         density="catalog"
                       />
-
                     </div>
                     <CatalogPagination
                       page={result.page}

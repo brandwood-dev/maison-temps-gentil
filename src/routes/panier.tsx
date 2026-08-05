@@ -5,8 +5,8 @@ import { useMemo } from "react";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
-import { PRODUCTS } from "@/fixtures/products";
 import { useCart } from "@/lib/cart-store";
+import { useCatalogProducts } from "@/lib/catalog-products";
 import { useNow } from "@/lib/now-store";
 import { formatPriceTND, getCurrentPriceMillimes, isPromotionActive } from "@/lib/product-pricing";
 import type { Product } from "@/types/product";
@@ -34,13 +34,14 @@ type LineData = {
 
 function CartPage() {
   const { items, removeItem, setQuantity, hydrated } = useCart();
+  const products = useCatalogProducts();
   const nowTs = useNow();
   const now = useMemo(() => new Date(nowTs), [nowTs]);
 
   const lines: LineData[] = items.map((it) => ({
     productId: it.productId,
     quantity: it.quantity,
-    product: PRODUCTS.find((p) => p.id === it.productId && p.availability !== "hidden") ?? null,
+    product: products.find((p) => p.id === it.productId && p.availability !== "hidden") ?? null,
   }));
 
   const purchasableLines = lines.filter((l) => l.product && l.product.availability === "available");

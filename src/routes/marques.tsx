@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { BrandCard } from "@/components/brand/BrandCard";
 import { getBrandSummaries } from "@/lib/brands";
+import { useCatalogProducts } from "@/lib/catalog-products";
 import { absoluteUrl } from "@/config/site";
 
 const CANONICAL = absoluteUrl("/marques");
@@ -28,7 +29,8 @@ export const Route = createFileRoute("/marques")({
 });
 
 function BrandsPage() {
-  const brands = getBrandSummaries();
+  const products = useCatalogProducts();
+  const brands = getBrandSummaries(products);
 
   return (
     <div className="min-h-screen bg-[color:var(--color-background)]">

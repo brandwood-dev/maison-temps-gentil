@@ -97,8 +97,8 @@ const SECTIONS: readonly LegalSection[] = [
     content: (
       <p>
         Nous mettons en œuvre des mesures raisonnables pour protéger vos données contre l’accès non
-        autorisé, la perte ou la divulgation. Aucune transmission sur Internet ne peut toutefois être
-        garantie comme totalement sûre.
+        autorisé, la perte ou la divulgation. Aucune transmission sur Internet ne peut toutefois
+        être garantie comme totalement sûre.
       </p>
     ),
   },

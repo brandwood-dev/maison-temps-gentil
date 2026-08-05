@@ -1,7 +1,13 @@
 import { ChevronDown, Facebook, Instagram } from "lucide-react";
 import { useState } from "react";
 import { Logo } from "@/components/brand/Logo";
-import { FOOTER_SHOP_LINKS, FOOTER_HELP_LINKS, FOOTER_INFO_LINKS } from "@/config/nav";
+import {
+  FOOTER_SHOP_LINKS,
+  FOOTER_HELP_LINKS,
+  FOOTER_INFO_LINKS,
+  getFooterShopLinks,
+} from "@/config/nav";
+import { useCatalogCategories } from "@/lib/catalog-products";
 
 type Col = { title: string; links: readonly { readonly label: string; readonly href: string }[] };
 
@@ -27,7 +33,6 @@ function LinkList({ links }: { links: Col["links"] }) {
     </ul>
   );
 }
-
 function MobileCol({ col }: { col: Col }) {
   const [open, setOpen] = useState(false);
   return (
@@ -54,6 +59,12 @@ function MobileCol({ col }: { col: Col }) {
 }
 
 export function SiteFooter() {
+  const categories = useCatalogCategories();
+  const cols: Col[] = [
+    { title: "Boutique", links: getFooterShopLinks(categories) },
+    ...COLS.slice(1),
+  ];
+
   return (
     <footer className="on-dark bg-[color:var(--color-primary)] text-white">
       <div className="container-page py-10 md:py-14">
@@ -85,7 +96,7 @@ export function SiteFooter() {
 
           {/* Desktop columns */}
           <div className="hidden grid-cols-3 gap-8 md:grid">
-            {COLS.map((c) => (
+            {cols.map((c) => (
               <div key={c.title}>
                 <p className="mb-4 text-sm font-semibold text-white">{c.title}</p>
                 <LinkList links={c.links} />
@@ -95,7 +106,7 @@ export function SiteFooter() {
 
           {/* Mobile accordions */}
           <div className="md:hidden">
-            {COLS.map((c) => (
+            {cols.map((c) => (
               <MobileCol key={c.title} col={c} />
             ))}
           </div>
@@ -134,8 +145,11 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col items-start justify-between gap-2 border-t border-white/10 pt-6 text-xs text-white/50 md:flex-row md:items-center md:pr-16 lg:pr-20">
-          <p>© {new Date().getFullYear()} La Maison des Montres. Tous droits réservés.</p>
+        <div className="mt-10 flex flex-col items-start justify-between gap-2 border-t border-white/10 pt-6 text-xs text-white/50 md:flex-row md:items-center">
+          <p>
+            © {new Date().getFullYear()} La Maison des Montres. Tous droits
+            réservés.
+          </p>
           <p>
             Developed by{" "}
             <a

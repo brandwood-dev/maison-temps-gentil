@@ -1,9 +1,8 @@
+import type { Product } from "@/types/product";
+
 import logoCalvinKlein from "@/assets/logo-calvin-klein.png";
 import logoSwatch from "@/assets/logo-swatch.png";
 import logoTissot from "@/assets/logo-tissot.png";
-
-import { PRODUCTS } from "@/fixtures/products";
-import type { Product } from "@/types/product";
 
 export type BrandSummary = {
   name: string;
@@ -15,12 +14,12 @@ export type BrandSummary = {
 
 const BRAND_LOGOS: Record<string, string> = {
   "Calvin Klein": logoCalvinKlein,
-  Tissot: logoTissot,
   Swatch: logoSwatch,
+  Tissot: logoTissot,
 };
 
-/** Derive the brand list (name, cover image, count, logo) from public products. */
-export function getBrandSummaries(products: Product[] = PRODUCTS): BrandSummary[] {
+/** Derive the brand list (name, cover image, count) from public products. */
+export function getBrandSummaries(products: Product[]): BrandSummary[] {
   const map = new Map<string, BrandSummary>();
 
   for (const p of products) {

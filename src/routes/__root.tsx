@@ -4,16 +4,32 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { CartDrawer } from "../components/cart/CartDrawer";
-import { ScrollToTop } from "../components/layout/ScrollToTop";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { NowProvider } from "../lib/now-store";
+import {
+  getPublicAttributes,
+  getPublicBrands,
+  getPublicCategories,
+  getPublicPromoMessages,
+  getPublicProducts,
+} from "../lib/catalog-api";
+import { initMetaPixel, trackPageView } from "../lib/meta-pixel";
+import { CartDrawer } from "../components/cart/CartDrawer";
+import { ScrollToTop } from "../components/layout/ScrollToTop";
+import { AnnouncementMessagesProvider } from "../components/layout/AnnouncementBar";
+
+const SITE_TITLE = "La Maison des Montres | Montres élégantes en Tunisie";
+const SITE_DESCRIPTION =
+  "Découvrez notre sélection de montres pour homme, femme, enfant et couple : marques soigneusement choisies, prix en TND, paiement à la livraison et livraison partout en Tunisie.";
+const SOCIAL_IMAGE =
+  "https://res.cloudinary.com/dxkxiy900/image/upload/v1785864404/LOGO_LA_MAISON_DES_MONTRES_BLANC_ibf5xs.png";
 
 function NotFoundComponent() {
   return (
@@ -76,46 +92,49 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  loader: () => ({ initialNow: Date.now() }),
+  loader: async () => {
+    const [products, brands, categories, attributes, promoMessages] = await Promise.all([
+      getPublicProducts(),
+      getPublicBrands().catch(() => []),
+      getPublicCategories().catch(() => []),
+      getPublicAttributes().catch(() => []),
+      getPublicPromoMessages().catch(() => undefined),
+    ]);
+    return { initialNow: Date.now(), products, brands, categories, attributes, promoMessages };
+  },
 
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "La Maison des Montres — Le temps, avec élégance" },
-      {
-        name: "description",
-        content:
-          "La Maison des Montres — sélection de montres pour homme, femme, enfant, couple, connectées et coffrets cadeaux. Livraison rapide partout en Tunisie.",
-      },
-      { property: "og:title", content: "La Maison des Montres — Le temps, avec élégance" },
-      {
-        property: "og:description",
-        content:
-          "La Maison des Montres — sélection de montres pour homme, femme, enfant, couple, connectées et coffrets cadeaux. Livraison rapide partout en Tunisie.",
-      },
+      { title: SITE_TITLE },
+      { name: "description", content: SITE_DESCRIPTION },
+      { property: "og:site_name", content: "La Maison des Montres" },
+      { property: "og:title", content: SITE_TITLE },
+      { property: "og:description", content: SITE_DESCRIPTION },
       { property: "og:type", content: "website" },
+      { property: "og:locale", content: "fr_TN" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "La Maison des Montres — Le temps, avec élégance" },
-      {
-        name: "twitter:description",
-        content:
-          "La Maison des Montres — sélection de montres pour homme, femme, enfant, couple, connectées et coffrets cadeaux. Livraison rapide partout en Tunisie.",
-      },
-      {
-        property: "og:image",
-        content:
-          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/79aa588c-df41-40ec-bd1c-f919105298da/id-preview-b40db207--478dbe92-24eb-44b0-a280-6c7860f8618c.lovable.app-1784403349287.png",
-      },
-      {
-        name: "twitter:image",
-        content:
-          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/79aa588c-df41-40ec-bd1c-f919105298da/id-preview-b40db207--478dbe92-24eb-44b0-a280-6c7860f8618c.lovable.app-1784403349287.png",
-      },
+      { name: "twitter:title", content: SITE_TITLE },
+      { name: "twitter:description", content: SITE_DESCRIPTION },
+      { property: "og:image", content: SOCIAL_IMAGE },
+      { property: "og:image:alt", content: "Logo La Maison des Montres" },
+      { name: "twitter:image", content: SOCIAL_IMAGE },
+      { name: "twitter:image:alt", content: "Logo La Maison des Montres" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon.ico?v=20260804", type: "image/x-icon" },
+      { rel: "shortcut icon", href: "/favicon.ico?v=20260804", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon.svg?v=20260804", type: "image/svg+xml" },
+      {
+        rel: "icon",
+        href: "/favicon-96x96.png?v=20260804",
+        type: "image/png",
+        sizes: "96x96",
+      },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
+      { rel: "manifest", href: "/site.webmanifest" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -146,16 +165,34 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const { initialNow } = Route.useLoaderData();
+  const { initialNow, promoMessages } = Route.useLoaderData();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <NowProvider initialNow={initialNow}>
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <Outlet />
-        <CartDrawer />
-        <ScrollToTop />
-      </NowProvider>
+      <AnnouncementMessagesProvider messages={promoMessages}>
+        <NowProvider initialNow={initialNow}>
+          <MetaPixelTracker />
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+          <CartDrawer />
+          <ScrollToTop />
+        </NowProvider>
+      </AnnouncementMessagesProvider>
     </QueryClientProvider>
   );
+}
+
+function MetaPixelTracker() {
+  const pageKey = useRouterState({
+    // Keep the selector serializable during SSR. `location.search` is a
+    // router-owned object and cannot be interpolated safely on the server.
+    select: (state) => state.location.pathname,
+  });
+
+  useEffect(() => {
+    initMetaPixel();
+    trackPageView(pageKey);
+  }, [pageKey]);
+
+  return null;
 }

@@ -141,6 +141,17 @@ const productB = PRODUCTS[1]!;
   assert(totals.shippingMillimes === 0, "shipping = 0 quand offerte");
 }
 
+{
+  const apiProduct = { ...productA, id: "507ece04-5fa4-4c89-91e5-f48b0a07ea9e" };
+  const totals = computeCheckoutTotals(
+    [{ productId: apiProduct.id, quantity: 1 }],
+    new Date("2100-01-01T00:00:00Z"),
+    [apiProduct],
+  );
+  assert(totals.lines.length === 1, "produit API résolu par son ID");
+  assert(totals.lines[0]?.product.id === apiProduct.id, "checkout conserve l'ID API");
+}
+
 // Livraison payante en-deça du seuil
 {
   const cheap = PRODUCTS.find((p) => p.regularPriceMillimes < FREE_SHIPPING_THRESHOLD_MILLIMES);

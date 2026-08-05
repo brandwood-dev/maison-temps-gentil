@@ -4,44 +4,42 @@ import { useMemo } from "react";
 
 import { CartLineItem } from "@/components/cart/CartLineItem";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
-import { PRODUCTS } from "@/fixtures/products";
 import { useCart, useCartDrawer } from "@/lib/cart-store";
+import { useCatalogProducts } from "@/lib/catalog-products";
 import { useNow } from "@/lib/now-store";
 import { formatPriceTND, getCurrentPriceMillimes } from "@/lib/product-pricing";
 import type { Product } from "@/types/product";
 
 export function CartDrawer() {
-  const { open, lastAddedProductId, addCount, closeDrawer } = useCartDrawer();
+  const { open, focusProductId, closeDrawer } = useCartDrawer();
   const { items, removeItem, setQuantity } = useCart();
+  const products = useCatalogProducts();
   const nowTs = useNow();
   const now = useMemo(() => new Date(nowTs), [nowTs]);
 
   const lines = items
-    .map((it) => ({
-      productId: it.productId,
-      quantity: it.quantity,
+    .map((item) => ({
+      productId: item.productId,
+      quantity: item.quantity,
       product:
-        (PRODUCTS.find(
-          (p) => p.id === it.productId && p.availability !== "hidden",
+        (products.find(
+          (product) => product.id === item.productId && product.availability !== "hidden",
         ) as Product | undefined) ?? null,
     }))
-    .filter((l): l is { productId: string; quantity: number; product: Product } =>
-      Boolean(l.product),
+    .filter((line): line is { productId: string; quantity: number; product: Product } =>
+      Boolean(line.product),
     );
 
-  // La ligne qui vient d'être ajoutée apparaît en premier.
-  const orderedLines = lastAddedProductId
+  const orderedLines = focusProductId
     ? [
-        ...lines.filter((l) => l.productId === lastAddedProductId),
-        ...lines.filter((l) => l.productId !== lastAddedProductId),
+        ...lines.filter((line) => line.productId === focusProductId),
+        ...lines.filter((line) => line.productId !== focusProductId),
       ]
     : lines;
-
   const subtotalMillimes = orderedLines
-    .filter((l) => l.product.availability === "available")
-    .reduce((sum, l) => sum + getCurrentPriceMillimes(l.product, now) * l.quantity, 0);
-
-  const totalQuantity = orderedLines.reduce((sum, l) => sum + l.quantity, 0);
+    .filter((line) => line.product.availability === "available")
+    .reduce((sum, line) => sum + getCurrentPriceMillimes(line.product, now) * line.quantity, 0);
+  const totalQuantity = orderedLines.reduce((sum, line) => sum + line.quantity, 0);
   const isEmpty = orderedLines.length === 0;
 
   return (
@@ -61,10 +59,6 @@ export function CartDrawer() {
             ) : null}
           </SheetTitle>
         </div>
-
-        <p aria-live="polite" className="sr-only">
-          {addCount > 0 && lastAddedProductId ? "Produit ajouté au panier." : ""}
-        </p>
 
         {isEmpty ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 text-center">
@@ -93,9 +87,9 @@ export function CartDrawer() {
                       product={line.product}
                       quantity={line.quantity}
                       now={now}
-                      highlighted={line.productId === lastAddedProductId}
+                      highlighted={line.productId === focusProductId}
                       onRemove={() => removeItem(line.productId)}
-                      onQuantityChange={(q) => setQuantity(line.productId, q)}
+                      onQuantityChange={(quantity) => setQuantity(line.productId, quantity)}
                       onNavigate={closeDrawer}
                     />
                   </li>

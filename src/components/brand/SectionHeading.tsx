@@ -2,16 +2,12 @@ type SectionHeadingProps = {
   eyebrow: string;
   title: string;
   subtitle?: string;
-  /** id posé sur le titre pour aria-labelledby sur la section parente */
   titleId?: string;
   align?: "left" | "center";
   className?: string;
 };
 
-/**
- * Bloc titre standard de section : même gouttière, même hiérarchie,
- * même alignement à gauche partout sur le site.
- */
+/** Shared section heading block for the storefront. */
 export function SectionHeading({
   eyebrow,
   title,

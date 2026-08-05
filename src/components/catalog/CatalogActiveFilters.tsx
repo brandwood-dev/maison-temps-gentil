@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import type { CatalogQuery } from "@/types/catalog";
+import type { CatalogQuery, CatalogResult } from "@/types/catalog";
 import { hasActiveFilters, millimesToDinars } from "@/lib/catalog";
 
 type Chip = { key: string; label: string; onRemove: () => void };
@@ -8,11 +8,18 @@ type Props = {
   query: CatalogQuery;
   onChange: (patch: Partial<CatalogQuery>) => void;
   onReset: () => void;
+  availableFilters?: CatalogResult["availableFilters"];
   /** Hide the "En promotion" chip (e.g. on the /promotions page). */
   hidePromoChip?: boolean;
 };
 
-export function CatalogActiveFilters({ query, onChange, onReset, hidePromoChip }: Props) {
+export function CatalogActiveFilters({
+  query,
+  onChange,
+  onReset,
+  hidePromoChip,
+  availableFilters,
+}: Props) {
   const chips: Chip[] = [];
 
   if (query.promotionOnly && !hidePromoChip) {
@@ -34,6 +41,22 @@ export function CatalogActiveFilters({ query, onChange, onReset, hidePromoChip }
       key: `color-${c}`,
       label: `Cadran : ${c}`,
       onRemove: () => onChange({ dialColors: query.dialColors.filter((x) => x !== c), page: 1 }),
+    });
+  });
+  Object.entries(query.attributes).forEach(([code, selected]) => {
+    const filter = availableFilters?.attributes.find((attribute) => attribute.code === code);
+    selected.forEach((value) => {
+      const option = filter?.options.find((item) => item.value === value);
+      chips.push({
+        key: `attribute-${code}-${value}`,
+        label: `${filter?.label ?? code} : ${option?.label ?? value}`,
+        onRemove: () => {
+          const next = { ...query.attributes };
+          next[code] = next[code].filter((item) => item !== value);
+          if (next[code].length === 0) delete next[code];
+          onChange({ attributes: next, page: 1 });
+        },
+      });
     });
   });
   if (query.minPriceMillimes != null) {

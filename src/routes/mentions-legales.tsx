@@ -69,8 +69,8 @@ const SECTIONS: readonly LegalSection[] = [
     title: "Propriété intellectuelle",
     content: (
       <p>
-        L’ensemble des éléments du site (textes, mise en page, identité visuelle, photographies)
-        est protégé. Les marques et visuels des fabricants restent la propriété de leurs titulaires
+        L’ensemble des éléments du site (textes, mise en page, identité visuelle, photographies) est
+        protégé. Les marques et visuels des fabricants restent la propriété de leurs titulaires
         respectifs. Toute reproduction sans autorisation écrite est interdite.
       </p>
     ),

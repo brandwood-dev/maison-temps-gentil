@@ -20,10 +20,10 @@ function TrustItem({ item }: { item: Item }) {
         aria-hidden
       />
       <div className="min-w-0">
-        <p className="text-[13px] leading-tight font-semibold whitespace-nowrap md:whitespace-normal">
+        <p className="whitespace-nowrap text-[13px] font-semibold leading-tight md:whitespace-normal">
           {item.title}
         </p>
-        <p className="text-xs whitespace-nowrap text-[color:var(--color-muted-foreground)] md:whitespace-normal">
+        <p className="whitespace-nowrap text-xs text-[color:var(--color-muted-foreground)] md:whitespace-normal">
           {item.text}
         </p>
       </div>
@@ -34,32 +34,29 @@ function TrustItem({ item }: { item: Item }) {
 export function TrustStrip({ items = ITEMS }: { items?: Item[] }) {
   return (
     <section aria-label="Nos engagements" className="bg-[color:var(--color-surface-cream)]">
-      {/* Mobile : carrousel horizontal automatique */}
       <div className="marquee-mask relative py-5 md:hidden">
         <div className="marquee-track flex w-max gap-6 pl-4">
           <ul className="flex shrink-0 items-center gap-6">
-            {items.map((it) => (
-              <li key={it.title} className="flex items-center gap-3">
-                <TrustItem item={it} />
+            {items.map((item) => (
+              <li key={item.title} className="flex items-center gap-3">
+                <TrustItem item={item} />
               </li>
             ))}
           </ul>
           <ul aria-hidden className="flex shrink-0 items-center gap-6">
-            {items.map((it) => (
-              <li key={`dup-${it.title}`} className="flex items-center gap-3">
-                <TrustItem item={it} />
+            {items.map((item) => (
+              <li key={"dup-" + item.title} className="flex items-center gap-3">
+                <TrustItem item={item} />
               </li>
             ))}
           </ul>
         </div>
       </div>
-
-      {/* Tablette / desktop : grille */}
       <div className="container-page hidden py-6 md:block md:py-8">
         <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5 md:gap-6">
-          {items.map((it) => (
-            <li key={it.title} className="flex items-start gap-3">
-              <TrustItem item={it} />
+          {items.map((item) => (
+            <li key={item.title} className="flex items-start gap-3">
+              <TrustItem item={item} />
             </li>
           ))}
         </ul>

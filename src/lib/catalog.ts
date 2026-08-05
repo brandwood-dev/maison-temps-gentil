@@ -33,6 +33,7 @@ export const DEFAULT_CATALOG_QUERY: CatalogQuery = {
   sort: "featured",
   brands: [],
   dialColors: [],
+  attributes: {},
   minPriceMillimes: undefined,
   maxPriceMillimes: undefined,
   promotionOnly: false,
@@ -80,7 +81,7 @@ export function getCatalogResult(
   // Predicate builder used for both filtering and facet-count computation.
   const matches = (
     p: Product,
-    opts: { ignoreBrand?: boolean; ignoreColor?: boolean } = {},
+    opts: { ignoreBrand?: boolean; ignoreColor?: boolean; ignoreAttribute?: string } = {},
   ): boolean => {
     if (!opts.ignoreBrand && query.brands.length && !query.brands.includes(p.brand)) return false;
     if (
@@ -89,6 +90,16 @@ export function getCatalogResult(
       !(p.dialColor && query.dialColors.includes(p.dialColor.label))
     )
       return false;
+    for (const [code, selected] of Object.entries(query.attributes)) {
+      if (selected.length === 0 || opts.ignoreAttribute === code) continue;
+      const productAttribute = p.attributes?.find((attribute) => attribute.code === code);
+      if (
+        !productAttribute ||
+        !productAttribute.values.some((value) => selected.includes(value.id))
+      ) {
+        return false;
+      }
+    }
     const eff = effectivePriceMillimes(p, now);
     if (query.minPriceMillimes != null && eff < query.minPriceMillimes) return false;
     if (query.maxPriceMillimes != null && eff > query.maxPriceMillimes) return false;
@@ -141,6 +152,26 @@ export function getCatalogResult(
       .length,
   }));
 
+  const attributes = (scope.attributes ?? [])
+    .filter((attribute) => attribute.visibleInFilters !== false && attribute.values.length > 0)
+    .map((attribute) => ({
+      id: attribute.id,
+      code: attribute.code,
+      label: attribute.label,
+      type: attribute.type,
+      options: attribute.values.map((value) => ({
+        value: value.id,
+        label: value.label,
+        count: scoped.filter((product) => {
+          const assigned = product.attributes?.find((item) => item.code === attribute.code);
+          return Boolean(
+            assigned?.values.some((assignedValue) => assignedValue.id === value.id) &&
+            matches(product, { ignoreAttribute: attribute.code }),
+          );
+        }).length,
+      })),
+    }));
+
   let priceRange: CatalogResult["availableFilters"]["priceRange"] = null;
   if (scoped.length > 0) {
     let min = Infinity;
@@ -161,7 +192,7 @@ export function getCatalogResult(
     page,
     pageSize: query.pageSize,
     totalPages,
-    availableFilters: { brands, dialColors, priceRange },
+    availableFilters: { brands, dialColors, attributes, priceRange },
   };
 }
 
@@ -195,6 +226,18 @@ function toList(v: unknown): string[] {
   return [];
 }
 
+function toAttributeFilters(raw: Record<string, unknown>): Record<string, string[]> {
+  const attributes: Record<string, string[]> = {};
+  for (const [key, value] of Object.entries(raw)) {
+    if (!key.startsWith("attr_")) continue;
+    const code = key.slice(5);
+    if (!code) continue;
+    const values = toList(value);
+    if (values.length > 0) attributes[code] = values;
+  }
+  return attributes;
+}
+
 /** Parse raw URL search into a normalized, valid CatalogQuery. Never throws. */
 export function parseCatalogSearch(raw: Record<string, unknown>): CatalogQuery {
   const page = Math.max(1, toPositiveInt(raw.page) ?? 1);
@@ -202,6 +245,7 @@ export function parseCatalogSearch(raw: Record<string, unknown>): CatalogQuery {
   const sort: CatalogSort = SORT_SET.has(sortRaw) ? sortRaw : "featured";
   const brands = toList(raw.brands);
   const dialColors = toList(raw.dialColors);
+  const attributes = toAttributeFilters(raw);
   let minPriceMillimes = toPositiveInt(raw.minPrice);
   let maxPriceMillimes = toPositiveInt(raw.maxPrice);
   if (
@@ -220,6 +264,7 @@ export function parseCatalogSearch(raw: Record<string, unknown>): CatalogQuery {
     sort,
     brands,
     dialColors,
+    attributes,
     minPriceMillimes,
     maxPriceMillimes,
     promotionOnly,
@@ -233,6 +278,9 @@ export function catalogQueryToSearch(q: Partial<CatalogQuery>): Record<string, s
   if (q.sort && q.sort !== "featured") out.sort = q.sort;
   if (q.brands && q.brands.length) out.brands = q.brands.join(",");
   if (q.dialColors && q.dialColors.length) out.dialColors = q.dialColors.join(",");
+  Object.entries(q.attributes ?? {}).forEach(([code, values]) => {
+    if (values.length > 0) out[`attr_${code}`] = values.join(",");
+  });
   if (q.minPriceMillimes != null) out.minPrice = String(q.minPriceMillimes);
   if (q.maxPriceMillimes != null) out.maxPrice = String(q.maxPriceMillimes);
   if (q.promotionOnly) out.promo = "true";
@@ -244,6 +292,7 @@ export function hasActiveFilters(q: CatalogQuery): boolean {
   return (
     q.brands.length > 0 ||
     q.dialColors.length > 0 ||
+    Object.values(q.attributes ?? {}).some((values) => values.length > 0) ||
     q.minPriceMillimes != null ||
     q.maxPriceMillimes != null ||
     q.promotionOnly

@@ -1,3 +1,5 @@
+import type { PublicCategory } from "@/lib/catalog-api";
+
 export const NAV_LINKS = [
   { label: "Montres", href: "/montres" },
   { label: "Homme", href: "/montres-homme" },
@@ -9,6 +11,31 @@ export const NAV_LINKS = [
   { label: "Promotions", href: "/promotions" },
   { label: "Marques", href: "/marques" },
 ] as const;
+
+export type NavLink = { label: string; href: string };
+
+/** Build storefront navigation from active API categories, with static links as fallback. */
+export function getCategoryNavLinks(categories: readonly PublicCategory[]): NavLink[] {
+  const active = categories
+    .filter((category) => category.active && !category.parentId)
+    .slice()
+    .sort((a, b) => a.order - b.order || a.name.localeCompare(b.name, "fr"));
+  if (active.length === 0) return NAV_LINKS.map((link) => ({ ...link }));
+
+  return [
+    { label: "Montres", href: "/montres" },
+    ...active.map((category) => ({
+      label: category.name,
+      href: `/categories/${encodeURIComponent(category.slug)}`,
+    })),
+    { label: "Promotions", href: "/promotions" },
+    { label: "Marques", href: "/marques" },
+  ];
+}
+
+export function getFooterShopLinks(categories: readonly PublicCategory[]): NavLink[] {
+  return getCategoryNavLinks(categories);
+}
 
 export const SECONDARY_LINKS = [
   { label: "Mes favoris", href: "/favoris" },
@@ -49,10 +76,8 @@ export const FOOTER_INFO_LINKS = [
 
 export const ANNOUNCEMENT_MESSAGES = [
   "Livraison rapide partout en Tunisie sous 2 à 3 jours",
-  "Paiement à la livraison disponible",
-  "Garantie sur toutes nos montres",
-  "Nouveautés chaque semaine — découvrez la collection",
-  "Une équipe à votre écoute du lundi au samedi",
+  "Paiement à la livraison",
+  "Une sélection pensée pour durer",
 ] as const;
 
 export const ANNOUNCEMENT_TEXT = ANNOUNCEMENT_MESSAGES[0];

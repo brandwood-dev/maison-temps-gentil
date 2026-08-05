@@ -1,5 +1,5 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useId, useMemo, useState } from "react";
+import { createFileRoute, Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -11,15 +11,17 @@ import {
   buildOrderSubmission,
   computeCheckoutTotals,
   saveConfirmation,
-  submitOrderMock,
   validateShipping,
   type ShippingErrors,
   type ShippingInput,
 } from "@/lib/checkout";
+import { createPublicOrder } from "@/lib/catalog-api";
+import { useCatalogProducts } from "@/lib/catalog-products";
+import { trackInitiateCheckout, trackPurchase } from "@/lib/meta-pixel";
 import { TUNISIA_GOVERNORATES } from "@/lib/tunisia";
 import { PAYMENT_METHOD_LABEL, SHIPPING_DELAY_LABEL } from "@/lib/checkout-config";
 
-export const Route = createFileRoute("/commande/")({
+export const Route = createFileRoute("/commande")({
   head: () => ({
     meta: [
       { title: "Finaliser ma commande | La Maison des Montres" },
@@ -31,7 +33,7 @@ export const Route = createFileRoute("/commande/")({
       { name: "robots", content: "noindex" },
     ],
   }),
-  component: CheckoutPage,
+  component: CommandeRoute,
 });
 
 const EMPTY_INPUT: ShippingInput = {
@@ -46,17 +48,39 @@ const EMPTY_INPUT: ShippingInput = {
   note: "",
 };
 
+/**
+ * `/commande/confirmation` is a child route of `/commande` in the generated
+ * TanStack route tree. Render the child outlet when it is active; otherwise
+ * keep the checkout page as the index content of `/commande`.
+ */
+function CommandeRoute() {
+  const { pathname } = useLocation();
+  return pathname === "/commande/confirmation" ? <Outlet /> : <CheckoutPage />;
+}
+
 function CheckoutPage() {
   const { items, hydrated, clearCart } = useCart();
+  const products = useCatalogProducts();
   const nowTs = useNow();
   const now = useMemo(() => new Date(nowTs), [nowTs]);
-  const totals = useMemo(() => computeCheckoutTotals(items, now), [items, now]);
+  const totals = useMemo(() => computeCheckoutTotals(items, now, products), [items, now, products]);
   const navigate = useNavigate();
 
   const [values, setValues] = useState<ShippingInput>(EMPTY_INPUT);
   const [errors, setErrors] = useState<ShippingErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const idempotencyKeyRef = useRef<string | null>(null);
+  const checkoutTrackedRef = useRef(false);
+
+  useEffect(() => {
+    if (!hydrated || checkoutTrackedRef.current || totals.lines.length === 0) return;
+    checkoutTrackedRef.current = true;
+    trackInitiateCheckout(
+      totals.totalMillimes,
+      totals.lines.map((line) => ({ productId: line.productId, quantity: line.quantity })),
+    );
+  }, [hydrated, totals.lines, totals.totalMillimes]);
 
   const set = <K extends keyof ShippingInput>(k: K, v: string) =>
     setValues((prev) => ({ ...prev, [k]: v }));
@@ -72,7 +96,12 @@ function CheckoutPage() {
       setServerError(null);
       return;
     }
-    const submission = buildOrderSubmission(items, values);
+    const idempotencyKey =
+      idempotencyKeyRef.current ??
+      globalThis.crypto?.randomUUID?.() ??
+      `${Date.now()}-${Math.random()}`;
+    idempotencyKeyRef.current = idempotencyKey;
+    const submission = buildOrderSubmission(items, values, idempotencyKey);
     if (!submission) {
       setServerError("Coordonnées invalides.");
       return;
@@ -80,7 +109,8 @@ function CheckoutPage() {
     setSubmitting(true);
     setServerError(null);
     try {
-      const confirmation = await submitOrderMock(submission, totals);
+      const confirmation = await createPublicOrder({ data: submission });
+      trackPurchase(confirmation);
       saveConfirmation(confirmation);
       clearCart();
       await navigate({ to: "/commande/confirmation" });
@@ -119,7 +149,6 @@ function CheckoutPage() {
               <OrderSummary totals={totals} />
             </aside>
           </div>
-
         )}
       </main>
       <SiteFooter />
@@ -146,7 +175,6 @@ function EmptyCart() {
 
 const inputClass =
   "h-12 w-full min-w-0 max-w-full rounded-[var(--radius-md)] border border-[color:var(--color-border-strong)] bg-[color:var(--color-background)] px-3 text-sm text-[color:var(--color-foreground)] outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-gold)] aria-[invalid=true]:border-[color:var(--color-foreground)]";
-
 const labelClass = "text-sm font-medium text-[color:var(--color-foreground)]";
 const errClass = "text-xs font-medium text-[color:var(--color-foreground)]";
 
@@ -193,7 +221,6 @@ function ShippingForm({
     const err = errors[key];
     return (
       <div className="flex min-w-0 flex-col gap-2">
-
         <label htmlFor={id} className={labelClass}>
           {label} {opts.required ? <span aria-hidden>*</span> : null}
         </label>
@@ -230,7 +257,6 @@ function ShippingForm({
           Coordonnées
         </legend>
         <div className="grid min-w-0 gap-4 sm:grid-cols-2">
-
           {field("firstName", "Prénom", { required: true, autoComplete: "given-name" })}
           {field("lastName", "Nom", { required: true, autoComplete: "family-name" })}
         </div>
@@ -253,7 +279,6 @@ function ShippingForm({
           Adresse de livraison
         </legend>
         <div className="flex min-w-0 flex-col gap-2">
-
           <label htmlFor={ids.governorate} className={labelClass}>
             Gouvernorat <span aria-hidden>*</span>
           </label>

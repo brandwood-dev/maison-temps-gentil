@@ -1,10 +1,15 @@
 import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Logo } from "@/components/brand/Logo";
-import { NAV_LINKS, SECONDARY_LINKS } from "@/config/nav";
+import { SECONDARY_LINKS } from "@/config/nav";
 
-type Props = { open: boolean; onClose: () => void; restoreFocus: () => void };
+type Props = {
+  open: boolean;
+  onClose: () => void;
+  restoreFocus: () => void;
+  links: readonly { label: string; href: string }[];
+};
 
-export function MobileMenu({ open, onClose, restoreFocus }: Props) {
+export function MobileMenu({ open, onClose, restoreFocus, links }: Props) {
   return (
     <Sheet open={open} onOpenChange={(v) => !v && onClose()}>
       <SheetContent
@@ -27,7 +32,7 @@ export function MobileMenu({ open, onClose, restoreFocus }: Props) {
 
         <nav aria-label="Catégories" className="flex-1 overflow-y-auto px-2 py-3">
           <ul>
-            {NAV_LINKS.map((l) => (
+            {links.map((l) => (
               <li key={l.href}>
                 <a
                   href={l.href}

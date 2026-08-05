@@ -43,7 +43,6 @@
   --color-on-image-muted: var(--on-image-muted);
   --color-on-image-border: var(--on-image-border);
   --color-on-image-surface: var(--on-image-surface);
-
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-success: var(--success);
@@ -86,7 +85,6 @@
   --gold: #c89d54;
   --gold-foreground: #1c1b1b;
 
-  /* Texte et surfaces posés sur une photographie (contraste AA garanti par l'overlay) */
   --on-image: #feffff;
   --on-image-muted: #ece9e2;
   --on-image-border: rgb(254 255 255 / 0.45);
@@ -134,8 +132,6 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* Filet de sécurité mobile : aucun défilement horizontal du document.
-     `clip` (et non `hidden`) préserve position: sticky. */
   html,
   body {
     max-width: 100%;
@@ -150,13 +146,11 @@
     font-feature-settings: "ss01", "cv11";
   }
 
-  /* Les champs natifs ne doivent jamais imposer leur largeur intrinsèque. */
   input,
   select,
   textarea {
     min-width: 0;
   }
-
 
   h1,
   h2,
@@ -196,8 +190,7 @@
   }
 }
 
-/* Rail pleine largeur dont le premier élément démarre exactement
-   sur la gouttière de container-page (débordement à droite seulement). */
+/* Full-width rails start on the same gutter as container-page and bleed right. */
 @utility rail-bleed {
   padding-inline-start: max(1rem, calc((100% - var(--container-max)) / 2 + 1rem));
   @media (min-width: 768px) {
@@ -205,220 +198,10 @@
   }
 }
 
-/* Sections sous la ligne de flottaison : évite layout/paint inutile. */
+/* Defer below-the-fold rendering without changing the visual layout. */
 @utility section-deferred {
   content-visibility: auto;
   contain-intrinsic-size: auto 420px;
-}
-
-@keyframes lmm-marquee {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    /* deux pistes identiques séparées par --marquee-gap */
-    transform: translate3d(calc(-50% - calc(var(--marquee-gap) / 2)), 0, 0);
-  }
-}
-
-@utility marquee-track {
-  --marquee-gap: 2rem;
-  animation: lmm-marquee 26s linear infinite;
-}
-
-
-@media (min-width: 640px) {
-  .marquee-track {
-    --marquee-gap: 3rem;
-  }
-}
-
-@utility marquee-mask {
-  overflow: hidden;
-  mask-image: linear-gradient(
-    to right,
-    transparent 0,
-    black 2.5rem,
-    black calc(100% - 2.5rem),
-    transparent 100%
-  );
-}
-
-@utility brand-marquee-mask {
-  overflow: hidden;
-  mask-image: linear-gradient(
-    to right,
-    transparent 0,
-    black 0.75rem,
-    black calc(100% - 0.75rem),
-    transparent 100%
-  );
-}
-
-@utility reviews-marquee-mask {
-  overflow: hidden;
-  mask-image: linear-gradient(
-    to right,
-    transparent 0,
-    black 1rem,
-    black calc(100% - 2rem),
-    transparent 100%
-  );
-}
-
-.brand-marquee-track,
-.brand-marquee-group,
-.reviews-marquee-track,
-.reviews-marquee-group {
-  width: max-content;
-  min-width: max-content;
-  flex: none;
-}
-
-.reviews-marquee-mask:hover .marquee-track,
-.reviews-marquee-mask:active .marquee-track,
-.reviews-marquee-mask:focus-within .marquee-track {
-  animation-play-state: paused;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .reviews-marquee-mask {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    mask-image: none;
-    -webkit-mask-image: none;
-  }
-
-  .reviews-marquee-track {
-    animation: none !important;
-    transform: none !important;
-    will-change: auto;
-  }
-}
-
-
-.marquee-mask:hover .marquee-track,
-.marquee-mask:active .marquee-track,
-.marquee-mask:focus-within .marquee-track,
-.brand-marquee-mask:hover .marquee-track,
-.brand-marquee-mask:active .marquee-track,
-.brand-marquee-mask:focus-within .marquee-track {
-  animation-play-state: paused;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .marquee-mask {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .marquee-track {
-    animation: none !important;
-    will-change: auto;
-  }
-
-  /* Marques : affichage statique, centré et sans défilement */
-  .brand-marquee-mask {
-    overflow-x: hidden;
-    mask-image: none;
-    -webkit-mask-image: none;
-    padding-inline: 1rem;
-  }
-
-  .brand-marquee-track {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    width: 100%;
-    min-width: 0;
-    transform: none !important;
-  }
-
-  .brand-marquee-group {
-    flex: 1 1 auto;
-    flex-wrap: wrap;
-    justify-content: center;
-    width: auto;
-    min-width: 0;
-    max-width: 100%;
-  }
-
-
-  .brand-marquee-group[aria-hidden="true"] {
-    display: none;
-  }
-}
-
-
-/* Bandeau d'annonces */
-@utility announce-track {
-  animation: lmm-marquee 22s linear infinite;
-  will-change: transform;
-}
-
-@utility announce-mask {
-  overflow: hidden;
-  mask-image: linear-gradient(
-    to right,
-    transparent 0,
-    black 1.5rem,
-    black calc(100% - 1.5rem),
-    transparent 100%
-  );
-}
-
-@keyframes lmm-announce-fade {
-  0%,
-  4% {
-    opacity: 0;
-    transform: translate3d(0, 40%, 0);
-  }
-  8%,
-  18% {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-  22%,
-  100% {
-    opacity: 0;
-    transform: translate3d(0, -40%, 0);
-  }
-}
-
-@utility announce-slide {
-  opacity: 0;
-  animation-name: lmm-announce-fade;
-  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  animation-iteration-count: infinite;
-  animation-fill-mode: both;
-}
-
-.announce-mask:hover .announce-track,
-.announce-mask:active .announce-track,
-.announce-mask:focus-within .announce-track,
-.announce-fader:hover .announce-slide,
-.announce-fader:focus-within .announce-slide {
-  animation-play-state: paused;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .announce-mask {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .announce-track,
-  .announce-slide {
-    animation: none !important;
-  }
-
-  .announce-slide {
-    opacity: 0;
-  }
-
-  .announce-slide:first-child {
-    opacity: 1;
-  }
 }
 
 @utility t-display {
@@ -449,9 +232,225 @@
   color: var(--color-muted-foreground);
 }
 
-/* Bouton retour en haut */
 @media (prefers-reduced-motion: reduce) {
   .scroll-to-top {
     transition: none !important;
+  }
+}
+
+@keyframes lmm-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(calc(-50% - calc(var(--marquee-gap) / 2)), 0, 0);
+  }
+}
+
+@utility marquee-track {
+  --marquee-gap: 2rem;
+  animation: lmm-marquee 26s linear infinite;
+  will-change: transform;
+}
+
+@media (min-width: 640px) {
+  .marquee-track {
+    --marquee-gap: 3rem;
+  }
+}
+
+@utility brand-marquee-mask {
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 0.75rem,
+    black calc(100% - 0.75rem),
+    transparent 100%
+  );
+}
+
+.brand-marquee-track,
+.brand-marquee-group,
+.reviews-marquee-track,
+.reviews-marquee-group {
+  width: max-content;
+  min-width: max-content;
+  flex: none;
+}
+
+.reviews-marquee-mask {
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 1rem,
+    black calc(100% - 2rem),
+    transparent 100%
+  );
+}
+
+.reviews-marquee-mask:hover .marquee-track,
+.reviews-marquee-mask:active .marquee-track,
+.reviews-marquee-mask:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+.brand-logo-slot {
+  display: flex;
+  width: min(12rem, 100%);
+  height: 3.5rem;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+.brand-logo-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+@media (min-width: 640px) {
+  .brand-logo-slot {
+    width: 14rem;
+    height: 4rem;
+  }
+}
+
+.brand-marquee-mask:hover .marquee-track,
+.brand-marquee-mask:active .marquee-track,
+.brand-marquee-mask:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+@utility marquee-mask {
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 2.5rem,
+    black calc(100% - 2.5rem),
+    transparent 100%
+  );
+}
+.marquee-mask:hover .marquee-track,
+.marquee-mask:active .marquee-track,
+.marquee-mask:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-mask {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .marquee-track {
+    animation: none !important;
+    will-change: auto;
+  }
+
+  .brand-marquee-mask {
+    overflow-x: visible;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+
+  .reviews-marquee-mask {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+
+  .reviews-marquee-track {
+    animation: none !important;
+    transform: none !important;
+    will-change: auto;
+  }
+
+  .brand-marquee-track {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    transform: none !important;
+  }
+
+  .brand-marquee-group {
+    flex-wrap: wrap;
+    justify-content: center;
+    width: auto;
+    min-width: 0;
+  }
+
+  .brand-marquee-group[aria-hidden="true"] {
+    display: none;
+  }
+}
+
+@utility announce-track {
+  animation: lmm-marquee 22s linear infinite;
+  will-change: transform;
+}
+@utility announce-mask {
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 1.5rem,
+    black calc(100% - 1.5rem),
+    transparent 100%
+  );
+}
+@keyframes lmm-announce-fade {
+  0%,
+  4% {
+    opacity: 0;
+    transform: translate3d(0, 40%, 0);
+  }
+  8%,
+  18% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+  22%,
+  100% {
+    opacity: 0;
+    transform: translate3d(0, -40%, 0);
+  }
+}
+@utility announce-slide {
+  opacity: 0;
+  animation-name: lmm-announce-fade;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+.announce-mask:hover .announce-track,
+.announce-mask:active .announce-track,
+.announce-mask:focus-within .announce-track,
+.announce-fader:hover .announce-slide,
+.announce-fader:focus-within .announce-slide {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .announce-mask {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .announce-track,
+  .announce-slide {
+    animation: none !important;
+  }
+  .announce-slide {
+    opacity: 0;
+  }
+  .announce-slide:first-child {
+    opacity: 1;
   }
 }

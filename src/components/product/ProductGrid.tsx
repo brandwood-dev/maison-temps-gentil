@@ -12,10 +12,7 @@ type Props = {
    * `/montres/{slug}` (the product detail page).
    */
   getHref?: (product: Product) => string | null | undefined;
-  /**
-   * `catalog` caps the grid at 3 columns (pages with a filters sidebar),
-   * `default` keeps the denser 4-column layout used on the home page.
-   */
+  /** Use the wider three-column layout for catalog pages with filters. */
   density?: "default" | "catalog";
 };
 
@@ -38,7 +35,6 @@ export function ProductGrid({
         className,
       )}
     >
-
       {products.map((p, i) => {
         const href = getHref(p) ?? undefined;
         return (

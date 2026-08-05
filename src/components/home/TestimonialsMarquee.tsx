@@ -1,22 +1,22 @@
 import { Link } from "@tanstack/react-router";
 import { Star } from "lucide-react";
 
-import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-import { PRODUCTS } from "@/fixtures/products";
-import { TESTIMONIALS, type Testimonial } from "@/fixtures/testimonials";
-import { getPublicProductBySlug } from "@/lib/products";
 import { SectionHeading } from "@/components/brand/SectionHeading";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { TESTIMONIALS, type Testimonial } from "@/fixtures/testimonials";
+import { PRODUCTS } from "@/fixtures/products";
+import { getPublicProductBySlug } from "@/lib/products";
 
 function Rating({ rating }: { rating: number }) {
   return (
     <p className="flex items-center gap-1" aria-label={`Note : ${rating} sur 5`}>
-      {[1, 2, 3, 4, 5].map((i) => (
+      {[1, 2, 3, 4, 5].map((value) => (
         <Star
-          key={i}
+          key={value}
           aria-hidden
           strokeWidth={1.5}
           className={
-            i <= rating
+            value <= rating
               ? "h-4 w-4 fill-[color:var(--color-gold)] text-[color:var(--color-gold)]"
               : "h-4 w-4 text-[color:var(--color-border-strong)]"
           }
@@ -37,7 +37,6 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
           « {testimonial.message} »
         </blockquote>
       </div>
-
       <footer className="space-y-1 border-t border-[color:var(--color-border)] pt-4">
         <p className="text-sm font-semibold">{testimonial.fullName}</p>
         <p className="text-xs text-[color:var(--color-muted-foreground)]">
@@ -68,19 +67,18 @@ export function TestimonialsMarquee() {
     >
       <div className="container-page">
         <SectionHeading
-          eyebrow="Avis Clients"
+          eyebrow="Avis clients"
           title="Ils nous font confiance"
           titleId="testimonials-title"
           align="center"
         />
       </div>
-
       <div className="reviews-marquee-mask rail-bleed relative">
         <div className="reviews-marquee-track marquee-track flex items-stretch gap-4 sm:gap-6">
           <ul className="reviews-marquee-group flex items-stretch gap-4 sm:gap-6">
-            {TESTIMONIALS.map((t) => (
-              <li key={t.id} className="flex">
-                <TestimonialCard testimonial={t} />
+            {TESTIMONIALS.map((testimonial) => (
+              <li key={testimonial.id} className="flex">
+                <TestimonialCard testimonial={testimonial} />
               </li>
             ))}
           </ul>
@@ -89,9 +87,9 @@ export function TestimonialsMarquee() {
               aria-hidden="true"
               className="reviews-marquee-group flex items-stretch gap-4 sm:gap-6"
             >
-              {TESTIMONIALS.map((t) => (
-                <li key={`dup-${t.id}`} className="flex">
-                  <TestimonialCard testimonial={t} />
+              {TESTIMONIALS.map((testimonial) => (
+                <li key={`dup-${testimonial.id}`} className="flex">
+                  <TestimonialCard testimonial={testimonial} />
                 </li>
               ))}
             </ul>

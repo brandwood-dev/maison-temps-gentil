@@ -1,5 +1,5 @@
-import { ChevronRight } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { ChevronRight } from "lucide-react";
 
 export type Crumb = { label: string; href?: string };
 
@@ -8,7 +8,6 @@ type Props = {
   title: string;
   intro?: string;
   totalItems: number;
-  /** Image de bannière (Cloudinary). Sans image, fond uni de repli. */
   imageSrc?: string;
   imageSrcSet?: string;
 };
@@ -19,73 +18,58 @@ function resultsLabel(total: number): string {
   return `${total} montres`;
 }
 
-export function CatalogHeader({
-  crumbs,
-  title,
-  intro,
-  totalItems,
-  imageSrc,
-  imageSrcSet,
-}: Props) {
+export function CatalogHeader({ crumbs, title, intro, totalItems, imageSrc, imageSrcSet }: Props) {
   return (
-    <header className="relative isolate overflow-hidden border-b border-[color:var(--color-border)] bg-[color:var(--color-noir,#0d0d0d)]">
+    <header className="relative isolate overflow-hidden bg-[color:var(--color-primary)]">
       {imageSrc ? (
         <img
           src={imageSrc}
           srcSet={imageSrcSet}
           sizes="100vw"
-          width={1600}
-          height={480}
           alt=""
-          aria-hidden="true"
-          loading="eager"
+          aria-hidden
+          width={1600}
+          height={560}
           decoding="async"
-          fetchPriority="high"
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover object-center"
         />
       ) : null}
-
-      {/* Overlay : voile uni + dégradé pour un contraste AA sur tout le texte */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 bg-black/60 bg-gradient-to-b from-black/70 via-black/50 to-black/75"
-      />
-
-      <div className="container-page relative flex min-h-[13rem] flex-col items-center justify-center py-10 text-center md:min-h-[17rem] md:py-14 lg:min-h-[20rem]">
-        <nav aria-label="Fil d’Ariane" className="mb-4">
-          <ol className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 text-xs text-white/80">
+      <div aria-hidden className="absolute inset-0 bg-[image:var(--hero-overlay)]" />
+      <div className="container-page relative py-12 text-center md:py-16">
+        <nav aria-label="Fil d’Ariane" className="mb-5">
+          <ol className="flex flex-wrap items-center justify-center gap-1 text-xs text-[color:var(--color-on-image-muted)]">
             {crumbs.map((c, i) => {
               const isLast = i === crumbs.length - 1;
               return (
-                <li key={`${c.label}-${i}`} className="inline-flex items-center gap-1.5">
+                <li key={`${c.label}-${i}`} className="inline-flex items-center gap-1">
                   {c.href && !isLast ? (
-                    <Link to={c.href} className="underline-offset-4 hover:text-white hover:underline">
+                    <Link
+                      to={c.href}
+                      className="hover:text-[color:var(--color-on-image)] hover:underline"
+                    >
                       {c.label}
                     </Link>
                   ) : (
                     <span
-                      className={isLast ? "font-medium text-white" : undefined}
+                      className={isLast ? "text-[color:var(--color-on-image)]" : undefined}
                       aria-current={isLast ? "page" : undefined}
                     >
                       {c.label}
                     </span>
                   )}
-                  {!isLast ? <ChevronRight className="h-3 w-3 text-white/60" aria-hidden /> : null}
+                  {!isLast ? <ChevronRight className="h-3 w-3 opacity-60" aria-hidden /> : null}
                 </li>
               );
             })}
           </ol>
         </nav>
-
-        <h1 className="t-h1 text-balance text-white">{title}</h1>
-
+        <h1 className="t-h1 text-[color:var(--color-on-image)]">{title}</h1>
         {intro ? (
-          <p className="mx-auto mt-3 max-w-2xl text-pretty text-sm text-white/85 md:text-base">
+          <p className="mx-auto mt-3 max-w-2xl text-sm text-[color:var(--color-on-image-muted)] md:text-base">
             {intro}
           </p>
         ) : null}
-
-        <p className="mt-4 text-xs font-medium uppercase tracking-[0.14em] text-white/80">
+        <p className="mt-3 text-xs font-medium tracking-wide text-[color:var(--color-on-image-muted)]">
           {resultsLabel(totalItems)}
         </p>
       </div>

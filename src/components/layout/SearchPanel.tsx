@@ -1,18 +1,34 @@
-import { useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Search } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { useCatalogProducts } from "@/lib/catalog-products";
+import type { Product } from "@/types/product";
 
 type Props = { open: boolean; onClose: () => void; restoreFocus: () => void };
 
 export function SearchPanel({ open, onClose, restoreFocus }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [query, setQuery] = useState("");
+  const products = useCatalogProducts();
+  const suggestions = useMemo(() => {
+    const normalizedQuery = normalizeSearch(query);
+    if (!normalizedQuery) return [];
+
+    return products
+      .filter((product) => product.availability !== "hidden")
+      .filter((product) => {
+        const searchable = normalizeSearch(`${product.name} ${product.brand} ${product.reference}`);
+        return searchable.includes(normalizedQuery);
+      })
+      .slice(0, 6);
+  }, [products, query]);
 
   return (
-    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+    <Dialog open={open} onOpenChange={(value) => !value && onClose()}>
       <DialogContent
         aria-label="Recherche"
-        onOpenAutoFocus={(e) => {
-          e.preventDefault();
+        onOpenAutoFocus={(event) => {
+          event.preventDefault();
           inputRef.current?.focus();
         }}
         onCloseAutoFocus={(event) => {
@@ -31,7 +47,7 @@ export function SearchPanel({ open, onClose, restoreFocus }: Props) {
         <div className="container-page py-4">
           <form
             role="search"
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={(event) => event.preventDefault()}
             className="flex items-center gap-2 pr-12"
           >
             <label htmlFor="site-search" className="sr-only">
@@ -49,19 +65,76 @@ export function SearchPanel({ open, onClose, restoreFocus }: Props) {
                 autoComplete="off"
                 placeholder="Rechercher une montre, une marque..."
                 className="h-11 w-full min-w-0 bg-transparent text-[15px] outline-none placeholder:text-[color:var(--color-muted-foreground)]"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
               />
             </div>
           </form>
 
           <div className="mt-6 min-h-[120px] pb-6">
             <p className="eyebrow mb-3">Suggestions</p>
-            <p className="text-sm text-[color:var(--color-muted-foreground)]">
-              Commencez à taper pour voir des résultats. Les suggestions apparaîtront ici
-              prochainement.
-            </p>
+            {!query.trim() ? (
+              <p className="text-sm text-[color:var(--color-muted-foreground)]">
+                Commencez à taper pour rechercher une montre, une marque ou une référence.
+              </p>
+            ) : suggestions.length > 0 ? (
+              <ul role="listbox" aria-label="Suggestions de produits" className="grid gap-1">
+                {suggestions.map((product) => (
+                  <Suggestion product={product} onSelect={onClose} key={product.id} />
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-[color:var(--color-muted-foreground)]">
+                Aucun produit ne correspond à votre recherche.
+              </p>
+            )}
           </div>
         </div>
       </DialogContent>
     </Dialog>
   );
+}
+
+function Suggestion({ product, onSelect }: { product: Product; onSelect: () => void }) {
+  const image = product.images[0];
+  return (
+    <li role="option">
+      <a
+        href={`/montres/${encodeURIComponent(product.slug)}`}
+        onClick={onSelect}
+        className="flex items-center gap-3 rounded-[var(--radius-md)] border border-transparent px-2 py-2 text-left transition-colors hover:border-[color:var(--color-border)] hover:bg-[color:var(--color-surface-cream)] focus-visible:border-[color:var(--color-gold)] focus-visible:outline-none"
+      >
+        {image ? (
+          <img
+            src={image.url}
+            alt=""
+            width={48}
+            height={48}
+            className="h-12 w-12 shrink-0 rounded-[var(--radius-sm)] border border-[color:var(--color-border)] bg-[color:var(--color-surface-cream)] object-cover"
+          />
+        ) : (
+          <span
+            aria-hidden
+            className="h-12 w-12 shrink-0 rounded-[var(--radius-sm)] border border-[color:var(--color-border)] bg-[color:var(--color-surface-cream)]"
+          />
+        )}
+        <span className="min-w-0">
+          <span className="block truncate text-sm font-semibold text-[color:var(--color-foreground)]">
+            {product.name}
+          </span>
+          <span className="block truncate text-xs text-[color:var(--color-muted-foreground)]">
+            {product.brand} · {product.reference}
+          </span>
+        </span>
+      </a>
+    </li>
+  );
+}
+
+function normalizeSearch(value: string): string {
+  return value
+    .trim()
+    .toLocaleLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
 }

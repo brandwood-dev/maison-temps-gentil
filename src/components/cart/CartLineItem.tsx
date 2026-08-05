@@ -1,11 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Minus, Plus, Trash2 } from "lucide-react";
 
-import {
-  formatPriceTND,
-  getCurrentPriceMillimes,
-  isPromotionActive,
-} from "@/lib/product-pricing";
+import { formatPriceTND, getCurrentPriceMillimes, isPromotionActive } from "@/lib/product-pricing";
 import { cn } from "@/lib/utils";
 import type { Product } from "@/types/product";
 

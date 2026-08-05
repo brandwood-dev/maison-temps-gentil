@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
 import { ChevronRight, Home } from "lucide-react";
 
 import type { Product } from "@/types/product";
@@ -8,6 +9,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { getCategoryLabel, getCategoryRoute, getRelatedProducts } from "@/lib/products";
 import { useCart } from "@/lib/cart-store";
+import { trackAddToCart, trackViewContent } from "@/lib/meta-pixel";
 import { ProductGallery } from "./ProductGallery";
 import { ProductSummary } from "./ProductSummary";
 import { ProductSpecifications } from "./ProductSpecifications";
@@ -28,7 +30,18 @@ export function ProductDetailPage({ product, allProducts, canonicalUrl }: Props)
   const categoryLabel = getCategoryLabel(product.category);
   const related = getRelatedProducts(allProducts, product, 4);
   const { addItem } = useCart();
-  const handleAddToCart = (p: Product, quantity: number) => addItem(p.id, quantity);
+  const trackedProductId = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (trackedProductId.current === product.id) return;
+    trackedProductId.current = product.id;
+    trackViewContent(product);
+  }, [product]);
+
+  const handleAddToCart = (p: Product, quantity: number) => {
+    addItem(p.id, quantity);
+    trackAddToCart(p, quantity);
+  };
 
   return (
     <div className="min-h-screen bg-[color:var(--color-background)]">

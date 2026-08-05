@@ -1,42 +1,46 @@
 import { Link } from "@tanstack/react-router";
 
 import { catalogQueryToSearch } from "@/lib/catalog";
-import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-import { getBrandSummaries } from "@/lib/brands";
 import { SectionHeading } from "@/components/brand/SectionHeading";
+import type { PublicBrand } from "@/lib/catalog-api";
+import { useCatalogBrands } from "@/lib/catalog-products";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
-function BrandLogo({ name, logoUrl }: { name: string; logoUrl: string }) {
+function BrandLogo({ brand }: { brand: PublicBrand }) {
   return (
     <Link
       to="/montres"
-      search={catalogQueryToSearch({ brands: [name] })}
-      aria-label={`Voir les montres ${name}`}
+      search={catalogQueryToSearch({ brands: [brand.name] })}
+      aria-label={`Voir les montres ${brand.name}`}
       className="group flex h-20 w-44 shrink-0 items-center justify-center px-4 transition-opacity duration-300 hover:opacity-60 focus-visible:opacity-60 motion-reduce:transition-none sm:h-24 sm:w-60 sm:px-6"
     >
-      {logoUrl ? (
-        <img
-          src={logoUrl}
-          alt={name}
-          width={180}
-          height={56}
-          loading="lazy"
-          className="h-7 w-full max-w-40 object-contain opacity-90 transition-opacity duration-300 group-hover:opacity-100 sm:h-9 sm:max-w-48"
-        />
-      ) : (
-        <span className="text-center text-[13px] leading-tight font-semibold tracking-[0.18em] text-[color:var(--color-foreground)] uppercase sm:text-sm">
-          {name}
-        </span>
-      )}
+      <span className="brand-logo-slot" aria-label={brand.logoUrl ? undefined : brand.name}>
+        {brand.logoUrl ? (
+          <img
+            src={brand.logoUrl}
+            alt={`Logo ${brand.name}`}
+            width={220}
+            height={64}
+            loading="lazy"
+            decoding="async"
+            className="brand-logo-image grayscale opacity-90 contrast-125 transition-opacity duration-300 group-hover:opacity-100"
+          />
+        ) : (
+          <span className="text-center text-[13px] leading-tight font-semibold tracking-[0.18em] text-[color:var(--color-foreground)] uppercase sm:text-sm">
+            {brand.name}
+          </span>
+        )}
+      </span>
     </Link>
   );
 }
 
 export function BrandLogosMarquee() {
-  const brands = getBrandSummaries();
+  const brands = useCatalogBrands();
   const prefersReducedMotion = usePrefersReducedMotion();
   if (brands.length === 0) return null;
 
-  // Triple the track on small catalogs so the loop feels continuous.
+  // Repeat short catalogues so the moving row stays visually continuous.
   const track =
     prefersReducedMotion || brands.length >= 6 ? brands : [...brands, ...brands, ...brands];
 
@@ -52,13 +56,19 @@ export function BrandLogosMarquee() {
           titleId="brands-featured"
           align="center"
         />
+        <div className="hidden">
+          <p className="eyebrow">Marques</p>
+          <h2 id="brands-featured" className="t-h1 mt-2">
+            Nos marques à la une
+          </h2>
+        </div>
       </div>
 
       <div className="brand-marquee-mask rail-bleed relative">
         <div className="brand-marquee-track marquee-track inline-flex items-center gap-8 sm:gap-12">
           <div className="brand-marquee-group inline-flex items-center gap-8 sm:gap-12">
-            {track.map((b, i) => (
-              <BrandLogo key={`a-${b.name}-${i}`} name={b.name} logoUrl={b.logoUrl} />
+            {track.map((brand, index) => (
+              <BrandLogo key={`primary-${brand.name}-${index}`} brand={brand} />
             ))}
           </div>
           {!prefersReducedMotion ? (
@@ -66,8 +76,8 @@ export function BrandLogosMarquee() {
               aria-hidden="true"
               className="brand-marquee-group inline-flex items-center gap-8 sm:gap-12"
             >
-              {track.map((b, i) => (
-                <BrandLogo key={`b-${b.name}-${i}`} name={b.name} logoUrl={b.logoUrl} />
+              {track.map((brand, index) => (
+                <BrandLogo key={`duplicate-${brand.name}-${index}`} brand={brand} />
               ))}
             </div>
           ) : null}

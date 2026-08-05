@@ -27,10 +27,14 @@ export type CheckoutTotals = {
  * Calcule les totaux côté client à titre indicatif uniquement.
  * La future API NestJS recalculera prix, promotions et livraison.
  */
-export function computeCheckoutTotals(items: CartItem[], now: Date = new Date()): CheckoutTotals {
+export function computeCheckoutTotals(
+  items: CartItem[],
+  now: Date = new Date(),
+  products: Product[] = PRODUCTS,
+): CheckoutTotals {
   const lines: CheckoutLine[] = [];
   for (const it of items) {
-    const product = PRODUCTS.find((p) => p.id === it.productId && p.availability === "available");
+    const product = products.find((p) => p.id === it.productId && p.availability === "available");
     if (!product) continue;
     const unit = getCurrentPriceMillimes(product, now);
     lines.push({
@@ -100,6 +104,7 @@ export function validateShipping(input: ShippingInput): ShippingErrors {
 /* ---------------- Mock service ---------------- */
 
 export type OrderSubmission = {
+  idempotencyKey: string;
   items: { productId: string; quantity: number }[];
   shipping: {
     firstName: string;
@@ -237,10 +242,12 @@ export async function submitOrderMock(
 export function buildOrderSubmission(
   items: CartItem[],
   input: ShippingInput,
+  idempotencyKey = "local-idempotency-key",
 ): OrderSubmission | null {
   const phone = normalizeTunisiaPhone(input.phone);
   if (!phone) return null;
   return {
+    idempotencyKey,
     items: items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
     shipping: {
       firstName: input.firstName.trim(),

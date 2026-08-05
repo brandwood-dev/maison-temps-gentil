@@ -2,7 +2,7 @@
  * Local cart store — SSR-safe, no dependency, backed by localStorage.
  * Only stores `{ productId, quantity }` pairs. Prices, product data and
  * promotions are never persisted; they are resolved at render time from
- * `PRODUCTS` and the shared `useNow()` clock.
+ * the catalog resolved by the current page and the shared `useNow()` clock.
  */
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 
@@ -236,9 +236,10 @@ function setItems(next: CartItem[]) {
 
 export function addItem(productId: string, quantity = 1) {
   const next = addCartItem(items, productId, quantity);
-  if (next === items) return;
-  setItems(next);
-  openCartDrawer(productId);
+  if (next !== items) {
+    setItems(next);
+    openCartDrawer(productId);
+  }
 }
 
 export function setQuantity(productId: string, quantity: number) {
@@ -259,8 +260,6 @@ export function clearCart() {
 export function useCart() {
   const current = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const totalQuantity = current.reduce((sum, item) => sum + item.quantity, 0);
-  // `mounted` stays false on the first client render so SSR markup matches
-  // exactly; the real cart state is revealed in the effect that follows.
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   const isHydrated = mounted && (current !== EMPTY || hydrated);
@@ -282,55 +281,47 @@ export function useCart() {
   };
 }
 
-/* ---------- cart drawer (mini-cart) UI store ---------- */
+/* ---------- cart drawer state ---------- */
 
-type CartDrawerState = {
+type CartDrawerSnapshot = {
   open: boolean;
-  lastAddedProductId: string | null;
-  /** Incremented on each add — lets the UI re-announce identical adds. */
-  addCount: number;
+  focusProductId?: string;
 };
 
-let drawerState: CartDrawerState = { open: false, lastAddedProductId: null, addCount: 0 };
+const CLOSED_DRAWER: CartDrawerSnapshot = { open: false };
+let drawerSnapshot: CartDrawerSnapshot = CLOSED_DRAWER;
 const drawerListeners = new Set<() => void>();
-const SERVER_DRAWER_STATE: CartDrawerState = {
-  open: false,
-  lastAddedProductId: null,
-  addCount: 0,
-};
 
-function setDrawerState(next: CartDrawerState) {
-  drawerState = next;
+function emitDrawer() {
   drawerListeners.forEach((listener) => listener());
 }
 
 function subscribeDrawer(listener: () => void) {
   drawerListeners.add(listener);
-  return () => {
-    drawerListeners.delete(listener);
-  };
+  return () => drawerListeners.delete(listener);
 }
 
-export function openCartDrawer(productId?: string) {
-  setDrawerState({
-    open: true,
-    lastAddedProductId: productId ?? null,
-    addCount: productId ? drawerState.addCount + 1 : drawerState.addCount,
-  });
+function getDrawerSnapshot() {
+  return drawerSnapshot;
+}
+
+function getDrawerServerSnapshot() {
+  return CLOSED_DRAWER;
+}
+
+export function openCartDrawer(focusProductId?: string) {
+  drawerSnapshot = { open: true, focusProductId };
+  emitDrawer();
 }
 
 export function closeCartDrawer() {
-  if (!drawerState.open) return;
-  setDrawerState({ ...drawerState, open: false });
+  drawerSnapshot = CLOSED_DRAWER;
+  emitDrawer();
 }
 
 export function useCartDrawer() {
-  const state = useSyncExternalStore(
-    subscribeDrawer,
-    () => drawerState,
-    () => SERVER_DRAWER_STATE,
-  );
-  const open = useCallback((productId?: string) => openCartDrawer(productId), []);
-  const close = useCallback(() => closeCartDrawer(), []);
-  return { ...state, openDrawer: open, closeDrawer: close };
+  const current = useSyncExternalStore(subscribeDrawer, getDrawerSnapshot, getDrawerServerSnapshot);
+  const openDrawer = useCallback((focusProductId?: string) => openCartDrawer(focusProductId), []);
+  const closeDrawer = useCallback(() => closeCartDrawer(), []);
+  return { ...current, openDrawer, closeDrawer };
 }

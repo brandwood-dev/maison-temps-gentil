@@ -7,10 +7,7 @@ export type Testimonial = {
   productSlug: string;
 };
 
-/**
- * Avis clients de démonstration — à remplacer par le backend NestJS.
- * `productSlug` doit correspondre à un slug de `src/fixtures/products.ts`.
- */
+/** Demo testimonials for the UI section until reviews are exposed by the API. */
 export const TESTIMONIALS: Testimonial[] = [
   {
     id: "t-1",

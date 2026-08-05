@@ -48,7 +48,9 @@ const SECTIONS: readonly LegalSection[] = [
     content: (
       <ul className="ml-5 list-disc space-y-1">
         <li>Rayures, chocs, écrasements et usure normale du boîtier et du bracelet.</li>
-        <li>Dommages liés à l’eau lorsque l’étanchéité du modèle n’est pas prévue pour cet usage.</li>
+        <li>
+          Dommages liés à l’eau lorsque l’étanchéité du modèle n’est pas prévue pour cet usage.
+        </li>
         <li>Interventions réalisées par un tiers non agréé.</li>
         <li>Pièces d’usure : bracelet, verre, pile, joints.</li>
       </ul>
