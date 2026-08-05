@@ -74,7 +74,7 @@ export function TestimonialsMarquee() {
         </div>
       </div>
 
-      <div className="reviews-marquee-mask relative">
+      <div className="reviews-marquee-mask relative pl-4 md:pl-8">
         <div className="reviews-marquee-track marquee-track flex items-stretch gap-4 sm:gap-6">
           <ul className="reviews-marquee-group flex items-stretch gap-4 sm:gap-6">
             {TESTIMONIALS.map((t) => (
