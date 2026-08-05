@@ -160,6 +160,16 @@ export type PublicOrderTracking = {
 };
 
 const DEFAULT_API_URL = "https://la-maison-des-montres-api.vercel.app";
+const PUBLIC_API_TIMEOUT_MS = 8_000;
+const PUBLIC_CACHE_TTL_MS = 15_000;
+
+type PublicCacheEntry = { expiresAt: number; value: unknown };
+
+// Public catalog reads are shared by the root loader and route loaders. Keep
+// a very short server-side cache and deduplicate concurrent requests so a
+// navigation burst does not fan out into identical API calls.
+const publicResponseCache = new Map<string, PublicCacheEntry>();
+const publicRequestCache = new Map<string, Promise<unknown>>();
 
 function apiUrl(path: string): string {
   const base = (process.env.PUBLIC_API_URL ?? DEFAULT_API_URL).replace(/\/+$/, "");
@@ -176,13 +186,39 @@ function apiHeaders(): HeadersInit {
 }
 
 async function apiRequest<T>(path: string): Promise<T> {
-  const response = await fetch(apiUrl(path), {
-    headers: apiHeaders(),
-  });
-  if (!response.ok) {
-    throw new Error(`Catalogue API indisponible (${response.status})`);
+  const now = Date.now();
+  const cached = publicResponseCache.get(path);
+  if (cached && cached.expiresAt > now) return cached.value as T;
+
+  const pending = publicRequestCache.get(path);
+  if (pending) return (await pending) as T;
+
+  const request = (async () => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), PUBLIC_API_TIMEOUT_MS);
+    try {
+      const response = await fetch(apiUrl(path), {
+        headers: apiHeaders(),
+        cache: "no-store",
+        signal: controller.signal,
+      });
+      if (!response.ok) {
+        throw new Error(`Catalogue API indisponible (${response.status})`);
+      }
+      const value = (await response.json()) as T;
+      publicResponseCache.set(path, { value, expiresAt: Date.now() + PUBLIC_CACHE_TTL_MS });
+      return value;
+    } finally {
+      clearTimeout(timeout);
+    }
+  })();
+
+  publicRequestCache.set(path, request);
+  try {
+    return await request;
+  } finally {
+    publicRequestCache.delete(path);
   }
-  return (await response.json()) as T;
 }
 
 export const getPublicProducts = createServerFn({ method: "GET" }).handler(async () => {

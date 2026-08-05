@@ -96,7 +96,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   loader: async () => {
     const [products, brands, categories, attributes, promoMessages, settings] = await Promise.all([
-      getPublicProducts(),
+      getPublicProducts().catch(() => []),
       getPublicBrands().catch(() => []),
       getPublicCategories().catch(() => []),
       getPublicAttributes().catch(() => []),
