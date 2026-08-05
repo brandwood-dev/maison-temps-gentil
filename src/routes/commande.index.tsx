@@ -21,7 +21,7 @@ import { trackInitiateCheckout, trackPurchase } from "@/lib/meta-pixel";
 import { TUNISIA_GOVERNORATES } from "@/lib/tunisia";
 import { PAYMENT_METHOD_LABEL, SHIPPING_DELAY_LABEL } from "@/lib/checkout-config";
 
-export const Route = createFileRoute("/commande")({
+export const Route = createFileRoute("/commande/")({
   head: () => ({
     meta: [
       { title: "Finaliser ma commande | La Maison des Montres" },
