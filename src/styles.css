@@ -319,9 +319,10 @@
 
   /* Marques : affichage statique, centré et sans défilement */
   .brand-marquee-mask {
-    overflow-x: visible;
+    overflow-x: hidden;
     mask-image: none;
     -webkit-mask-image: none;
+    padding-inline: 1rem;
   }
 
   .brand-marquee-track {
@@ -334,11 +335,14 @@
   }
 
   .brand-marquee-group {
+    flex: 1 1 auto;
     flex-wrap: wrap;
     justify-content: center;
     width: auto;
     min-width: 0;
+    max-width: 100%;
   }
+
 
   .brand-marquee-group[aria-hidden="true"] {
     display: none;
