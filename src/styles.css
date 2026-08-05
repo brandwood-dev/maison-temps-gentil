@@ -240,12 +240,47 @@
   );
 }
 
+@utility reviews-marquee-mask {
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    black 1rem,
+    black calc(100% - 2rem),
+    transparent 100%
+  );
+}
+
 .brand-marquee-track,
-.brand-marquee-group {
+.brand-marquee-group,
+.reviews-marquee-track,
+.reviews-marquee-group {
   width: max-content;
   min-width: max-content;
   flex: none;
 }
+
+.reviews-marquee-mask:hover .marquee-track,
+.reviews-marquee-mask:active .marquee-track,
+.reviews-marquee-mask:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reviews-marquee-mask {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+
+  .reviews-marquee-track {
+    animation: none !important;
+    transform: none !important;
+    will-change: auto;
+  }
+}
+
 
 .marquee-mask:hover .marquee-track,
 .marquee-mask:active .marquee-track,

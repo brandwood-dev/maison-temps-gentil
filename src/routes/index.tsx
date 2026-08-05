@@ -6,6 +6,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { TrustStrip } from "@/components/layout/TrustStrip";
 import { CollectionsShowcase } from "@/components/home/CollectionsShowcase";
 import { BrandLogosMarquee } from "@/components/home/BrandLogosMarquee";
+import { TestimonialsMarquee } from "@/components/home/TestimonialsMarquee";
 
 import { LmmButton } from "@/components/brand/LmmButton";
 import { ProductGrid } from "@/components/product/ProductGrid";
@@ -58,6 +59,7 @@ function HomePage() {
         <TrustStrip />
         <CollectionsShowcase />
         <BrandLogosMarquee />
+        <TestimonialsMarquee />
 
         <FeaturedProducts />
       </main>
