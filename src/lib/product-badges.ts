@@ -16,7 +16,7 @@ export function getProductBadges(product: Product, nowTs: number): ProductBadge[
     badges.push({ id: "promo", label: "Promo", tone: "promo" });
   }
   if (product.isBestSeller) {
-    badges.push({ id: "best", label: "Meilleure vente", tone: "best" });
+    badges.push({ id: "best", label: "Best seller", tone: "best" });
   }
   if (product.isNew && badges.length < 2) {
     badges.push({ id: "new", label: "Nouveauté", tone: "new" });
