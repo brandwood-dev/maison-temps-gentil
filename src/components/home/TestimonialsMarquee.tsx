@@ -71,6 +71,7 @@ export function TestimonialsMarquee() {
           eyebrow="Avis Clients"
           title="Ils nous font confiance"
           titleId="testimonials-title"
+          align="center"
         />
       </div>
 
