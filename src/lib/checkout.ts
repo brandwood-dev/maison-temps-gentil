@@ -23,6 +23,18 @@ export type CheckoutTotals = {
   itemCount: number;
 };
 
+export type CheckoutShippingConfig = {
+  feeMillimes: number;
+  freeShippingEnabled: boolean;
+  freeShippingThresholdMillimes?: number;
+};
+
+const DEFAULT_SHIPPING: CheckoutShippingConfig = {
+  feeMillimes: SHIPPING_FEE_MILLIMES,
+  freeShippingEnabled: false,
+  freeShippingThresholdMillimes: FREE_SHIPPING_THRESHOLD_MILLIMES,
+};
+
 /**
  * Calcule les totaux côté client à titre indicatif uniquement.
  * La future API NestJS recalculera prix, promotions et livraison.
@@ -31,6 +43,7 @@ export function computeCheckoutTotals(
   items: CartItem[],
   now: Date = new Date(),
   products: Product[] = PRODUCTS,
+  shipping: CheckoutShippingConfig = DEFAULT_SHIPPING,
 ): CheckoutTotals {
   const lines: CheckoutLine[] = [];
   for (const it of items) {
@@ -47,13 +60,16 @@ export function computeCheckoutTotals(
     });
   }
   const subtotal = lines.reduce((s, l) => s + l.lineMillimes, 0);
-  const freeShipping = subtotal >= FREE_SHIPPING_THRESHOLD_MILLIMES;
-  const shipping = subtotal > 0 && !freeShipping ? SHIPPING_FEE_MILLIMES : 0;
+  const freeShipping =
+    shipping.freeShippingEnabled ||
+    (shipping.freeShippingThresholdMillimes !== undefined &&
+      subtotal >= shipping.freeShippingThresholdMillimes);
+  const shippingFee = subtotal > 0 && !freeShipping ? shipping.feeMillimes : 0;
   return {
     lines,
     subtotalMillimes: subtotal,
-    shippingMillimes: shipping,
-    totalMillimes: subtotal + shipping,
+    shippingMillimes: shippingFee,
+    totalMillimes: subtotal + shippingFee,
     freeShipping,
     itemCount: lines.reduce((s, l) => s + l.quantity, 0),
   };

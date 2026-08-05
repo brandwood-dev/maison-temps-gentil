@@ -5,6 +5,7 @@ import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { useCart } from "@/lib/cart-store";
+import { useSiteSettings } from "@/lib/site-settings";
 import { useNow } from "@/lib/now-store";
 import { formatPriceTND } from "@/lib/product-pricing";
 import {
@@ -61,9 +62,13 @@ function CommandeRoute() {
 function CheckoutPage() {
   const { items, hydrated, clearCart } = useCart();
   const products = useCatalogProducts();
+  const { shipping } = useSiteSettings();
   const nowTs = useNow();
   const now = useMemo(() => new Date(nowTs), [nowTs]);
-  const totals = useMemo(() => computeCheckoutTotals(items, now, products), [items, now, products]);
+  const totals = useMemo(
+    () => computeCheckoutTotals(items, now, products, shipping),
+    [items, now, products, shipping],
+  );
   const navigate = useNavigate();
 
   const [values, setValues] = useState<ShippingInput>(EMPTY_INPUT);

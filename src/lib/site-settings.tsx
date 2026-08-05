@@ -15,6 +15,12 @@ export const DEFAULT_SITE_SETTINGS: PublicStoreSettings = {
     phone: "",
     whatsapp: "",
   },
+  shipping: {
+    feeMillimes: 8_000,
+    freeShippingEnabled: false,
+    freeShippingThresholdMillimes: 500_000,
+  },
+  cod: { enabled: true },
   seo: {
     defaultTitle: "La Maison des Montres | Montres élégantes en Tunisie",
     defaultDescription:

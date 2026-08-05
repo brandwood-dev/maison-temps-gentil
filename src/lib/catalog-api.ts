@@ -103,6 +103,12 @@ export type PublicStoreSettings = {
     whatsapp: string;
     address?: string;
   };
+  shipping: {
+    feeMillimes: number;
+    freeShippingEnabled: boolean;
+    freeShippingThresholdMillimes?: number;
+  };
+  cod: { enabled: true };
   seo: {
     defaultTitle: string;
     defaultDescription: string;
