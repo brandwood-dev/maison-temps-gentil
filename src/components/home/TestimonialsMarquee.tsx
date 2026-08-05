@@ -84,7 +84,10 @@ export function TestimonialsMarquee() {
             ))}
           </ul>
           {!prefersReducedMotion ? (
-            <ul aria-hidden="true" className="reviews-marquee-group flex items-stretch gap-4 sm:gap-6">
+            <ul
+              aria-hidden="true"
+              className="reviews-marquee-group flex items-stretch gap-4 sm:gap-6"
+            >
               {TESTIMONIALS.map((t) => (
                 <li key={`dup-${t.id}`} className="flex">
                   <TestimonialCard testimonial={t} />
