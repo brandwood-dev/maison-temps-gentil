@@ -71,6 +71,8 @@ export function ProductCard({
         <img
           src={primary.url}
           alt={primary.alt}
+          width={800}
+          height={1000}
           loading={mainLoading}
           fetchPriority={mainFetchPriority}
           decoding="async"
@@ -91,6 +93,8 @@ export function ProductCard({
         <img
           src={secondary.url}
           alt={secondary.alt}
+          width={800}
+          height={1000}
           loading="lazy"
           fetchPriority="auto"
           decoding="async"
