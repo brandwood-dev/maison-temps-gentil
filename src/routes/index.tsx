@@ -63,6 +63,7 @@ const fallbackHero: PublicHeroSlide = {
 
 const HERO_AUTOPLAY_MS = 6500;
 const HERO_TRANSITION_MS = 700;
+type HeroDirection = 1 | -1;
 
 function Hero({ slides }: { slides: PublicHeroSlide[] }) {
   const allSlides = slides.length > 5 ? slides.slice(0, 5) : slides.length ? slides : [fallbackHero];
@@ -70,13 +71,14 @@ function Hero({ slides }: { slides: PublicHeroSlide[] }) {
   const [incomingIndex, setIncomingIndex] = useState<number | null>(null);
   const [incomingReady, setIncomingReady] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [transitionDirection, setTransitionDirection] = useState<HeroDirection>(1);
   const [paused, setPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const slide = allSlides[currentIndex] ?? allSlides[0];
   const incomingSlide = incomingIndex === null ? null : allSlides[incomingIndex];
 
   const goToSlide = useCallback(
-    (nextIndex: number) => {
+    (nextIndex: number, direction: HeroDirection = nextIndex >= currentIndex ? 1 : -1) => {
       const safeIndex = (nextIndex + allSlides.length) % allSlides.length;
       if (safeIndex === currentIndex || incomingIndex !== null) return;
 
@@ -86,6 +88,7 @@ function Hero({ slides }: { slides: PublicHeroSlide[] }) {
       }
 
       setIncomingReady(false);
+      setTransitionDirection(direction);
       setIncomingIndex(safeIndex);
     },
     [allSlides.length, currentIndex, incomingIndex, reducedMotion],
@@ -124,7 +127,7 @@ function Hero({ slides }: { slides: PublicHeroSlide[] }) {
   useEffect(() => {
     if (allSlides.length <= 1 || paused || reducedMotion || incomingIndex !== null) return;
     const timer = window.setInterval(() => {
-      goToSlide(currentIndex + 1);
+      goToSlide(currentIndex + 1, 1);
     }, HERO_AUTOPLAY_MS);
     return () => window.clearInterval(timer);
   }, [allSlides.length, currentIndex, goToSlide, incomingIndex, paused, reducedMotion]);
@@ -139,6 +142,17 @@ function Hero({ slides }: { slides: PublicHeroSlide[] }) {
   }, [allSlides, currentIndex]);
 
   const activeDotIndex = incomingIndex ?? currentIndex;
+  const imageTransition = isTransitioning ? "transition-transform duration-700 ease-out" : "transition-none";
+  const currentImageTransform = isTransitioning
+    ? transitionDirection === 1
+      ? "-translate-x-full"
+      : "translate-x-full"
+    : "translate-x-0";
+  const incomingImageTransform = isTransitioning
+    ? "translate-x-0"
+    : transitionDirection === 1
+      ? "translate-x-full"
+      : "-translate-x-full";
 
   return (
     <section
@@ -163,7 +177,7 @@ function Hero({ slides }: { slides: PublicHeroSlide[] }) {
           loading="eager"
           fetchPriority={currentIndex === 0 ? "high" : "low"}
           decoding="async"
-          className={`absolute inset-0 h-full w-full object-cover object-center will-change-[opacity] ${isTransitioning ? "opacity-0 transition-opacity duration-700 ease-out" : "opacity-100 transition-none"}`}
+          className={`absolute inset-0 h-full w-full object-cover object-center will-change-transform ${imageTransition} ${currentImageTransform}`}
         />
         {incomingSlide && (
           <img
@@ -176,13 +190,20 @@ function Hero({ slides }: { slides: PublicHeroSlide[] }) {
             fetchPriority="low"
             decoding="async"
             aria-hidden
-            onLoad={() => setIncomingReady(true)}
+            onLoad={(event) => {
+              const image = event.currentTarget;
+              if (typeof image.decode !== "function") {
+                setIncomingReady(true);
+                return;
+              }
+              void image.decode().catch(() => undefined).finally(() => setIncomingReady(true));
+            }}
             onError={() => {
               setIncomingIndex(null);
               setIncomingReady(false);
               setIsTransitioning(false);
             }}
-            className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ease-out will-change-[opacity] ${isTransitioning ? "opacity-100" : "opacity-0"}`}
+            className={`absolute inset-0 h-full w-full object-cover object-center will-change-transform ${imageTransition} ${incomingImageTransform}`}
           />
         )}
       </div>
@@ -209,7 +230,7 @@ function Hero({ slides }: { slides: PublicHeroSlide[] }) {
             aria-label="Slide précédente"
             aria-controls="hero-carousel"
             className="hidden h-11 w-11 items-center justify-center rounded-full border border-white/40 text-white transition-colors hover:bg-white/15 md:inline-flex"
-            onClick={() => goToSlide(currentIndex - 1)}
+            onClick={() => goToSlide(currentIndex - 1, -1)}
           >
             <ArrowLeft className="h-4 w-4" aria-hidden />
           </button>
@@ -231,7 +252,7 @@ function Hero({ slides }: { slides: PublicHeroSlide[] }) {
             aria-label="Slide suivante"
             aria-controls="hero-carousel"
             className="hidden h-11 w-11 items-center justify-center rounded-full border border-white/40 text-white transition-colors hover:bg-white/15 md:inline-flex"
-            onClick={() => goToSlide(currentIndex + 1)}
+            onClick={() => goToSlide(currentIndex + 1, 1)}
           >
             <ArrowRight className="h-4 w-4" aria-hidden />
           </button>
