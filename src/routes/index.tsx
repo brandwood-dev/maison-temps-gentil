@@ -59,9 +59,8 @@ function HomePage() {
         <TrustStrip />
         <CollectionsShowcase />
         <BrandLogosMarquee />
-        <TestimonialsMarquee />
-
         <FeaturedProducts />
+        <TestimonialsMarquee />
       </main>
 
       <SiteFooter />
