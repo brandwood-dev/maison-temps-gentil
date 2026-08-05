@@ -52,6 +52,23 @@ type AttributePage = {
   total: number;
 };
 
+export type PublicHeroSlide = {
+  id: string;
+  tagline?: string;
+  title: string;
+  subtitle?: string;
+  ctaPrimaryLabel: string;
+  ctaPrimaryHref: string;
+  ctaSecondaryLabel: string;
+  ctaSecondaryHref: string;
+  imageUrl: string;
+  imageAlt?: string;
+  sortOrder: number;
+  active: boolean;
+};
+
+type HeroPage = { data: PublicHeroSlide[]; page: number; pageSize: number; total: number };
+
 export type PublicOrderTracking = {
   id: string;
   reference: string;
@@ -143,6 +160,11 @@ export const getPublicAttributes = createServerFn({ method: "GET" }).handler(asy
     "/api/v1/public/attributes?page=1&pageSize=100&sortBy=order&sortOrder=asc",
   );
   return page.data;
+});
+
+export const getPublicHeroSlides = createServerFn({ method: "GET" }).handler(async () => {
+  const page = await apiRequest<HeroPage>("/api/v1/public/hero-slides");
+  return page.data.filter((slide) => slide.active).slice(0, 5);
 });
 
 /** Load products for one public category without trusting client-provided prices or status. */
