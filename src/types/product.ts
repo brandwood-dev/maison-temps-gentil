@@ -53,6 +53,7 @@ export type Product = {
   slug: string;
   name: string;
   brand: string;
+  brandLogoUrl?: string;
   reference: string;
   category: ProductCategory;
   currency: Currency;

@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 import type { Product } from "@/types/product";
 import { useNow } from "@/lib/now-store";
 import { getProductBadges } from "@/lib/product-badges";
@@ -16,13 +17,28 @@ type Props = {
 export function ProductSummary({ product, onAddToCart }: Props) {
   const nowTs = useNow();
   const badges = getProductBadges(product, nowTs);
+  const [brandLogoFailed, setBrandLogoFailed] = useState(false);
 
   return (
     <div className="flex flex-col gap-5">
       <header className="flex flex-col gap-2">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[color:var(--color-muted-foreground)]">
-          {product.brand}
-        </p>
+        {product.brandLogoUrl && !brandLogoFailed ? (
+          <div className="flex h-10 max-w-[160px] items-center" title={product.brand}>
+            <img
+              src={product.brandLogoUrl}
+              alt={`Logo ${product.brand}`}
+              loading="eager"
+              decoding="async"
+              onError={() => setBrandLogoFailed(true)}
+              className="max-h-8 w-auto max-w-[160px] object-contain grayscale"
+            />
+            <span className="sr-only">{product.brand}</span>
+          </div>
+        ) : (
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[color:var(--color-muted-foreground)]">
+            {product.brand}
+          </p>
+        )}
         <h1 className="t-h1 text-[color:var(--color-foreground)]">{product.name}</h1>
         <p className="text-xs text-[color:var(--color-muted-foreground)]">
           Référence&nbsp;: <span className="font-medium">{product.reference}</span>
