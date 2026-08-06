@@ -10,6 +10,7 @@ import {
   getRelatedProducts,
 } from "../src/lib/products";
 import { getProductBadges } from "../src/lib/product-badges";
+import { getRemainingTime } from "../src/lib/product-pricing";
 import type { Product } from "../src/types/product";
 
 const future = "2030-01-01T00:00:00Z";
@@ -152,6 +153,18 @@ console.log("\n== getProductBadges (shared priority) ==");
   assert(!badges.some((b) => b.id === "promo"), "expired promo → no promo badge");
   assert(badges.length <= 2, "max 2 badges");
   assert(badges[0].id === "best", "best before new");
+}
+
+console.log("\n== promotion countdown ==");
+{
+  const remaining = getRemainingTime(
+    "2026-08-06T12:34:57Z",
+    new Date("2026-08-06T10:11:12Z"),
+  );
+  assert(remaining.days === 0, "countdown days are computed");
+  assert(remaining.hours === 2, "countdown hours are computed");
+  assert(remaining.minutes === 23, "countdown minutes are computed");
+  assert(remaining.seconds === 45, "countdown seconds are computed");
 }
 
 console.log("\n== static guards ==");

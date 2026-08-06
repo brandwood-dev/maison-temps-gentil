@@ -60,7 +60,7 @@ export function ProductPurchasePanel({ product, onAddToCart }: Props) {
           <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--color-muted-foreground)]">
             Offre à durée limitée
           </p>
-          <PromotionCountdown endsAt={product.promotion.endsAt} />
+          <PromotionCountdown endsAt={product.promotion.endsAt} variant="detailed" />
         </div>
       ) : null}
 

@@ -257,7 +257,7 @@ export function ProductCard({
               Indisponible
             </p>
           ) : promoActive && product.promotion ? (
-            <PromotionCountdown endsAt={product.promotion.endsAt} />
+            <PromotionCountdown endsAt={product.promotion.endsAt} variant="detailed" />
           ) : null}
         </div>
 
