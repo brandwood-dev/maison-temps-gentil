@@ -108,15 +108,19 @@ export function SiteFooter() {
             <div className="mt-5 flex items-center gap-2">
               <span className="sr-only">Réseaux sociaux</span>
               <a
-                href="#"
+                href="https://www.instagram.com/la.maison.des.montres.tn"
                 aria-label="Instagram"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)] border border-white/15 text-white/80 transition-colors hover:border-[color:var(--color-gold)] hover:text-[color:var(--color-gold)]"
               >
                 <Instagram className="h-4 w-4" strokeWidth={1.75} />
               </a>
               <a
-                href="#"
+                href="https://www.facebook.com/maisondesmontrestn"
                 aria-label="Facebook"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)] border border-white/15 text-white/80 transition-colors hover:border-[color:var(--color-gold)] hover:text-[color:var(--color-gold)]"
               >
                 <Facebook className="h-4 w-4" strokeWidth={1.75} />
