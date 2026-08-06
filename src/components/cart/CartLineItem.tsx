@@ -46,7 +46,9 @@ export function CartLineItem({
       >
         {image ? (
           <img
-            src={image.url}
+            src={image.optimizedUrl ?? image.url}
+            srcSet={image.srcSet}
+            sizes="80px"
             alt={image.alt}
             loading="lazy"
             decoding="async"

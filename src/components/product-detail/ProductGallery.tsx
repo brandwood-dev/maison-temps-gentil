@@ -26,11 +26,17 @@ export function ProductGallery({ product }: Props) {
         {active ? (
           <img
             key={active.id}
-            src={active.url}
+            src={active.optimizedUrl ?? active.url}
+            srcSet={active.srcSet}
+            sizes="(max-width: 768px) 100vw, 50vw"
             alt={active.alt}
             fetchPriority="high"
             loading="eager"
             decoding="async"
+            onError={(event) => {
+              event.currentTarget.removeAttribute("srcset");
+              event.currentTarget.src = active.url;
+            }}
             className="absolute inset-0 h-full w-full object-contain p-6 md:p-10"
           />
         ) : (
@@ -71,11 +77,17 @@ export function ProductGallery({ product }: Props) {
                   )}
                 >
                   <img
-                    src={img.url}
+                    src={img.optimizedUrl ?? img.url}
+                    srcSet={img.srcSet}
+                    sizes="80px"
                     alt=""
                     loading="lazy"
                     decoding="async"
                     className="h-full w-full object-contain p-1.5"
+                    onError={(event) => {
+                      event.currentTarget.removeAttribute("srcset");
+                      event.currentTarget.src = img.url;
+                    }}
                   />
                 </button>
               </li>
@@ -111,8 +123,14 @@ export function ProductGallery({ product }: Props) {
             <div className="mt-2 flex flex-1 items-center justify-center">
               {active ? (
                 <img
-                  src={active.url}
+                  src={active.optimizedUrl ?? active.url}
+                  srcSet={active.srcSet}
+                  sizes="100vw"
                   alt={active.alt}
+                  onError={(event) => {
+                    event.currentTarget.removeAttribute("srcset");
+                    event.currentTarget.src = active.url;
+                  }}
                   className="max-h-full max-w-full object-contain"
                 />
               ) : (

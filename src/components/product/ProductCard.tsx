@@ -33,6 +33,7 @@ export function ProductCard({
   const [imgHover, setImgHover] = useState(false);
   const [mainLoaded, setMainLoaded] = useState(false);
   const [mainError, setMainError] = useState(false);
+  const [optimizedMainFailed, setOptimizedMainFailed] = useState(false);
   const [secondaryLoaded, setSecondaryLoaded] = useState(false);
   const mainImageRef = useRef<HTMLImageElement>(null);
   const secondaryImageRef = useRef<HTMLImageElement>(null);
@@ -43,11 +44,12 @@ export function ProductCard({
   useEffect(() => {
     setMainLoaded(false);
     setMainError(false);
+    setOptimizedMainFailed(false);
     const image = mainImageRef.current;
     if (!image || !primary?.url || !image.complete) return;
     if (image.naturalWidth > 0) setMainLoaded(true);
     else setMainError(true);
-  }, [primary?.url]);
+  }, [primary?.optimizedUrl, primary?.url]);
 
   useEffect(() => {
     setSecondaryLoaded(false);
@@ -89,13 +91,21 @@ export function ProductCard({
       {primary && !mainError ? (
         <img
           ref={mainImageRef}
-          src={primary.url}
+          src={optimizedMainFailed ? primary.url : (primary.optimizedUrl ?? primary.url)}
+          srcSet={optimizedMainFailed ? undefined : primary.srcSet}
+          sizes={primary.sizes ?? "(max-width: 640px) 85vw, (max-width: 1024px) 33vw, 25vw"}
           alt={primary.alt}
           loading={mainLoading}
           fetchPriority={mainFetchPriority}
           decoding="async"
           onLoad={() => setMainLoaded(true)}
-          onError={() => setMainError(true)}
+          onError={() => {
+            if (primary.optimizedUrl && !optimizedMainFailed) {
+              setOptimizedMainFailed(true);
+            } else {
+              setMainError(true);
+            }
+          }}
           className={cn(
             "absolute inset-0 h-full w-full object-contain p-4 transition-opacity duration-300",
             mainLoaded ? "opacity-100" : "opacity-0",

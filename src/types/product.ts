@@ -15,6 +15,10 @@ export type ProductImage = {
   url: string;
   alt: string;
   position: number;
+  /** Supabase Image Transformation URL (WebP when supported). */
+  optimizedUrl?: string;
+  srcSet?: string;
+  sizes?: string;
 };
 
 export type ProductAttributeValue = {

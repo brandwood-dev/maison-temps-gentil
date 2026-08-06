@@ -160,7 +160,9 @@ function CartLine({
       >
         {image ? (
           <img
-            src={image.url}
+            src={image.optimizedUrl ?? image.url}
+            srcSet={image.srcSet}
+            sizes="112px"
             alt={image.alt}
             loading="lazy"
             decoding="async"
