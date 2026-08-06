@@ -24,8 +24,11 @@ export function ProductCarousel({ products, className, onAddToCart }: Props) {
   const scroll = useCallback((direction: -1 | 1) => {
     const viewport = viewportRef.current;
     if (!viewport) return;
+    const firstCard = viewport.querySelector<HTMLElement>("li");
+    const gap = Number.parseFloat(getComputedStyle(viewport).columnGap || "0") || 0;
+    const step = firstCard ? firstCard.getBoundingClientRect().width + gap : viewport.clientWidth;
     viewport.scrollBy({
-      left: direction * Math.max(viewport.clientWidth * 0.82, 280),
+      left: direction * step,
       behavior: "smooth",
     });
   }, []);
@@ -77,7 +80,7 @@ export function ProductCarousel({ products, className, onAddToCart }: Props) {
         {products.map((product, index) => (
           <li
             key={product.id}
-            className="flex min-w-0 basis-[85%] snap-start sm:basis-[calc((100%-1rem)/2)] md:basis-[calc((100%-2rem)/3)] lg:basis-[calc((100%-3rem)/4)]"
+            className="flex min-w-0 shrink-0 basis-full snap-start sm:basis-[calc((100%-1rem)/2)] md:basis-[calc((100%-2rem)/3)] lg:basis-[calc((100%-3rem)/4)]"
           >
             <ProductCard
               product={product}

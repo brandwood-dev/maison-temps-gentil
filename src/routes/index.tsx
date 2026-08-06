@@ -276,10 +276,11 @@ function Hero({ slides }: { slides: PublicHeroSlide[] }) {
 
 function FeaturedProducts() {
   // The API returns published products ordered by creation date descending.
-  // Selection is cross-category and limited to the eight latest products.
+  // Selection is cross-category and progressively reveals four products at a time.
   const products = useCatalogProducts()
     .filter((product) => product.availability !== "hidden")
     .slice(0, 8);
+  const [visibleCount, setVisibleCount] = useState(4);
   const { addItem } = useCart();
   const handleAddToCart = (p: Product, quantity: number) => {
     addItem(p.id, quantity);
@@ -302,7 +303,29 @@ function FeaturedProducts() {
           Voir plus
         </Link>
       </div>
-      <ProductGrid products={products} onAddToCart={handleAddToCart} />
+      <ProductGrid products={products.slice(0, visibleCount)} onAddToCart={handleAddToCart} />
+      {products.length > 4 && (
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          {visibleCount < products.length && (
+            <button
+              type="button"
+              onClick={() => setVisibleCount((count) => Math.min(count + 4, products.length))}
+              className="inline-flex h-11 items-center justify-center rounded-[var(--radius-md)] border border-[color:var(--color-border-strong)] px-5 text-sm font-semibold text-[color:var(--color-foreground)] transition-colors hover:border-[color:var(--color-gold)] hover:text-[color:var(--color-gold)]"
+            >
+              Afficher plus de résultats
+            </button>
+          )}
+          {visibleCount > 4 && (
+            <button
+              type="button"
+              onClick={() => setVisibleCount(4)}
+              className="inline-flex h-11 items-center justify-center rounded-[var(--radius-md)] px-5 text-sm font-semibold text-[color:var(--color-muted-foreground)] underline underline-offset-4 transition-colors hover:text-[color:var(--color-foreground)]"
+            >
+              Afficher moins
+            </button>
+          )}
+        </div>
+      )}
     </section>
   );
 }
