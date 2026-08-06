@@ -1,10 +1,10 @@
 import { Heart, Search, ShoppingBag, Truck } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Logo } from "@/components/brand/Logo";
 import { getCategoryNavLinks } from "@/config/nav";
 import { useFavorites } from "@/hooks/useFavorites";
-import { useCart, useCartDrawer } from "@/lib/cart-store";
-import { useCatalogCategories } from "@/lib/catalog-products";
+import { getCartTotalQuantity, reconcileCart, useCart, useCartDrawer } from "@/lib/cart-store";
+import { useCatalogCategories, useCatalogProducts } from "@/lib/catalog-products";
 import { SearchPanel } from "./SearchPanel";
 import { MobileMenu } from "./MobileMenu";
 import { useSiteSettings } from "@/lib/site-settings";
@@ -73,9 +73,16 @@ export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const returnFocusRef = useRef<HTMLButtonElement | null>(null);
-  const { totalQuantity } = useCart();
+  const { items, hydrated } = useCart();
   const { openDrawer } = useCartDrawer();
-  const cartCount = totalQuantity;
+  const products = useCatalogProducts();
+  useEffect(() => {
+    // Do not wipe a cart while the catalog request is still unavailable. Once
+    // products are present, remove lines that are no longer purchasable.
+    if (!hydrated || products.length === 0) return;
+    reconcileCart(products);
+  }, [hydrated, products]);
+  const cartCount = getCartTotalQuantity(items, products);
   const { ids: favoriteIds } = useFavorites();
   const favoriteCount = favoriteIds.length;
   const { identity } = useSiteSettings();
@@ -132,7 +139,13 @@ export function SiteHeader() {
               aria-label="La Maison des Montres — Accueil"
               className="inline-flex shrink-0"
             >
-              <Logo variant="dark" height={32} priority src={identity.logoUrl} alt={identity.name} />
+              <Logo
+                variant="dark"
+                height={32}
+                priority
+                src={identity.logoUrl}
+                alt={identity.name}
+              />
             </a>
             <div className="flex shrink-0 items-center gap-1">
               <IconAction label="Rechercher" onClick={openSearch}>
@@ -162,7 +175,13 @@ export function SiteHeader() {
               aria-label="La Maison des Montres — Accueil"
               className="inline-flex shrink-0"
             >
-              <Logo variant="dark" height={36} priority src={identity.logoUrl} alt={identity.name} />
+              <Logo
+                variant="dark"
+                height={36}
+                priority
+                src={identity.logoUrl}
+                alt={identity.name}
+              />
             </a>
             <div className="min-w-0 flex-1">
               <DesktopNav links={navLinks} />

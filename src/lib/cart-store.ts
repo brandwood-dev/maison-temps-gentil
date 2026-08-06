@@ -14,6 +14,12 @@ export type CartItem = {
   quantity: number;
 };
 
+/** Minimal catalog shape used to reconcile persisted cart lines safely. */
+export type CartProductRef = {
+  id: string;
+  availability: "available" | "unavailable" | "hidden";
+};
+
 export type CartStorage = Pick<Storage, "getItem" | "setItem">;
 
 type StoredCartV1 = {
@@ -178,6 +184,42 @@ export function removeCartItem(current: CartItem[], productIdValue: unknown): Ca
   return current.filter((item) => item.productId !== productId);
 }
 
+/**
+ * Keep only cart lines that still point to a published, purchasable product.
+ * The catalog is the source of truth; prices and availability are never read
+ * from localStorage.
+ */
+export function reconcileCartItems(
+  current: readonly CartItem[],
+  products: readonly CartProductRef[],
+): CartItem[] {
+  const availableProductIds = new Set(
+    products.filter((product) => product.availability === "available").map((product) => product.id),
+  );
+  const next = current.filter((item) => availableProductIds.has(item.productId));
+  return next.length === current.length ? [...current] : next;
+}
+
+/** Reconcile the live store and persist the result after the catalog is loaded. */
+export function reconcileCart(products: readonly CartProductRef[]): void {
+  const next = reconcileCartItems(items, products);
+  if (next.length !== items.length) setItems(next);
+}
+
+/** Count only lines that are currently available in the public catalog. */
+export function getCartTotalQuantity(
+  current: readonly CartItem[],
+  products: readonly CartProductRef[],
+): number {
+  const availableProductIds = new Set(
+    products.filter((product) => product.availability === "available").map((product) => product.id),
+  );
+  return current.reduce(
+    (sum, item) => (availableProductIds.has(item.productId) ? sum + item.quantity : sum),
+    0,
+  );
+}
+
 function getBrowserStorage(): CartStorage | null {
   return typeof window === "undefined" ? null : window.localStorage;
 }
@@ -253,7 +295,12 @@ export function removeItem(productId: string) {
 }
 
 export function clearCart() {
-  if (items.length === 0) return;
+  if (items.length === 0) {
+    // Also clear a stale/invalid localStorage payload when the in-memory store
+    // has already been emptied by a previous render.
+    writeCartStorage(getBrowserStorage(), []);
+    return;
+  }
   setItems([]);
 }
 

@@ -1,7 +1,9 @@
 import {
   addCartItem,
   decodeCartStorage,
+  getCartTotalQuantity,
   readCartStorage,
+  reconcileCartItems,
   removeCartItem,
   sanitizeCartItems,
   serializeCartItems,
@@ -191,6 +193,31 @@ console.log("\n== immutable cart operations ==");
   const removed = removeCartItem(updated, " watch-1 ");
   assert(removed.length === 0, "product is removed using its normalized id");
   assert(updated.length === 1, "remove does not mutate previous items");
+}
+
+console.log("\n== catalog reconciliation ==");
+{
+  const current = [
+    { productId: "published", quantity: 2 },
+    { productId: "hidden", quantity: 1 },
+    { productId: "unavailable", quantity: 3 },
+    { productId: "deleted", quantity: 1 },
+  ];
+  const products = [
+    { id: "published", availability: "available" as const },
+    { id: "hidden", availability: "hidden" as const },
+    { id: "unavailable", availability: "unavailable" as const },
+  ];
+  const reconciled = reconcileCartItems(current, products);
+  assert(
+    json(reconciled) === json([{ productId: "published", quantity: 2 }]),
+    "stale, hidden and unavailable lines are removed",
+  );
+  assert(getCartTotalQuantity(current, products) === 2, "badge count ignores invalid lines");
+  assert(
+    reconcileCartItems([{ productId: "published", quantity: 2 }], products).length === 1,
+    "available lines remain unchanged",
+  );
 }
 
 console.log("\n== canonical serialization ==");

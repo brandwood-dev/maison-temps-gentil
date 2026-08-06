@@ -4,7 +4,7 @@ import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
-import { useCart } from "@/lib/cart-store";
+import { reconcileCart, useCart } from "@/lib/cart-store";
 import { useSiteSettings } from "@/lib/site-settings";
 import { useNow } from "@/lib/now-store";
 import { formatPriceTND } from "@/lib/product-pricing";
@@ -101,12 +101,22 @@ function CheckoutPage() {
       setServerError(null);
       return;
     }
+    const validItems = totals.lines.map(({ productId, quantity }) => ({ productId, quantity }));
+    if (validItems.length !== items.length) {
+      // Remove stale lines before the next attempt instead of sending them to
+      // the API and showing a generic PRODUCT_UNAVAILABLE error.
+      reconcileCart(products);
+      setServerError(
+        "Un ou plusieurs articles ne sont plus disponibles et ont été retirés du panier. Vérifiez votre panier puis réessayez.",
+      );
+      return;
+    }
     const idempotencyKey =
       idempotencyKeyRef.current ??
       globalThis.crypto?.randomUUID?.() ??
       `${Date.now()}-${Math.random()}`;
     idempotencyKeyRef.current = idempotencyKey;
-    const submission = buildOrderSubmission(items, values, idempotencyKey);
+    const submission = buildOrderSubmission(validItems, values, idempotencyKey);
     if (!submission) {
       setServerError("Coordonnées invalides.");
       return;

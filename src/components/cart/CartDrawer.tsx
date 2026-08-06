@@ -23,7 +23,7 @@ export function CartDrawer() {
       quantity: item.quantity,
       product:
         (products.find(
-          (product) => product.id === item.productId && product.availability !== "hidden",
+          (product) => product.id === item.productId && product.availability === "available",
         ) as Product | undefined) ?? null,
     }))
     .filter((line): line is { productId: string; quantity: number; product: Product } =>
