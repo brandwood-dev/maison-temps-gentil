@@ -81,6 +81,7 @@ export function ProductCarousel({ products, className, onAddToCart }: Props) {
           >
             <ProductCard
               product={product}
+              href={`/montres/${product.slug}`}
               onAddToCart={onAddToCart}
               imagePriority={index === 0}
               className="w-full"
