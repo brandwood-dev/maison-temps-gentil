@@ -37,6 +37,8 @@ export const DEFAULT_CATALOG_QUERY: CatalogQuery = {
   minPriceMillimes: undefined,
   maxPriceMillimes: undefined,
   promotionOnly: false,
+  bestSellerOnly: false,
+  featuredOnly: false,
 };
 
 function effectivePriceMillimes(p: Product, now: Date): number {
@@ -110,6 +112,8 @@ export function getCatalogResult(
     if (query.maxPriceMillimes != null && eff > query.maxPriceMillimes) return false;
     if (!opts.ignorePromotion && query.promotionOnly && !isPromotionActive(p.promotion, now))
       return false;
+    if (query.bestSellerOnly && !p.isBestSeller) return false;
+    if (query.featuredOnly && !p.isNew) return false;
     return true;
   };
 
@@ -282,6 +286,8 @@ export function parseCatalogSearch(raw: Record<string, unknown>): CatalogQuery {
     maxPriceMillimes = tmp;
   }
   const promotionOnly = raw.promo === true || raw.promo === "true";
+  const bestSellerOnly = raw.bestSeller === true || raw.bestSeller === "true";
+  const featuredOnly = raw.featured === true || raw.featured === "true";
   return {
     page,
     pageSize: CATALOG_PAGE_SIZE,
@@ -292,6 +298,8 @@ export function parseCatalogSearch(raw: Record<string, unknown>): CatalogQuery {
     minPriceMillimes,
     maxPriceMillimes,
     promotionOnly,
+    bestSellerOnly,
+    featuredOnly,
   };
 }
 
@@ -308,6 +316,8 @@ export function catalogQueryToSearch(q: Partial<CatalogQuery>): Record<string, s
   if (q.minPriceMillimes != null) out.minPrice = String(q.minPriceMillimes);
   if (q.maxPriceMillimes != null) out.maxPrice = String(q.maxPriceMillimes);
   if (q.promotionOnly) out.promo = "true";
+  if (q.bestSellerOnly) out.bestSeller = "true";
+  if (q.featuredOnly) out.featured = "true";
   return out;
 }
 
@@ -319,7 +329,9 @@ export function hasActiveFilters(q: CatalogQuery): boolean {
     Object.values(q.attributes ?? {}).some((values) => values.length > 0) ||
     q.minPriceMillimes != null ||
     q.maxPriceMillimes != null ||
-    q.promotionOnly
+    q.promotionOnly ||
+    q.bestSellerOnly ||
+    q.featuredOnly
   );
 }
 

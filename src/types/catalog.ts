@@ -19,6 +19,10 @@ export interface CatalogQuery {
   minPriceMillimes?: number;
   maxPriceMillimes?: number;
   promotionOnly: boolean;
+  /** Restrict the catalogue to products marked Best seller. */
+  bestSellerOnly: boolean;
+  /** Restrict the catalogue to products marked Mettre en avant. */
+  featuredOnly: boolean;
 }
 
 export interface CatalogFacetOption {

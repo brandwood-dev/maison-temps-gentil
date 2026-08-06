@@ -149,6 +149,40 @@ console.log("\n== active vs expired promotion ==");
   );
 }
 
+console.log("\n== merchandising filters ==");
+{
+  const products = [
+    make({ id: "best", isBestSeller: true }),
+    make({ id: "featured", isNew: true }),
+    make({ id: "regular" }),
+  ];
+  const best = getCatalogResult(
+    products,
+    { ...DEFAULT_CATALOG_QUERY, bestSellerOnly: true },
+    { now },
+  );
+  const featured = getCatalogResult(
+    products,
+    { ...DEFAULT_CATALOG_QUERY, featuredOnly: true },
+    { now },
+  );
+  assert(
+    best.totalItems === 1 && best.items[0]?.id === "best",
+    "bestSellerOnly keeps marked products",
+  );
+  assert(
+    featured.totalItems === 1 && featured.items[0]?.id === "featured",
+    "featuredOnly keeps marked products",
+  );
+  const parsed = parseCatalogSearch({ bestSeller: "true", featured: "true" });
+  assert(parsed.bestSellerOnly && parsed.featuredOnly, "merchandising URL filters are parsed");
+  const serialized = catalogQueryToSearch(parsed);
+  assert(
+    serialized.bestSeller === "true" && serialized.featured === "true",
+    "merchandising filters serialize",
+  );
+}
+
 console.log("\n== zero-count facet options are hidden ==");
 {
   const attribute = {

@@ -93,7 +93,9 @@ export function CatalogPage({
     Object.values(query.attributes).reduce((count, values) => count + values.length, 0) +
     (query.minPriceMillimes != null ? 1 : 0) +
     (query.maxPriceMillimes != null ? 1 : 0) +
-    (!forcePromotionOnly && query.promotionOnly ? 1 : 0);
+    (!forcePromotionOnly && query.promotionOnly ? 1 : 0) +
+    (query.bestSellerOnly ? 1 : 0) +
+    (query.featuredOnly ? 1 : 0);
 
   const applyPatch = (patch: Partial<CatalogQuery>) => {
     const merged: CatalogQuery = { ...query, ...patch };

@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
@@ -9,7 +9,9 @@ import { CollectionsShowcase } from "@/components/home/CollectionsShowcase";
 import { BrandLogosMarquee } from "@/components/home/BrandLogosMarquee";
 import { TestimonialsMarquee } from "@/components/home/TestimonialsMarquee";
 import { ProductGrid } from "@/components/product/ProductGrid";
+import { ProductCarousel } from "@/components/product/ProductCarousel";
 import { useCatalogProducts } from "@/lib/catalog-products";
+import { catalogQueryToSearch } from "@/lib/catalog";
 import { useCart } from "@/lib/cart-store";
 import { trackAddToCart } from "@/lib/meta-pixel";
 import type { Product } from "@/types/product";
@@ -47,8 +49,8 @@ function HomePage() {
         <TrustStrip />
         <CollectionsShowcase />
         <BrandLogosMarquee />
-        <MerchandisingSections />
         <FeaturedProducts />
+        <MerchandisingSections />
         <TestimonialsMarquee testimonials={testimonials} />
       </main>
 
@@ -273,17 +275,32 @@ function Hero({ slides }: { slides: PublicHeroSlide[] }) {
 }
 
 function FeaturedProducts() {
-  const products = useCatalogProducts();
+  // The API returns published products ordered by creation date descending.
+  // Selection is cross-category and limited to the eight latest products.
+  const products = useCatalogProducts()
+    .filter((product) => product.availability !== "hidden")
+    .slice(0, 8);
   const { addItem } = useCart();
   const handleAddToCart = (p: Product, quantity: number) => {
     addItem(p.id, quantity);
     trackAddToCart(p, quantity);
   };
+  if (products.length === 0) return null;
+
   return (
     <section className="container-page py-12 md:py-16">
-      <div className="mb-6 max-w-2xl md:mb-8">
-        <p className="eyebrow">Sélection</p>
-        <h2 className="t-h1 mt-2">Nos montres</h2>
+      <div className="mb-6 flex items-end justify-between gap-4 md:mb-8">
+        <div className="max-w-2xl">
+          <p className="eyebrow">Sélection</p>
+          <h2 className="t-h1 mt-2">Nos dernières montres</h2>
+        </div>
+        <Link
+          to="/montres"
+          search={catalogQueryToSearch({})}
+          className="shrink-0 text-sm font-semibold text-[color:var(--color-foreground)] underline decoration-[color:var(--color-gold)] decoration-2 underline-offset-4 hover:text-[color:var(--color-gold)]"
+        >
+          Voir plus
+        </Link>
       </div>
       <ProductGrid products={products} onAddToCart={handleAddToCart} />
     </section>
@@ -291,9 +308,9 @@ function FeaturedProducts() {
 }
 
 function MerchandisingSections() {
-  const products = useCatalogProducts();
+  const products = useCatalogProducts().filter((product) => product.availability !== "hidden");
   const bestSellers = products.filter((product) => product.isBestSeller).slice(0, 8);
-  const newArrivals = products.filter((product) => product.isNew).slice(0, 8);
+  const featuredProducts = products.filter((product) => product.isNew).slice(0, 8);
   const { addItem } = useCart();
   const handleAddToCart = (product: Product, quantity: number) => {
     addItem(product.id, quantity);
@@ -304,20 +321,38 @@ function MerchandisingSections() {
     <>
       {bestSellers.length > 0 && (
         <section className="container-page py-12 md:py-16">
-          <div className="mb-6 max-w-2xl md:mb-8">
-            <p className="eyebrow">Les préférées</p>
-            <h2 className="t-h1 mt-2">Meilleures Ventes</h2>
+          <div className="mb-6 flex items-end justify-between gap-4 md:mb-8">
+            <div className="max-w-2xl">
+              <p className="eyebrow">Les préférées</p>
+              <h2 className="t-h1 mt-2">Meilleures ventes</h2>
+            </div>
+            <Link
+              to="/montres"
+              search={catalogQueryToSearch({ bestSellerOnly: true })}
+              className="shrink-0 text-sm font-semibold text-[color:var(--color-foreground)] underline decoration-[color:var(--color-gold)] decoration-2 underline-offset-4 hover:text-[color:var(--color-gold)]"
+            >
+              Voir plus
+            </Link>
           </div>
-          <ProductGrid products={bestSellers} onAddToCart={handleAddToCart} />
+          <ProductCarousel products={bestSellers} onAddToCart={handleAddToCart} />
         </section>
       )}
-      {newArrivals.length > 0 && (
+      {featuredProducts.length > 0 && (
         <section className="container-page py-12 md:py-16">
-          <div className="mb-6 max-w-2xl md:mb-8">
-            <p className="eyebrow">À découvrir</p>
-            <h2 className="t-h1 mt-2">Nouvelles Arrivées</h2>
+          <div className="mb-6 flex items-end justify-between gap-4 md:mb-8">
+            <div className="max-w-2xl">
+              <p className="eyebrow">À découvrir</p>
+              <h2 className="t-h1 mt-2">Nouvelles arrivées</h2>
+            </div>
+            <Link
+              to="/montres"
+              search={catalogQueryToSearch({ featuredOnly: true })}
+              className="shrink-0 text-sm font-semibold text-[color:var(--color-foreground)] underline decoration-[color:var(--color-gold)] decoration-2 underline-offset-4 hover:text-[color:var(--color-gold)]"
+            >
+              Voir plus
+            </Link>
           </div>
-          <ProductGrid products={newArrivals} onAddToCart={handleAddToCart} />
+          <ProductCarousel products={featuredProducts} onAddToCart={handleAddToCart} />
         </section>
       )}
     </>

@@ -29,6 +29,20 @@ export function CatalogActiveFilters({
       onRemove: () => onChange({ promotionOnly: false, page: 1 }),
     });
   }
+  if (query.bestSellerOnly) {
+    chips.push({
+      key: "best-seller",
+      label: "Best seller",
+      onRemove: () => onChange({ bestSellerOnly: false, page: 1 }),
+    });
+  }
+  if (query.featuredOnly) {
+    chips.push({
+      key: "featured",
+      label: "Mettre en avant",
+      onRemove: () => onChange({ featuredOnly: false, page: 1 }),
+    });
+  }
   query.brands.forEach((b) => {
     chips.push({
       key: `brand-${b}`,
