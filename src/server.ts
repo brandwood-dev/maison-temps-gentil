@@ -35,6 +35,34 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
   });
 }
 
+function withPublicHtmlCache(request: Request, response: Response): Response {
+  if (request.method !== "GET" || response.status !== 200) return response;
+  if (!(response.headers.get("content-type") ?? "").includes("text/html")) return response;
+  if (response.headers.has("set-cookie")) return response;
+
+  const path = new URL(request.url).pathname;
+  const privatePaths = [
+    "/panier",
+    "/commande",
+    "/favoris",
+    "/commande/confirmation",
+    "/suivi-commande",
+  ];
+  if (
+    privatePaths.some((privatePath) => path === privatePath || path.startsWith(`${privatePath}/`))
+  ) {
+    return response;
+  }
+
+  const headers = new Headers(response.headers);
+  headers.set("Cache-Control", "public, max-age=0, s-maxage=15, stale-while-revalidate=60");
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
 function isH3SwallowedErrorBody(body: string): boolean {
   try {
     const payload = JSON.parse(body) as { unhandled?: unknown; message?: unknown };
@@ -49,7 +77,8 @@ export default {
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
-      return await normalizeCatastrophicSsrResponse(response);
+      const normalized = await normalizeCatastrophicSsrResponse(response);
+      return withPublicHtmlCache(request, normalized);
     } catch (error) {
       console.error(error);
       return new Response(renderErrorPage(), {
