@@ -210,7 +210,7 @@ async function apiRequest<T>(path: string, options: { allowNotFound?: boolean } 
     try {
       const response = await fetch(apiUrl(path), {
         headers: apiHeaders(),
-        cache: "no-store",
+        cache: "default",
         signal: controller.signal,
       });
       if (response.status === 404 && options.allowNotFound) {
