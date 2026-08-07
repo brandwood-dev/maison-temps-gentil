@@ -170,6 +170,23 @@ const DEFAULT_API_URL = "https://la-maison-des-montres-api.vercel.app";
 const PUBLIC_API_TIMEOUT_MS = 8_000;
 const PUBLIC_CACHE_TTL_MS = 15_000;
 
+type RuntimeEnv = {
+  PUBLIC_API_URL?: string;
+  API_PREVIEW_BYPASS_SECRET?: string;
+};
+
+/**
+ * Nitro's Cloudflare module exposes Worker bindings on globalThis.__env__.
+ * Keep process.env as the Node/Vercel fallback for local and Vercel SSR.
+ */
+function getRuntimeEnv(): RuntimeEnv {
+  const cloudflareEnv = (globalThis as typeof globalThis & { __env__?: RuntimeEnv }).__env__;
+  if (cloudflareEnv && typeof cloudflareEnv === "object") return cloudflareEnv;
+
+  if (typeof process !== "undefined" && process.env) return process.env;
+  return {};
+}
+
 type PublicCacheEntry = { expiresAt: number; value: unknown };
 
 // Public catalog reads are shared by the root loader and route loaders. Keep
@@ -179,13 +196,13 @@ const publicResponseCache = new Map<string, PublicCacheEntry>();
 const publicRequestCache = new Map<string, Promise<unknown>>();
 
 function apiUrl(path: string): string {
-  const base = (process.env.PUBLIC_API_URL ?? DEFAULT_API_URL).replace(/\/+$/, "");
+  const base = (getRuntimeEnv().PUBLIC_API_URL ?? DEFAULT_API_URL).replace(/\/+$/, "");
   return `${base}${path}`;
 }
 
 function apiHeaders(): HeadersInit {
   const headers = new Headers({ accept: "application/json" });
-  const bypassSecret = process.env.API_PREVIEW_BYPASS_SECRET;
+  const bypassSecret = getRuntimeEnv().API_PREVIEW_BYPASS_SECRET;
   if (bypassSecret) {
     headers.set("x-vercel-protection-bypass", bypassSecret);
   }
