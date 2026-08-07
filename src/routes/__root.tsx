@@ -103,7 +103,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       getPublicPromoMessages().catch(() => undefined),
       getPublicSettings().catch(() => null),
     ]);
-    return { initialNow: Date.now(), products, brands, categories, attributes, promoMessages, settings };
+    return {
+      initialNow: Date.now(),
+      products,
+      brands,
+      categories,
+      attributes,
+      promoMessages,
+      settings,
+    };
   },
 
   head: ({ loaderData }) => {
@@ -112,44 +120,43 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     const description = settings?.seo.defaultDescription || SITE_DESCRIPTION;
     const siteName = settings?.identity.name || "La Maison des Montres";
     return {
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title },
-      { name: "description", content: description },
-      { property: "og:site_name", content: siteName },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { property: "og:locale", content: "fr_TN" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: title },
-      { name: "twitter:description", content: description },
-      { property: "og:image", content: SOCIAL_IMAGE },
-      { property: "og:image:alt", content: "Logo La Maison des Montres" },
-      { name: "twitter:image", content: SOCIAL_IMAGE },
-      { name: "twitter:image:alt", content: "Logo La Maison des Montres" },
-    ],
-    links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico?v=20260804", type: "image/x-icon" },
-      { rel: "shortcut icon", href: "/favicon.ico?v=20260804", type: "image/x-icon" },
-      { rel: "icon", href: "/favicon.svg?v=20260804", type: "image/svg+xml" },
-      {
-        rel: "icon",
-        href: "/favicon-96x96.png?v=20260804",
-        type: "image/png",
-        sizes: "96x96",
-      },
-      { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
-      { rel: "manifest", href: "/site.webmanifest" },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap",
-      },
-    ],
+      meta: [
+        { charSet: "utf-8" },
+        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        { title },
+        { name: "description", content: description },
+        { property: "og:site_name", content: siteName },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "website" },
+        { property: "og:locale", content: "fr_TN" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
+        { property: "og:image", content: SOCIAL_IMAGE },
+        { property: "og:image:alt", content: "Logo La Maison des Montres" },
+        { name: "twitter:image", content: SOCIAL_IMAGE },
+        { name: "twitter:image:alt", content: "Logo La Maison des Montres" },
+      ],
+      links: [
+        { rel: "stylesheet", href: appCss },
+        { rel: "icon", href: "/favicon.ico?v=20260804", type: "image/x-icon" },
+        { rel: "shortcut icon", href: "/favicon.ico?v=20260804", type: "image/x-icon" },
+        {
+          rel: "icon",
+          href: "/favicon-96x96.png?v=20260804",
+          type: "image/png",
+          sizes: "96x96",
+        },
+        { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
+        { rel: "manifest", href: "/site.webmanifest" },
+        { rel: "preconnect", href: "https://fonts.googleapis.com" },
+        { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+        {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap",
+        },
+      ],
     };
   },
   shellComponent: RootShell,
@@ -201,8 +208,28 @@ function MetaPixelTracker() {
   });
 
   useEffect(() => {
-    initMetaPixel();
-    trackPageView(pageKey);
+    let cancelled = false;
+    const track = () => {
+      if (cancelled) return;
+      initMetaPixel();
+      trackPageView(pageKey);
+    };
+    const idleApi = window as Window & {
+      requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+    if (idleApi.requestIdleCallback) {
+      const idleId = idleApi.requestIdleCallback(track, { timeout: 1500 });
+      return () => {
+        cancelled = true;
+        idleApi.cancelIdleCallback?.(idleId);
+      };
+    }
+    const timeoutId = window.setTimeout(track, 500);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeoutId);
+    };
   }, [pageKey]);
 
   return null;

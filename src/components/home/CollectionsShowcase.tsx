@@ -39,7 +39,6 @@ function CollectionCard({ to, badge, title, subtitle, image, alt }: CollectionCa
     <Link
       to={to}
       search={DEFAULT_CATALOG_QUERY}
-      aria-label={`${title} — voir la collection`}
       className="group relative block min-w-0 overflow-hidden rounded-[var(--radius-lg)] border border-[color:var(--color-border)]"
     >
       <div className="relative aspect-[4/5] w-full sm:aspect-[16/11] lg:aspect-[4/3]">

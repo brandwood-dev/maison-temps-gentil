@@ -7,7 +7,7 @@ import type { PublicTestimonial } from "@/lib/catalog-api";
 
 function Rating({ rating }: { rating: number }) {
   return (
-    <p className="flex items-center gap-1" aria-label={`Note : ${rating} sur 5`}>
+    <div className="flex items-center gap-1" role="img" aria-label={`Note : ${rating} sur 5`}>
       {[1, 2, 3, 4, 5].map((value) => (
         <Star
           key={value}
@@ -20,11 +20,17 @@ function Rating({ rating }: { rating: number }) {
           }
         />
       ))}
-    </p>
+    </div>
   );
 }
 
-function TestimonialCard({ testimonial }: { testimonial: PublicTestimonial }) {
+function TestimonialCard({
+  testimonial,
+  decorative = false,
+}: {
+  testimonial: PublicTestimonial;
+  decorative?: boolean;
+}) {
   return (
     <article className="flex h-full w-[78vw] max-w-[340px] shrink-0 flex-col justify-between gap-5 rounded-[var(--radius-lg)] border border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-5 sm:w-[340px] sm:p-6">
       <div className="space-y-3">
@@ -38,7 +44,7 @@ function TestimonialCard({ testimonial }: { testimonial: PublicTestimonial }) {
         <p className="text-xs text-[color:var(--color-muted-foreground)]">
           {testimonial.governorate}, Tunisie
         </p>
-        {testimonial.productSlug && testimonial.productTitle ? (
+        {testimonial.productSlug && testimonial.productTitle && !decorative ? (
           <Link
             to="/montres/$slug"
             params={{ slug: testimonial.productSlug }}
@@ -89,7 +95,7 @@ export function TestimonialsMarquee({ testimonials }: { testimonials: PublicTest
             >
               {testimonials.map((testimonial) => (
                 <li key={`dup-${testimonial.id}`} className="flex">
-                  <TestimonialCard testimonial={testimonial} />
+                  <TestimonialCard testimonial={testimonial} decorative />
                 </li>
               ))}
             </ul>

@@ -1,11 +1,7 @@
 import { ChevronDown, Facebook, Instagram } from "lucide-react";
 import { useState } from "react";
 import { Logo } from "@/components/brand/Logo";
-import {
-  FOOTER_HELP_LINKS,
-  FOOTER_INFO_LINKS,
-  getFooterShopLinks,
-} from "@/config/nav";
+import { FOOTER_HELP_LINKS, FOOTER_INFO_LINKS, getFooterShopLinks } from "@/config/nav";
 import { useCatalogCategories } from "@/lib/catalog-products";
 import { useSiteSettings } from "@/lib/site-settings";
 
@@ -43,7 +39,9 @@ function MobileCol({ col }: { col: Col }) {
       >
         {col.title}
         <ChevronDown
-          className={open ? "h-4 w-4 rotate-180 transition-transform" : "h-4 w-4 transition-transform"}
+          className={
+            open ? "h-4 w-4 rotate-180 transition-transform" : "h-4 w-4 transition-transform"
+          }
           aria-hidden
         />
       </button>
@@ -64,8 +62,7 @@ export function SiteFooter() {
     { title: "Aide", links: FOOTER_HELP_LINKS },
     { title: "Informations", links: FOOTER_INFO_LINKS },
   ];
-  const tagline =
-    identity.tagline || "Une sélection soignée pour chaque style et chaque occasion.";
+  const tagline = identity.tagline || "Une sélection soignée pour chaque style et chaque occasion.";
 
   return (
     <footer className="on-dark bg-[color:var(--color-primary)] text-white">
@@ -86,18 +83,24 @@ export function SiteFooter() {
             {(support.email || support.phone || support.whatsapp) && (
               <div className="mt-4 space-y-1 text-xs text-white/60">
                 {support.email && (
-                  <a className="block hover:text-white" href={"mailto:" + support.email}>
+                  <a
+                    className="inline-flex min-h-11 items-center hover:text-white"
+                    href={"mailto:" + support.email}
+                  >
                     {support.email}
                   </a>
                 )}
                 {support.phone && (
-                  <a className="block hover:text-white" href={"tel:" + support.phone}>
+                  <a
+                    className="inline-flex min-h-11 items-center hover:text-white"
+                    href={"tel:" + support.phone}
+                  >
                     {support.phone}
                   </a>
                 )}
                 {support.whatsapp && (
                   <a
-                    className="block hover:text-white"
+                    className="inline-flex min-h-11 items-center hover:text-white"
                     href={"https://wa.me/" + support.whatsapp.replace(/[^0-9]/g, "")}
                   >
                     WhatsApp
@@ -148,7 +151,11 @@ export function SiteFooter() {
             <p className="mb-4 text-sm text-white/70">
               Recevez les nouveautés et offres de {identity.name}.
             </p>
-            <form onSubmit={(event) => event.preventDefault()} className="flex flex-col gap-2 sm:flex-row" noValidate>
+            <form
+              onSubmit={(event) => event.preventDefault()}
+              className="flex flex-col gap-2 sm:flex-row"
+              noValidate
+            >
               <label htmlFor="newsletter-email" className="sr-only">
                 Adresse e-mail
               </label>
@@ -173,7 +180,9 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-10 flex flex-col items-start justify-between gap-2 border-t border-white/10 pt-6 text-xs text-white/50 md:flex-row md:items-center">
-          <p>© {new Date().getFullYear()} {identity.name}. Tous droits réservés.</p>
+          <p>
+            © {new Date().getFullYear()} {identity.name}. Tous droits réservés.
+          </p>
           <p>
             Developed by{" "}
             <a

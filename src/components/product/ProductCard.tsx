@@ -18,6 +18,8 @@ type Props = {
   onAddToCart?: (product: Product, quantity: number) => void;
   /** Prioritize main image loading (LCP). Only the first card in a grid should set this. */
   imagePriority?: boolean;
+  /** Override the responsive image hint when the card lives in a carousel. */
+  imageSizes?: string;
   className?: string;
 };
 
@@ -26,6 +28,7 @@ export function ProductCard({
   href,
   onAddToCart,
   imagePriority = false,
+  imageSizes,
   className,
 }: Props) {
   const { isFavorite, toggle, hydrated } = useFavorites();
@@ -95,7 +98,9 @@ export function ProductCard({
           ref={mainImageRef}
           src={optimizedMainFailed ? primary.url : (primary.optimizedUrl ?? primary.url)}
           srcSet={optimizedMainFailed ? undefined : primary.srcSet}
-          sizes={primary.sizes ?? "(max-width: 640px) 85vw, (max-width: 1024px) 33vw, 25vw"}
+          sizes={
+            imageSizes ?? primary.sizes ?? "(max-width: 480px) 85vw, (max-width: 1024px) 48vw, 25vw"
+          }
           alt={primary.alt}
           loading={mainLoading}
           fetchPriority={mainFetchPriority}
@@ -124,7 +129,11 @@ export function ProductCard({
           ref={secondaryImageRef}
           src={optimizedSecondaryFailed ? secondary.url : (secondary.optimizedUrl ?? secondary.url)}
           srcSet={optimizedSecondaryFailed ? undefined : secondary.srcSet}
-          sizes={secondary.sizes ?? "(max-width: 1024px) 33vw, 25vw"}
+          sizes={
+            imageSizes ??
+            secondary.sizes ??
+            "(max-width: 480px) 85vw, (max-width: 1024px) 48vw, 25vw"
+          }
           alt={secondary.alt}
           loading="lazy"
           fetchPriority="auto"
@@ -230,7 +239,7 @@ export function ProductCard({
       )}
     >
       {href && !unavailable ? (
-        <Link to={href} className="block shrink-0" aria-label={product.name}>
+        <Link to={href} className="block shrink-0">
           {Media}
         </Link>
       ) : (

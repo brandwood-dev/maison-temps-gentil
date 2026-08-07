@@ -87,6 +87,7 @@ export function ProductCarousel({ products, className, onAddToCart }: Props) {
               href={`/montres/${product.slug}`}
               onAddToCart={onAddToCart}
               imagePriority={index === 0}
+              imageSizes="(max-width: 640px) 85vw, (max-width: 1024px) 48vw, 25vw"
               className="w-full"
             />
           </li>

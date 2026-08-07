@@ -168,7 +168,7 @@ export type PublicOrderTracking = {
 
 const DEFAULT_API_URL = "https://la-maison-des-montres-api.vercel.app";
 const PUBLIC_API_TIMEOUT_MS = 8_000;
-const PUBLIC_CACHE_TTL_MS = 15_000;
+const PUBLIC_CACHE_TTL_MS = 30_000;
 
 type RuntimeEnv = {
   PUBLIC_API_URL?: string;

@@ -44,6 +44,11 @@ export function ProductGrid({
               href={href}
               onAddToCart={onAddToCart}
               imagePriority={i === 0}
+              imageSizes={
+                density === "catalog"
+                  ? "(max-width: 480px) 85vw, (max-width: 1024px) 48vw, 33vw"
+                  : "(max-width: 480px) 85vw, (max-width: 1024px) 48vw, 25vw"
+              }
               className="w-full"
             />
           </li>

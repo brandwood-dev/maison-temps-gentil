@@ -23,10 +23,13 @@ import {
 } from "@/lib/catalog-api";
 
 export const Route = createFileRoute("/")({
-  loader: async () => ({
-    heroSlides: await getPublicHeroSlides().catch(() => []),
-    testimonials: await getPublicTestimonials().catch(() => []),
-  }),
+  loader: async () => {
+    const [heroSlides, testimonials] = await Promise.all([
+      getPublicHeroSlides().catch(() => []),
+      getPublicTestimonials().catch(() => []),
+    ]);
+    return { heroSlides, testimonials };
+  },
   head: () => ({
     meta: [{ property: "og:url", content: absoluteUrl() }],
     links: [
@@ -68,7 +71,8 @@ const fallbackHero: PublicHeroSlide = {
   ctaPrimaryHref: "/montres",
   ctaSecondaryLabel: "Voir les promotions",
   ctaSecondaryHref: "/promotions",
-  imageUrl: "https://res.cloudinary.com/dxkxiy900/image/upload/f_auto,q_auto,c_fill,g_auto/v1785813483/laurenz-heymann-al6s6JpnZis-unsplash_eemoes.jpg",
+  imageUrl:
+    "https://res.cloudinary.com/dxkxiy900/image/upload/f_auto,q_auto,c_fill,g_auto/v1785813483/laurenz-heymann-al6s6JpnZis-unsplash_eemoes.jpg",
   sortOrder: 1,
   active: true,
 };
@@ -78,7 +82,8 @@ const HERO_TRANSITION_MS = 700;
 type HeroDirection = 1 | -1;
 
 function Hero({ slides }: { slides: PublicHeroSlide[] }) {
-  const allSlides = slides.length > 5 ? slides.slice(0, 5) : slides.length ? slides : [fallbackHero];
+  const allSlides =
+    slides.length > 5 ? slides.slice(0, 5) : slides.length ? slides : [fallbackHero];
   const [currentIndex, setCurrentIndex] = useState(0);
   const [incomingIndex, setIncomingIndex] = useState<number | null>(null);
   const [incomingReady, setIncomingReady] = useState(false);
@@ -154,7 +159,9 @@ function Hero({ slides }: { slides: PublicHeroSlide[] }) {
   }, [allSlides, currentIndex]);
 
   const activeDotIndex = incomingIndex ?? currentIndex;
-  const imageTransition = isTransitioning ? "transition-transform duration-700 ease-out" : "transition-none";
+  const imageTransition = isTransitioning
+    ? "transition-transform duration-700 ease-out"
+    : "transition-none";
   const currentImageTransform = isTransitioning
     ? transitionDirection === 1
       ? "-translate-x-full"
@@ -208,7 +215,10 @@ function Hero({ slides }: { slides: PublicHeroSlide[] }) {
                 setIncomingReady(true);
                 return;
               }
-              void image.decode().catch(() => undefined).finally(() => setIncomingReady(true));
+              void image
+                .decode()
+                .catch(() => undefined)
+                .finally(() => setIncomingReady(true));
             }}
             onError={() => {
               setIncomingIndex(null);
@@ -223,20 +233,33 @@ function Hero({ slides }: { slides: PublicHeroSlide[] }) {
       <div className="container-page relative flex min-h-[520px] flex-col justify-end py-14 sm:min-h-[560px] md:min-h-[620px] md:justify-center md:py-24 lg:min-h-[680px]">
         <div className="max-w-xl">
           <p className="eyebrow text-[color:var(--color-gold)]">{slide.tagline}</p>
-          <h1 className="t-display mt-3 text-[color:var(--color-on-image)]">
-            {slide.title}
-          </h1>
+          <h1 className="t-display mt-3 text-[color:var(--color-on-image)]">{slide.title}</h1>
           <p className="mt-5 max-w-md text-base text-[color:var(--color-on-image-muted)] md:text-lg">
             {slide.subtitle}
           </p>
           <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
-            <a href={slide.ctaPrimaryHref} className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-[var(--radius-md)] bg-[color:var(--color-gold)] px-6 text-base font-semibold text-[color:var(--color-gold-foreground)] transition-colors hover:brightness-95 sm:w-auto">{slide.ctaPrimaryLabel}<ArrowRight className="h-4 w-4" strokeWidth={1.75} /></a>
-            <a href={slide.ctaSecondaryHref} className="inline-flex h-12 w-full items-center justify-center rounded-[var(--radius-md)] border border-[color:var(--color-on-image-border)] bg-[color:var(--color-on-image-surface)] px-6 text-base font-semibold text-[color:var(--color-on-image)] backdrop-blur-sm hover:bg-[color:var(--color-on-image-border)] sm:w-auto">{slide.ctaSecondaryLabel}</a>
+            <a
+              href={slide.ctaPrimaryHref}
+              className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-[var(--radius-md)] bg-[color:var(--color-gold)] px-6 text-base font-semibold text-[color:var(--color-gold-foreground)] transition-colors hover:brightness-95 sm:w-auto"
+            >
+              {slide.ctaPrimaryLabel}
+              <ArrowRight className="h-4 w-4" strokeWidth={1.75} />
+            </a>
+            <a
+              href={slide.ctaSecondaryHref}
+              className="inline-flex h-12 w-full items-center justify-center rounded-[var(--radius-md)] border border-[color:var(--color-on-image-border)] bg-[color:var(--color-on-image-surface)] px-6 text-base font-semibold text-[color:var(--color-on-image)] backdrop-blur-sm hover:bg-[color:var(--color-on-image-border)] sm:w-auto"
+            >
+              {slide.ctaSecondaryLabel}
+            </a>
           </div>
         </div>
       </div>
       {allSlides.length > 1 && (
-        <div className="absolute inset-x-0 bottom-5 z-10 flex items-center justify-center gap-1.5" role="group" aria-label="Contrôles du carrousel">
+        <div
+          className="absolute inset-x-0 bottom-5 z-10 flex items-center justify-center gap-1.5"
+          role="group"
+          aria-label="Contrôles du carrousel"
+        >
           <button
             type="button"
             aria-label="Slide précédente"
@@ -256,7 +279,9 @@ function Hero({ slides }: { slides: PublicHeroSlide[] }) {
               className="group relative flex h-11 w-11 items-center justify-center"
               onClick={() => goToSlide(index)}
             >
-              <span className={`block h-1.5 rounded-full transition-all duration-300 ${index === activeDotIndex ? "w-7 bg-white" : "w-1.5 bg-white/50 group-hover:bg-white/80"}`} />
+              <span
+                className={`block h-1.5 rounded-full transition-all duration-300 ${index === activeDotIndex ? "w-7 bg-white" : "w-1.5 bg-white/50 group-hover:bg-white/80"}`}
+              />
             </button>
           ))}
           <button
