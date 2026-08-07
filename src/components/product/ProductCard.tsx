@@ -35,6 +35,7 @@ export function ProductCard({
   const [mainError, setMainError] = useState(false);
   const [optimizedMainFailed, setOptimizedMainFailed] = useState(false);
   const [secondaryLoaded, setSecondaryLoaded] = useState(false);
+  const [optimizedSecondaryFailed, setOptimizedSecondaryFailed] = useState(false);
   const mainImageRef = useRef<HTMLImageElement>(null);
   const secondaryImageRef = useRef<HTMLImageElement>(null);
 
@@ -53,10 +54,11 @@ export function ProductCard({
 
   useEffect(() => {
     setSecondaryLoaded(false);
+    setOptimizedSecondaryFailed(false);
     const image = secondaryImageRef.current;
     if (!image || !secondary?.url || !image.complete) return;
     setSecondaryLoaded(image.naturalWidth > 0);
-  }, [secondary?.url]);
+  }, [secondary?.optimizedUrl, secondary?.url]);
 
   // Shared per-request clock: SSR and first client render agree on `nowTs`,
   // so `promoActive` matches the HTML sent by the server. After hydration the
@@ -120,7 +122,9 @@ export function ProductCard({
       {secondary ? (
         <img
           ref={secondaryImageRef}
-          src={secondary.url}
+          src={optimizedSecondaryFailed ? secondary.url : (secondary.optimizedUrl ?? secondary.url)}
+          srcSet={optimizedSecondaryFailed ? undefined : secondary.srcSet}
+          sizes={secondary.sizes ?? "(max-width: 1024px) 33vw, 25vw"}
           alt={secondary.alt}
           loading="lazy"
           fetchPriority="auto"
@@ -130,7 +134,13 @@ export function ProductCard({
             imgHover && secondaryLoaded ? "opacity-100" : "",
           )}
           onLoad={() => setSecondaryLoaded(true)}
-          onError={() => setSecondaryLoaded(false)}
+          onError={() => {
+            if (secondary.optimizedUrl && !optimizedSecondaryFailed) {
+              setOptimizedSecondaryFailed(true);
+              return;
+            }
+            setSecondaryLoaded(false);
+          }}
           aria-hidden={!imgHover || !secondaryLoaded}
         />
       ) : null}

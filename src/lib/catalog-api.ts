@@ -192,7 +192,11 @@ function apiHeaders(): HeadersInit {
   return headers;
 }
 
-async function apiRequest<T>(path: string): Promise<T> {
+function isAbortError(error: unknown): boolean {
+  return error instanceof DOMException && error.name === "AbortError";
+}
+
+async function apiRequest<T>(path: string, options: { allowNotFound?: boolean } = {}): Promise<T> {
   const now = Date.now();
   const cached = publicResponseCache.get(path);
   if (cached && cached.expiresAt > now) return cached.value as T;
@@ -209,6 +213,10 @@ async function apiRequest<T>(path: string): Promise<T> {
         cache: "no-store",
         signal: controller.signal,
       });
+      if (response.status === 404 && options.allowNotFound) {
+        publicResponseCache.set(path, { value: null, expiresAt: Date.now() + PUBLIC_CACHE_TTL_MS });
+        return null as T;
+      }
       if (!response.ok) {
         throw new Error(`Catalogue API indisponible (${response.status})`);
       }
@@ -297,14 +305,16 @@ export const getPublicProduct = createServerFn({ method: "GET" })
   .validator((input: { slug: string }) => input)
   .handler(async ({ data }) => {
     const slug = encodeURIComponent(data.slug);
-    const response = await fetch(apiUrl(`/api/v1/public/products/${slug}`), {
-      headers: apiHeaders(),
-    });
-    if (response.status === 404) return null;
-    if (!response.ok) {
-      throw new Error(`Catalogue API indisponible (${response.status})`);
+    try {
+      return await apiRequest<Product | null>(`/api/v1/public/products/${slug}`, {
+        allowNotFound: true,
+      });
+    } catch (error) {
+      if (isAbortError(error)) {
+        throw new Error("La fiche produit met trop de temps à répondre. Veuillez réessayer.");
+      }
+      throw error;
     }
-    return (await response.json()) as Product;
   });
 
 export const createPublicOrder = createServerFn({ method: "POST" })

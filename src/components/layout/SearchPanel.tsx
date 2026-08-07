@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Search } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useCatalogProducts } from "@/lib/catalog-products";
@@ -97,6 +97,13 @@ export function SearchPanel({ open, onClose, restoreFocus }: Props) {
 
 function Suggestion({ product, onSelect }: { product: Product; onSelect: () => void }) {
   const image = product.images[0];
+  const [optimizedFailed, setOptimizedFailed] = useState(false);
+  const imageRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    setOptimizedFailed(false);
+  }, [image?.optimizedUrl, image?.url]);
+
   return (
     <li role="option">
       <a
@@ -106,11 +113,19 @@ function Suggestion({ product, onSelect }: { product: Product; onSelect: () => v
       >
         {image ? (
           <img
-            src={image.url}
+            ref={imageRef}
+            src={optimizedFailed ? image.url : (image.optimizedUrl ?? image.url)}
+            srcSet={optimizedFailed ? undefined : image.srcSet}
+            sizes="48px"
             alt=""
             width={48}
             height={48}
             className="h-12 w-12 shrink-0 rounded-[var(--radius-sm)] border border-[color:var(--color-border)] bg-[color:var(--color-surface-cream)] object-cover"
+            onError={() => {
+              if (image.optimizedUrl && !optimizedFailed) {
+                setOptimizedFailed(true);
+              }
+            }}
           />
         ) : (
           <span
