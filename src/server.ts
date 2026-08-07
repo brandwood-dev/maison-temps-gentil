@@ -97,7 +97,7 @@ async function renderSitemap(env: unknown): Promise<Response> {
   const productUrls: string[] = [];
   try {
     const response = await fetch(
-      `${baseUrl}/api/v1/public/products?page=1&pageSize=100&sortBy=createdAt&sortOrder=desc`,
+      `${baseUrl}/api/v1/public/products?page=1&pageSize=48&sortBy=createdAt&sortOrder=desc`,
       { headers: { accept: "application/json" } },
     );
     if (response.ok) {

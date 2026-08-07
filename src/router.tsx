@@ -11,7 +11,7 @@ export const getRouter = () => {
     scrollRestoration: true,
     // Keep intent preloads reusable during a short navigation burst. A zero
     // stale time caused every hover/navigation pair to refetch the same route.
-    defaultPreloadStaleTime: 30_000,
+    defaultPreloadStaleTime: 60_000,
   });
 
   return router;

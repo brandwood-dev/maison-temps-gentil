@@ -94,6 +94,10 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  // Catalogue and store settings are public data with a short freshness
+  // window. Reusing the root loader during navigation avoids showing the
+  // global loading state and refetching six API resources on every route.
+  staleTime: 60_000,
   loader: async () => {
     const [products, brands, categories, attributes, promoMessages, settings] = await Promise.all([
       getPublicProducts().catch(() => []),

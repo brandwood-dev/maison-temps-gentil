@@ -168,7 +168,9 @@ export type PublicOrderTracking = {
 
 const DEFAULT_API_URL = "https://la-maison-des-montres-api.vercel.app";
 const PUBLIC_API_TIMEOUT_MS = 8_000;
-const PUBLIC_CACHE_TTL_MS = 30_000;
+const PUBLIC_CACHE_TTL_MS = 60_000;
+/** Hard upper bound for one public catalogue response. */
+export const PUBLIC_PRODUCT_PAGE_SIZE = 48;
 
 type RuntimeEnv = {
   PUBLIC_API_URL?: string;
@@ -254,7 +256,7 @@ async function apiRequest<T>(path: string, options: { allowNotFound?: boolean } 
 
 export const getPublicProducts = createServerFn({ method: "GET" }).handler(async () => {
   const page = await apiRequest<ProductPage>(
-    "/api/v1/public/products?page=1&pageSize=100&sortBy=createdAt&sortOrder=desc",
+    `/api/v1/public/products?page=1&pageSize=${PUBLIC_PRODUCT_PAGE_SIZE}&sortBy=createdAt&sortOrder=desc`,
   );
   return page.data;
 });
@@ -312,7 +314,7 @@ export const getPublicProductsByCategory = createServerFn({ method: "GET" })
   .validator((input: { categoryId: string }) => input)
   .handler(async ({ data }) => {
     const page = await apiRequest<ProductPage>(
-      `/api/v1/public/products?page=1&pageSize=100&sortBy=createdAt&sortOrder=desc&categoryId=${encodeURIComponent(data.categoryId)}`,
+      `/api/v1/public/products?page=1&pageSize=${PUBLIC_PRODUCT_PAGE_SIZE}&sortBy=createdAt&sortOrder=desc&categoryId=${encodeURIComponent(data.categoryId)}`,
     );
     return page.data;
   });
