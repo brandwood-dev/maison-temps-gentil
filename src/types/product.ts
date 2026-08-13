@@ -68,6 +68,8 @@ export type Product = {
   /** Dynamic attributes configured in the Admin catalogue. */
   attributes?: ProductAttribute[];
   shortDescription: string;
+  /** Full product description shown in the dedicated description section. */
+  description?: string;
   dialColor: ProductDialColor | null;
   braceletMaterial: string | null;
   braceletColor: string | null;

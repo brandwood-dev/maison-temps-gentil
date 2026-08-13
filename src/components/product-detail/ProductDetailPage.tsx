@@ -98,6 +98,20 @@ export function ProductDetailPage({ product, allProducts, canonicalUrl }: Props)
           </div>
 
           <ProductSpecifications product={product} />
+
+          {product.description ? (
+            <section aria-labelledby="description-heading" className="mt-12 md:mt-16">
+              <h2
+                id="description-heading"
+                className="t-h2 mb-5 text-[color:var(--color-foreground)] md:mb-6"
+              >
+                Description
+              </h2>
+              <div className="max-w-3xl whitespace-pre-line text-sm leading-relaxed text-[color:var(--color-muted-foreground)] md:text-base">
+                {product.description}
+              </div>
+            </section>
+          ) : null}
         </section>
 
         {related.length > 0 ? (
