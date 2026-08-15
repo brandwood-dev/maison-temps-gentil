@@ -7,10 +7,16 @@
   "preview_urls": true,
   "env": {
     "preview": {
-      "name": "la-maison-des-montres-preview"
+      "name": "la-maison-des-montres-preview",
+      "vars": {
+        "PUBLIC_API_URL": "https://la-maison-des-montres-api.onrender.com"
+      }
     },
     "production": {
-      "name": "la-maison-des-montres"
+      "name": "la-maison-des-montres",
+      "vars": {
+        "PUBLIC_API_URL": "https://la-maison-des-montres-api.onrender.com"
+      }
     }
   }
 }
