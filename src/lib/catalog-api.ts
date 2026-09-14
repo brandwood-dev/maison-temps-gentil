@@ -206,8 +206,8 @@ const publicRequestCache = new Map<string, Promise<unknown>>();
 function apiUrl(path: string, preferPublicProxy = false): string {
   const runtime = getRuntimeEnv();
   const base = (
-    (preferPublicProxy ? runtime.PUBLIC_API_PROXY_URL : undefined) ??
     runtime.PUBLIC_API_URL ??
+    (preferPublicProxy ? runtime.PUBLIC_API_PROXY_URL : undefined) ??
     DEFAULT_API_URL
   ).replace(/\/+$/, "");
   return `${base}${path}`;
