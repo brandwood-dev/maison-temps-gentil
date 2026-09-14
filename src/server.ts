@@ -10,8 +10,7 @@ type ServerEntry = {
 const DEFAULT_API_URL = "https://la-maison-des-montres-api.vercel.app";
 const SITEMAP_PATH = "/sitemap.xml";
 
-type RuntimeEnv = { PUBLIC_API_URL?: string };
-type PublicApiRuntimeEnv = RuntimeEnv & { PUBLIC_API_PROXY_URL?: string };
+type RuntimeEnv = { PUBLIC_API_URL?: string; PUBLIC_API_PROXY_URL?: string };
 type ScheduledExecutionContext = {
   waitUntil(promise: Promise<unknown>): void;
 };
@@ -107,7 +106,7 @@ async function proxyPublicApi(
   const requestUrl = new URL(request.url);
   if (!requestUrl.pathname.startsWith(PUBLIC_API_PATH_PREFIX)) return null;
 
-  const runtime = getRuntimeEnv(env) as PublicApiRuntimeEnv;
+  const runtime = getRuntimeEnv(env);
   if (!runtime.PUBLIC_API_PROXY_URL) return null;
 
   const cache =
@@ -266,6 +265,12 @@ export default {
 
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
+      // Make Worker bindings available to server functions executed by
+      // TanStack Start during SSR (catalog-api reads this global).
+      if (env && typeof env === "object") {
+        (globalThis as typeof globalThis & { __env__?: RuntimeEnv }).__env__ =
+          env as RuntimeEnv;
+      }
       const proxiedApiResponse = await proxyPublicApi(request, env);
       if (proxiedApiResponse) return proxiedApiResponse;
       if (new URL(request.url).pathname === SITEMAP_PATH && request.method === "GET") {
