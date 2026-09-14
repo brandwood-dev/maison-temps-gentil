@@ -166,7 +166,10 @@ export type PublicOrderTracking = {
   };
 };
 
-const DEFAULT_API_URL = "https://la-maison-des-montres-api.vercel.app";
+// Render is the active Production API origin. Environment bindings override
+// this value, while the fallback keeps SSR/catalogue reads functional when a
+// deployment runtime does not inject Worker variables into server functions.
+const DEFAULT_API_URL = "https://la-maison-des-montres-api.onrender.com";
 // Render Free may need ~20–30 s to wake after inactivity. Cached requests
 // remain fast; this bound only prevents a cold-start catalogue from failing.
 const PUBLIC_API_TIMEOUT_MS = 35_000;

@@ -7,7 +7,9 @@ type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
 };
 
-const DEFAULT_API_URL = "https://la-maison-des-montres-api.vercel.app";
+// Render is the active Production API origin. Keep this fallback aligned with
+// Production so SSR still loads the catalogue when Worker bindings are absent.
+const DEFAULT_API_URL = "https://la-maison-des-montres-api.onrender.com";
 const SITEMAP_PATH = "/sitemap.xml";
 
 type RuntimeEnv = { PUBLIC_API_URL?: string; PUBLIC_API_PROXY_URL?: string };
