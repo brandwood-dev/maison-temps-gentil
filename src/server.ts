@@ -11,6 +11,9 @@ const DEFAULT_API_URL = "https://la-maison-des-montres-api.vercel.app";
 const SITEMAP_PATH = "/sitemap.xml";
 
 type RuntimeEnv = { PUBLIC_API_URL?: string };
+type ScheduledExecutionContext = {
+  waitUntil(promise: Promise<unknown>): void;
+};
 
 let serverEntryPromise: Promise<ServerEntry> | undefined;
 
@@ -83,6 +86,34 @@ function getRuntimeEnv(env: unknown): RuntimeEnv {
   return cloudflareEnv ?? {};
 }
 
+/**
+ * Keep the free Render API instance warm with a real database-backed request.
+ * The cron runs from this already-deployed Worker, so no paid monitoring
+ * service or secret is required. Only the public settings payload is touched.
+ */
+async function warmProductionApi(env: unknown): Promise<void> {
+  const baseUrl = (getRuntimeEnv(env).PUBLIC_API_URL ?? DEFAULT_API_URL).replace(/\/+$/, "");
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 25_000);
+  try {
+    const response = await fetch(`${baseUrl}/api/v1/public/settings`, {
+      headers: {
+        accept: "application/json",
+        "cache-control": "no-cache",
+      },
+      signal: controller.signal,
+    });
+    if (!response.ok) {
+      console.warn(`API warm-up returned ${response.status}`);
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "request failed";
+    console.warn(`API warm-up failed: ${message}`);
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 function xmlEscape(value: string): string {
   return value.replace(
     /[<>&"']/g,
@@ -147,6 +178,10 @@ async function renderSitemap(env: unknown): Promise<Response> {
 }
 
 export default {
+  scheduled(_controller: unknown, env: unknown, ctx: ScheduledExecutionContext) {
+    ctx.waitUntil(warmProductionApi(env));
+  },
+
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
       if (new URL(request.url).pathname === SITEMAP_PATH && request.method === "GET") {
