@@ -15,9 +15,6 @@ type PublicApiRuntimeEnv = RuntimeEnv & { PUBLIC_API_PROXY_URL?: string };
 type ScheduledExecutionContext = {
   waitUntil(promise: Promise<unknown>): void;
 };
-type FetchExecutionContext = {
-  waitUntil(promise: Promise<unknown>): void;
-};
 type EdgeCache = {
   match(request: Request): Promise<Response | undefined>;
   put(request: Request, response: Response): Promise<void>;
@@ -94,15 +91,6 @@ function getRuntimeEnv(env: unknown): RuntimeEnv {
   return cloudflareEnv ?? {};
 }
 
-function schedule(ctx: unknown, promise: Promise<unknown>): void {
-  if (ctx && typeof ctx === "object" && "waitUntil" in ctx) {
-    const executionContext = ctx as FetchExecutionContext;
-    executionContext.waitUntil(promise);
-    return;
-  }
-  void promise;
-}
-
 const PUBLIC_API_PATH_PREFIX = "/api/v1/public/";
 
 /**
@@ -113,7 +101,6 @@ const PUBLIC_API_PATH_PREFIX = "/api/v1/public/";
 async function proxyPublicApi(
   request: Request,
   env: unknown,
-  ctx: unknown,
 ): Promise<Response | null> {
   if (request.method !== "GET") return null;
 
@@ -161,12 +148,13 @@ async function proxyPublicApi(
     });
 
     if (cache && response.status === 200) {
-      schedule(
-        ctx,
-        cache.put(cacheKey, response.clone()).catch((error: unknown) => {
-          console.warn(`API edge cache write failed: ${error instanceof Error ? error.message : "unknown error"}`);
-        }),
-      );
+      try {
+        await cache.put(cacheKey, response.clone());
+      } catch (error: unknown) {
+        console.warn(
+          `API edge cache write failed: ${error instanceof Error ? error.message : "unknown error"}`,
+        );
+      }
     }
     return response;
   } catch (error) {
@@ -278,7 +266,7 @@ export default {
 
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
-      const proxiedApiResponse = await proxyPublicApi(request, env, ctx);
+      const proxiedApiResponse = await proxyPublicApi(request, env);
       if (proxiedApiResponse) return proxiedApiResponse;
       if (new URL(request.url).pathname === SITEMAP_PATH && request.method === "GET") {
         return await renderSitemap(env);
