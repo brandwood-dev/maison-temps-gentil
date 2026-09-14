@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CatalogPage } from "@/components/catalog/CatalogPage";
-import { useCatalogProducts } from "@/lib/catalog-products";
+import { getPublicPromotionProducts } from "@/lib/catalog-api";
 import { absoluteUrl } from "@/config/site";
 import { parseCatalogSearch } from "@/lib/catalog";
 
@@ -11,6 +11,7 @@ const DESC =
 
 export const Route = createFileRoute("/promotions")({
   validateSearch: (raw) => parseCatalogSearch(raw as Record<string, unknown>),
+  loader: async () => ({ products: await getPublicPromotionProducts().catch(() => []) }),
   head: () => ({
     meta: [
       { title: TITLE },
@@ -27,7 +28,7 @@ export const Route = createFileRoute("/promotions")({
 });
 
 function PromotionsPage() {
-  const products = useCatalogProducts();
+  const { products } = Route.useLoaderData();
   const query = Route.useSearch();
   return (
     <CatalogPage

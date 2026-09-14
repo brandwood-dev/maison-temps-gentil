@@ -261,6 +261,17 @@ export const getPublicProducts = createServerFn({ method: "GET" }).handler(async
   return page.data;
 });
 
+/**
+ * Promotions use a dedicated API filter so an older published product cannot
+ * be omitted simply because it falls outside the root catalogue page.
+ */
+export const getPublicPromotionProducts = createServerFn({ method: "GET" }).handler(async () => {
+  const page = await apiRequest<ProductPage>(
+    `/api/v1/public/products?page=1&pageSize=${PUBLIC_PRODUCT_PAGE_SIZE}&sortBy=createdAt&sortOrder=desc&promotion=active`,
+  );
+  return page.data;
+});
+
 /** Public featured-brand data is managed from the Admin catalogue. */
 export const getPublicBrands = createServerFn({ method: "GET" }).handler(async () => {
   const page = await apiRequest<BrandPage>(
