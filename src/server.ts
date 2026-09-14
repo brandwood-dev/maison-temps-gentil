@@ -131,7 +131,7 @@ async function proxyPublicApi(
   const upstreamBase = (runtime.PUBLIC_API_URL ?? DEFAULT_API_URL).replace(/\/+$/, "");
   const upstreamUrl = `${upstreamBase}${requestUrl.pathname}${requestUrl.search}`;
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 12_000);
+  const timeout = setTimeout(() => controller.abort(), 35_000);
   try {
     const upstream = await fetch(upstreamUrl, {
       headers: { accept: "application/json", "cache-control": "no-cache" },
@@ -176,7 +176,7 @@ async function proxyPublicApi(
 async function warmProductionApi(env: unknown): Promise<void> {
   const baseUrl = (getRuntimeEnv(env).PUBLIC_API_URL ?? DEFAULT_API_URL).replace(/\/+$/, "");
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 25_000);
+  const timeout = setTimeout(() => controller.abort(), 35_000);
   try {
     const response = await fetch(`${baseUrl}/api/v1/public/settings`, {
       headers: {

@@ -167,7 +167,9 @@ export type PublicOrderTracking = {
 };
 
 const DEFAULT_API_URL = "https://la-maison-des-montres-api.vercel.app";
-const PUBLIC_API_TIMEOUT_MS = 8_000;
+// Render Free may need ~20–30 s to wake after inactivity. Cached requests
+// remain fast; this bound only prevents a cold-start catalogue from failing.
+const PUBLIC_API_TIMEOUT_MS = 35_000;
 const PUBLIC_CACHE_TTL_MS = 60_000;
 /** Hard upper bound for one public catalogue response. */
 export const PUBLIC_PRODUCT_PAGE_SIZE = 48;

@@ -19,7 +19,7 @@
         "PUBLIC_API_PROXY_URL": "https://lamaisondesmontres.com"
       },
       "triggers": {
-        "crons": ["*/10 * * * *"]
+        "crons": ["*/5 * * * *"]
       }
     }
   }
