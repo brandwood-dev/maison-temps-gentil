@@ -174,6 +174,7 @@ export const PUBLIC_PRODUCT_PAGE_SIZE = 48;
 
 type RuntimeEnv = {
   PUBLIC_API_URL?: string;
+  PUBLIC_API_PROXY_URL?: string;
   API_PREVIEW_BYPASS_SECRET?: string;
 };
 
@@ -197,8 +198,13 @@ type PublicCacheEntry = { expiresAt: number; value: unknown };
 const publicResponseCache = new Map<string, PublicCacheEntry>();
 const publicRequestCache = new Map<string, Promise<unknown>>();
 
-function apiUrl(path: string): string {
-  const base = (getRuntimeEnv().PUBLIC_API_URL ?? DEFAULT_API_URL).replace(/\/+$/, "");
+function apiUrl(path: string, preferPublicProxy = false): string {
+  const runtime = getRuntimeEnv();
+  const base = (
+    (preferPublicProxy ? runtime.PUBLIC_API_PROXY_URL : undefined) ??
+    runtime.PUBLIC_API_URL ??
+    DEFAULT_API_URL
+  ).replace(/\/+$/, "");
   return `${base}${path}`;
 }
 
@@ -227,7 +233,7 @@ async function apiRequest<T>(path: string, options: { allowNotFound?: boolean } 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), PUBLIC_API_TIMEOUT_MS);
     try {
-      const response = await fetch(apiUrl(path), {
+      const response = await fetch(apiUrl(path, true), {
         headers: apiHeaders(),
         signal: controller.signal,
       });

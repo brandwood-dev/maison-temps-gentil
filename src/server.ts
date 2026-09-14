@@ -11,8 +11,16 @@ const DEFAULT_API_URL = "https://la-maison-des-montres-api.vercel.app";
 const SITEMAP_PATH = "/sitemap.xml";
 
 type RuntimeEnv = { PUBLIC_API_URL?: string };
+type PublicApiRuntimeEnv = RuntimeEnv & { PUBLIC_API_PROXY_URL?: string };
 type ScheduledExecutionContext = {
   waitUntil(promise: Promise<unknown>): void;
+};
+type FetchExecutionContext = {
+  waitUntil(promise: Promise<unknown>): void;
+};
+type EdgeCache = {
+  match(request: Request): Promise<Response | undefined>;
+  put(request: Request, response: Response): Promise<void>;
 };
 
 let serverEntryPromise: Promise<ServerEntry> | undefined;
@@ -84,6 +92,92 @@ function getRuntimeEnv(env: unknown): RuntimeEnv {
   if (env && typeof env === "object") return env as RuntimeEnv;
   const cloudflareEnv = (globalThis as typeof globalThis & { __env__?: RuntimeEnv }).__env__;
   return cloudflareEnv ?? {};
+}
+
+function schedule(ctx: unknown, promise: Promise<unknown>): void {
+  if (ctx && typeof ctx === "object" && "waitUntil" in ctx) {
+    const executionContext = ctx as FetchExecutionContext;
+    executionContext.waitUntil(promise);
+    return;
+  }
+  void promise;
+}
+
+const PUBLIC_API_PATH_PREFIX = "/api/v1/public/";
+
+/**
+ * Proxy only public catalogue reads through the storefront Worker so the
+ * Cloudflare edge cache can absorb repeated SSR navigations. Private API
+ * calls (orders, admin, tracking) continue to use the Render origin.
+ */
+async function proxyPublicApi(
+  request: Request,
+  env: unknown,
+  ctx: unknown,
+): Promise<Response | null> {
+  if (request.method !== "GET") return null;
+
+  const requestUrl = new URL(request.url);
+  if (!requestUrl.pathname.startsWith(PUBLIC_API_PATH_PREFIX)) return null;
+
+  const runtime = getRuntimeEnv(env) as PublicApiRuntimeEnv;
+  if (!runtime.PUBLIC_API_PROXY_URL) return null;
+
+  const cache =
+    typeof caches === "undefined"
+      ? null
+      : ((caches as unknown as { default?: EdgeCache }).default ?? null);
+  const cacheKey = new Request(requestUrl.toString(), { method: "GET" });
+  if (cache) {
+    const cached = await cache.match(cacheKey);
+    if (cached) {
+      const headers = new Headers(cached.headers);
+      headers.set("X-Storefront-API-Cache", "HIT");
+      return new Response(cached.body, {
+        status: cached.status,
+        statusText: cached.statusText,
+        headers,
+      });
+    }
+  }
+
+  const upstreamBase = (runtime.PUBLIC_API_URL ?? DEFAULT_API_URL).replace(/\/+$/, "");
+  const upstreamUrl = `${upstreamBase}${requestUrl.pathname}${requestUrl.search}`;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 12_000);
+  try {
+    const upstream = await fetch(upstreamUrl, {
+      headers: { accept: "application/json", "cache-control": "no-cache" },
+      signal: controller.signal,
+    });
+    const headers = new Headers(upstream.headers);
+    headers.set("Cache-Control", "public, max-age=0, s-maxage=60, stale-while-revalidate=300");
+    headers.set("CDN-Cache-Control", "public, max-age=60, stale-while-revalidate=300");
+    headers.set("X-Storefront-API-Cache", "MISS");
+    const response = new Response(upstream.body, {
+      status: upstream.status,
+      statusText: upstream.statusText,
+      headers,
+    });
+
+    if (cache && response.status === 200) {
+      schedule(
+        ctx,
+        cache.put(cacheKey, response.clone()).catch((error: unknown) => {
+          console.warn(`API edge cache write failed: ${error instanceof Error ? error.message : "unknown error"}`);
+        }),
+      );
+    }
+    return response;
+  } catch (error) {
+    console.warn(`Public API proxy failed: ${error instanceof Error ? error.message : "request failed"}`);
+    return new Response(JSON.stringify({ message: "Catalogue API indisponible" }), {
+      status: 503,
+      headers: { "content-type": "application/json; charset=utf-8" },
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 /**
@@ -184,6 +278,8 @@ export default {
 
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
+      const proxiedApiResponse = await proxyPublicApi(request, env, ctx);
+      if (proxiedApiResponse) return proxiedApiResponse;
       if (new URL(request.url).pathname === SITEMAP_PATH && request.method === "GET") {
         return await renderSitemap(env);
       }

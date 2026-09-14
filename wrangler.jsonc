@@ -15,7 +15,8 @@
     "production": {
       "name": "la-maison-des-montres",
       "vars": {
-        "PUBLIC_API_URL": "https://la-maison-des-montres-api.onrender.com"
+        "PUBLIC_API_URL": "https://la-maison-des-montres-api.onrender.com",
+        "PUBLIC_API_PROXY_URL": "https://lamaisondesmontres.com"
       },
       "triggers": {
         "crons": ["*/10 * * * *"]
