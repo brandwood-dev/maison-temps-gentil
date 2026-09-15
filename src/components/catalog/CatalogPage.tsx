@@ -34,6 +34,8 @@ type Props = {
   crumbs: Crumb[];
   products: Product[];
   query: CatalogQuery;
+  /** Database category id used to scope the available storefront filters. */
+  categoryId?: string;
   fixedCategory?: ProductCategory;
   fixedCollection?: string;
   /** When true: force `promotionOnly` server-side, hide the promo filter/chip. */
@@ -49,6 +51,7 @@ export function CatalogPage({
   crumbs,
   products,
   query,
+  categoryId,
   fixedCategory,
   fixedCollection,
   forcePromotionOnly = false,
@@ -57,6 +60,12 @@ export function CatalogPage({
   const navigate = useNavigate();
   const nowTs = useNow();
   const catalogAttributes = useCatalogAttributes();
+  const categoryAttributes = useMemo(() => {
+    if (!categoryId) return catalogAttributes;
+    return catalogAttributes.filter(
+      (attribute) => !attribute.categoryIds?.length || attribute.categoryIds.includes(categoryId),
+    );
+  }, [catalogAttributes, categoryId]);
   const { addItem } = useCart();
   const handleAddToCart = (p: Product, quantity: number) => {
     addItem(p.id, quantity);
@@ -72,7 +81,7 @@ export function CatalogPage({
     return getCatalogResult(products, effectiveQuery, {
       fixedCategory,
       fixedCollection,
-      attributes: catalogAttributes,
+      attributes: categoryAttributes,
       now: new Date(nowTs),
     });
   }, [
@@ -81,7 +90,7 @@ export function CatalogPage({
     forcePromotionOnly,
     fixedCategory,
     fixedCollection,
-    catalogAttributes,
+    categoryAttributes,
     nowTs,
   ]);
 

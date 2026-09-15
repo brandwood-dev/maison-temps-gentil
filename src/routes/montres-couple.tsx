@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CatalogPage } from "@/components/catalog/CatalogPage";
-import { useCatalogProducts } from "@/lib/catalog-products";
+import { useCatalogCategories, useCatalogProducts } from "@/lib/catalog-products";
 import { absoluteUrl } from "@/config/site";
 import { parseCatalogSearch } from "@/lib/catalog";
 
@@ -26,6 +26,7 @@ export const Route = createFileRoute("/montres-couple")({
 
 function MontresCouplePage() {
   const products = useCatalogProducts();
+  const categories = useCatalogCategories();
   const query = Route.useSearch();
   return (
     <CatalogPage
@@ -39,6 +40,7 @@ function MontresCouplePage() {
       ]}
       products={products}
       fixedCategory="couple"
+      categoryId={categories.find((category) => category.slug === "couple")?.id}
       query={query}
     />
   );

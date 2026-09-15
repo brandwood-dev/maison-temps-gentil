@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CatalogPage } from "@/components/catalog/CatalogPage";
-import { useCatalogProducts } from "@/lib/catalog-products";
+import { useCatalogCategories, useCatalogProducts } from "@/lib/catalog-products";
 import { absoluteUrl } from "@/config/site";
 import { parseCatalogSearch } from "@/lib/catalog";
 
@@ -27,6 +27,7 @@ export const Route = createFileRoute("/montres-connectees")({
 
 function MontresConnecteesPage() {
   const products = useCatalogProducts();
+  const categories = useCatalogCategories();
   const query = Route.useSearch();
   return (
     <CatalogPage
@@ -40,6 +41,7 @@ function MontresConnecteesPage() {
       ]}
       products={products}
       fixedCategory="connected"
+      categoryId={categories.find((category) => category.slug === "connectees")?.id}
       query={query}
     />
   );

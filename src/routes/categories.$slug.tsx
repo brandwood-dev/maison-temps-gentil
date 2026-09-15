@@ -51,6 +51,7 @@ function CategoryPage() {
       ]}
       products={products}
       query={query}
+      categoryId={category.id}
     />
   );
 }

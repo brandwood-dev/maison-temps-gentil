@@ -35,6 +35,8 @@ export type ProductAttribute = {
   label: string;
   type: "select" | "multiselect" | "color" | "boolean" | "text" | "number";
   visibleInFilters?: boolean;
+  /** Explicit category scope; empty means the attribute is global. */
+  categoryIds?: string[];
   values: ProductAttributeValue[];
 };
 
