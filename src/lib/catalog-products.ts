@@ -17,3 +17,7 @@ export function useCatalogCategories() {
 export function useCatalogAttributes() {
   return rootRoute.useLoaderData().attributes;
 }
+
+export function useCatalogInitialNow() {
+  return rootRoute.useLoaderData().initialNow;
+}

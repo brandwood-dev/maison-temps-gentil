@@ -11,6 +11,7 @@ import {
 } from "../src/lib/products";
 import { getProductBadges } from "../src/lib/product-badges";
 import { getRemainingTime } from "../src/lib/product-pricing";
+import { getHomeRotationKey, getRotatingHomeSelection } from "../src/lib/home-selection";
 import type { Product } from "../src/types/product";
 
 const future = "2030-01-01T00:00:00Z";
@@ -157,14 +158,61 @@ console.log("\n== getProductBadges (shared priority) ==");
 
 console.log("\n== promotion countdown ==");
 {
-  const remaining = getRemainingTime(
-    "2026-08-06T12:34:57Z",
-    new Date("2026-08-06T10:11:12Z"),
-  );
+  const remaining = getRemainingTime("2026-08-06T12:34:57Z", new Date("2026-08-06T10:11:12Z"));
   assert(remaining.days === 0, "countdown days are computed");
   assert(remaining.hours === 2, "countdown hours are computed");
   assert(remaining.minutes === 23, "countdown minutes are computed");
   assert(remaining.seconds === 45, "countdown seconds are computed");
+}
+
+console.log("\n== daily homepage selection ==");
+{
+  const candidates = [
+    make({
+      id: "a",
+      brand: "BrandA",
+      category: "men",
+      images: [{ id: "a-image", url: "/a.jpg", alt: "A", position: 1 }],
+    }),
+    make({
+      id: "b",
+      brand: "BrandA",
+      category: "men",
+      images: [{ id: "b-image", url: "/b.jpg", alt: "B", position: 1 }],
+    }),
+    make({
+      id: "c",
+      brand: "BrandB",
+      category: "women",
+      images: [{ id: "c-image", url: "/c.jpg", alt: "C", position: 1 }],
+    }),
+    make({
+      id: "d",
+      brand: "BrandC",
+      category: "children",
+      images: [{ id: "d-image", url: "/d.jpg", alt: "D", position: 1 }],
+    }),
+    make({
+      id: "hidden",
+      availability: "hidden",
+      images: [{ id: "hidden-image", url: "/hidden.jpg", alt: "Hidden", position: 1 }],
+    }),
+  ];
+  const today = getRotatingHomeSelection(candidates, "2026-09-16", 4);
+  const sameDay = getRotatingHomeSelection(candidates, "2026-09-16", 4);
+  const nextDay = getRotatingHomeSelection(candidates, "2026-09-17", 4);
+  assert(JSON.stringify(today) === JSON.stringify(sameDay), "same rotation key is deterministic");
+  assert(
+    today.length === 4 && !today.some((product) => product.id === "hidden"),
+    "selection keeps available products only",
+  );
+  assert(
+    new Set(today.map((product) => product.brand)).size >= 3,
+    "selection favours brand diversity",
+  );
+  assert(JSON.stringify(today) !== JSON.stringify(nextDay), "rotation key changes the order");
+  const tunisMidnight = getHomeRotationKey(Date.parse("2026-09-16T00:30:00Z"));
+  assert(tunisMidnight === "2026-09-16", "rotation key uses Tunisia local date");
 }
 
 console.log("\n== static guards ==");
@@ -203,8 +251,10 @@ console.log("\n== static guards ==");
     "utf8",
   );
   assert(
-    /onAddToCart\?:\s*\(product:\s*Product,\s*quantity:\s*number\)\s*=>\s*void/.test(panelSrc),
-    "ProductPurchasePanel declares onAddToCart?: (product: Product, quantity: number) => void",
+    /onAddToCart\?:\s*\(product:\s*Product,\s*quantity:\s*number(?:,\s*variantId\?:\s*string)?\)\s*=>\s*void/.test(
+      panelSrc,
+    ),
+    "ProductPurchasePanel declares the product, quantity and optional variant callback",
   );
 }
 

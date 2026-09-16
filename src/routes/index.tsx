@@ -10,9 +10,10 @@ import { BrandLogosMarquee } from "@/components/home/BrandLogosMarquee";
 import { TestimonialsMarquee } from "@/components/home/TestimonialsMarquee";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { ProductCarousel } from "@/components/product/ProductCarousel";
-import { useCatalogProducts } from "@/lib/catalog-products";
+import { useCatalogInitialNow, useCatalogProducts } from "@/lib/catalog-products";
 import { catalogQueryToSearch } from "@/lib/catalog";
 import { useCart } from "@/lib/cart-store";
+import { getHomeRotationKey, getRotatingHomeSelection } from "@/lib/home-selection";
 import { trackAddToCart } from "@/lib/meta-pixel";
 import type { Product } from "@/types/product";
 import { absoluteUrl } from "@/config/site";
@@ -300,11 +301,12 @@ function Hero({ slides }: { slides: PublicHeroSlide[] }) {
 }
 
 function FeaturedProducts() {
-  // The API returns published products ordered by creation date descending.
-  // Selection is cross-category and progressively reveals four products at a time.
-  const products = useCatalogProducts()
-    .filter((product) => product.availability !== "hidden")
-    .slice(0, 8);
+  // Rotate the already cached cross-category catalogue once per day. This
+  // avoids another API request while keeping SSR and client hydration stable.
+  const allProducts = useCatalogProducts();
+  const initialNow = useCatalogInitialNow();
+  const rotationKey = getHomeRotationKey(initialNow);
+  const products = getRotatingHomeSelection(allProducts, rotationKey);
   const [visibleCount, setVisibleCount] = useState(4);
   const { addItem } = useCart();
   const handleAddToCart = (p: Product, quantity: number) => {
@@ -318,7 +320,7 @@ function FeaturedProducts() {
       <div className="mb-6 flex items-end justify-between gap-4 md:mb-8">
         <div className="max-w-2xl">
           <p className="eyebrow">Sélection</p>
-          <h2 className="t-h1 mt-2">Nos dernières montres</h2>
+          <h2 className="t-h1 mt-2">Notre sélection du moment</h2>
         </div>
         <Link
           to="/montres"
@@ -357,8 +359,23 @@ function FeaturedProducts() {
 
 function MerchandisingSections() {
   const products = useCatalogProducts().filter((product) => product.availability !== "hidden");
-  const bestSellers = products.filter((product) => product.isBestSeller).slice(0, 8);
-  const featuredProducts = products.filter((product) => product.isNew).slice(0, 8);
+  const initialNow = useCatalogInitialNow();
+  const rotationKey = getHomeRotationKey(initialNow);
+  const selectionIds = new Set(
+    getRotatingHomeSelection(products, rotationKey).map((product) => product.id),
+  );
+  const bestSellerPool = products.filter((product) => product.isBestSeller);
+  const featuredPool = products.filter((product) => product.isNew);
+  const bestSellers = (
+    bestSellerPool.filter((product) => !selectionIds.has(product.id)).length
+      ? bestSellerPool.filter((product) => !selectionIds.has(product.id))
+      : bestSellerPool
+  ).slice(0, 8);
+  const featuredProducts = (
+    featuredPool.filter((product) => !selectionIds.has(product.id)).length
+      ? featuredPool.filter((product) => !selectionIds.has(product.id))
+      : featuredPool
+  ).slice(0, 8);
   const { addItem } = useCart();
   const handleAddToCart = (product: Product, quantity: number) => {
     addItem(product.id, quantity);
