@@ -7,7 +7,7 @@ import { parseCatalogSearch } from "@/lib/catalog";
 const CANONICAL = absoluteUrl("/promotions");
 const TITLE = "Promotions | La Maison des Montres";
 const DESC =
-  "Découvrez toutes nos montres actuellement en promotion : offres à durée limitée sur notre sélection.";
+  "Découvrez tous nos produits actuellement en promotion : offres à durée limitée sur notre sélection.";
 
 export const Route = createFileRoute("/promotions")({
   validateSearch: (raw) => {
@@ -49,7 +49,7 @@ function PromotionsPage() {
     <CatalogPage
       basePath="/promotions"
       title="Promotions"
-      intro="Toutes les montres actuellement en promotion. Les offres disparaissent automatiquement à leur expiration."
+      intro="Tous les produits actuellement en promotion. Les offres disparaissent automatiquement à leur expiration."
       crumbs={[{ label: "Accueil", href: "/" }, { label: "Promotions" }]}
       products={products}
       query={query}
