@@ -41,7 +41,7 @@ export function CartLineItem({
       )}
     >
       <Link
-        to="/montres/$slug"
+        to="/produits/$slug"
         params={{ slug: product.slug }}
         onClick={onNavigate}
         aria-label={product.name}
@@ -68,7 +68,7 @@ export function CartLineItem({
             </p>
             <h3 className="mt-0.5 truncate text-sm font-semibold text-[color:var(--color-foreground)]">
               <Link
-                to="/montres/$slug"
+                to="/produits/$slug"
                 params={{ slug: product.slug }}
                 onClick={onNavigate}
                 className="hover:text-[color:var(--color-gold)]"

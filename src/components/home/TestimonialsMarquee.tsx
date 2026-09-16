@@ -46,7 +46,7 @@ function TestimonialCard({
         </p>
         {testimonial.productSlug && testimonial.productTitle && !decorative ? (
           <Link
-            to="/montres/$slug"
+            to="/produits/$slug"
             params={{ slug: testimonial.productSlug }}
             className="mt-1 inline-block text-xs font-semibold tracking-[0.06em] text-[color:var(--color-gold)] underline decoration-[color:var(--color-gold)]/40 underline-offset-4 hover:decoration-[color:var(--color-gold)]"
           >

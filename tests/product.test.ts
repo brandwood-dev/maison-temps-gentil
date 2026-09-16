@@ -6,6 +6,9 @@ import {
   formatSchemaPriceTND,
   formatSpecifications,
   getProductBySlug,
+  getProductCategoryLabel,
+  getProductCategoryRoute,
+  getProductPath,
   getPublicProductBySlug,
   getRelatedProducts,
 } from "../src/lib/products";
@@ -95,6 +98,28 @@ console.log("\n== getRelatedProducts ==");
   const limited = getRelatedProducts(FIXTURES, current, 2);
   assert(limited.length === 2, "respects limit");
   assert(JSON.stringify(FIXTURES) === snapshot, "no mutation");
+}
+
+console.log("\n== generic product category paths ==");
+{
+  const perfume = make({
+    slug: "miss-dior",
+    category: "men",
+    primaryCategory: {
+      id: "category-parfum-femme",
+      name: "Parfum Femme",
+      slug: "parfum-femme",
+    },
+  });
+  assert(getProductPath(perfume) === "/produits/miss-dior", "product path is generic");
+  assert(
+    getProductCategoryRoute(perfume) === "/categories/parfum-femme",
+    "category path follows the real category slug",
+  );
+  assert(
+    getProductCategoryLabel(perfume) === "Parfum Femme",
+    "category label follows API metadata",
+  );
 }
 
 console.log("\n== formatSpecifications ==");

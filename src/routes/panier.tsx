@@ -158,7 +158,7 @@ function CartLine({
       )}
     >
       <Link
-        to="/montres/$slug"
+        to="/produits/$slug"
         params={{ slug: product.slug }}
         className="relative block h-24 w-24 shrink-0 self-start overflow-hidden rounded-[var(--radius-sm)] bg-white sm:h-28 sm:w-28"
         aria-label={product.name}
@@ -188,7 +188,7 @@ function CartLine({
             </p>
             <h2 className="mt-1 text-sm font-semibold leading-snug text-[color:var(--color-foreground)]">
               <Link
-                to="/montres/$slug"
+                to="/produits/$slug"
                 params={{ slug: product.slug }}
                 className="hover:text-[color:var(--color-gold)]"
               >

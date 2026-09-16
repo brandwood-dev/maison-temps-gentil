@@ -7,7 +7,11 @@ import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { ProductGrid } from "@/components/product/ProductGrid";
-import { getCategoryLabel, getCategoryRoute, getRelatedProducts } from "@/lib/products";
+import {
+  getProductCategoryLabel,
+  getProductCategoryRoute,
+  getRelatedProducts,
+} from "@/lib/products";
 import { useCart } from "@/lib/cart-store";
 import { trackAddToCart, trackViewContent } from "@/lib/meta-pixel";
 import { ProductGallery } from "./ProductGallery";
@@ -26,8 +30,8 @@ type Props = {
  * root provider so the whole app shares one clock singleton.
  */
 export function ProductDetailPage({ product, allProducts, canonicalUrl }: Props) {
-  const categoryRoute = getCategoryRoute(product.category);
-  const categoryLabel = getCategoryLabel(product.category);
+  const categoryRoute = getProductCategoryRoute(product);
+  const categoryLabel = getProductCategoryLabel(product);
   const related = getRelatedProducts(allProducts, product, 4);
   const { addItem } = useCart();
   const trackedProductId = useRef<string | null>(null);
@@ -59,18 +63,6 @@ export function ProductDetailPage({ product, allProducts, canonicalUrl }: Props)
                 >
                   <Home className="h-3.5 w-3.5" aria-hidden />
                   <span className="sr-only sm:not-sr-only">Accueil</span>
-                </Link>
-              </li>
-              <li aria-hidden>
-                <ChevronRight className="h-3.5 w-3.5" />
-              </li>
-              <li>
-                <Link
-                  to="/montres"
-                  search={{}}
-                  className="hover:text-[color:var(--color-foreground)]"
-                >
-                  Montres
                 </Link>
               </li>
               <li aria-hidden>
@@ -121,7 +113,7 @@ export function ProductDetailPage({ product, allProducts, canonicalUrl }: Props)
                 <div>
                   <p className="eyebrow">Vous aimerez aussi</p>
                   <h2 className="t-h2 mt-2 text-[color:var(--color-foreground)]">
-                    Nos autres montres
+                    Autres produits {categoryLabel.toLocaleLowerCase()}
                   </h2>
                 </div>
                 <Link

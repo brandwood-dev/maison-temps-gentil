@@ -8,6 +8,19 @@ export type Currency = "TND";
 
 export type ProductCategory = "men" | "women" | "children" | "couple" | "connected";
 
+/**
+ * The public API keeps the legacy `category` family for compatibility with
+ * existing watch-only filters, and exposes the real catalogue category below.
+ * Slugs are data-driven so new categories do not require a frontend release.
+ */
+export type ProductCategoryRef = {
+  id: string;
+  name: string;
+  slug: string;
+  parentId?: string | null;
+  order?: number;
+};
+
 export type ProductAvailability = "available" | "unavailable" | "hidden";
 
 export type ProductImage = {
@@ -73,6 +86,10 @@ export type Product = {
   brandLogoUrl?: string;
   reference: string;
   category: ProductCategory;
+  /** Primary category used for URLs, breadcrumbs and related products. */
+  primaryCategory?: ProductCategoryRef;
+  /** All active categories assigned to the product. */
+  categories?: ProductCategoryRef[];
   currency: Currency;
   regularPriceMillimes: number;
   promotion: ProductPromotion | null;

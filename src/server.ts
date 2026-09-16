@@ -99,10 +99,7 @@ const PUBLIC_API_PATH_PREFIX = "/api/v1/public/";
  * Cloudflare edge cache can absorb repeated SSR navigations. Private API
  * calls (orders, admin, tracking) continue to use the Render origin.
  */
-async function proxyPublicApi(
-  request: Request,
-  env: unknown,
-): Promise<Response | null> {
+async function proxyPublicApi(request: Request, env: unknown): Promise<Response | null> {
   if (request.method !== "GET") return null;
 
   const requestUrl = new URL(request.url);
@@ -159,7 +156,9 @@ async function proxyPublicApi(
     }
     return response;
   } catch (error) {
-    console.warn(`Public API proxy failed: ${error instanceof Error ? error.message : "request failed"}`);
+    console.warn(
+      `Public API proxy failed: ${error instanceof Error ? error.message : "request failed"}`,
+    );
     return new Response(JSON.stringify({ message: "Catalogue API indisponible" }), {
       status: 503,
       headers: { "content-type": "application/json; charset=utf-8" },
@@ -210,16 +209,32 @@ async function renderSitemap(env: unknown): Promise<Response> {
   const baseUrl = (getRuntimeEnv(env).PUBLIC_API_URL ?? DEFAULT_API_URL).replace(/\/+$/, "");
   const productUrls: string[] = [];
   try {
-    const response = await fetch(
-      `${baseUrl}/api/v1/public/products?page=1&pageSize=48&sortBy=createdAt&sortOrder=desc`,
-      { headers: { accept: "application/json" } },
+    const pageSize = 48;
+    const maxPages = 16;
+    const fetchPage = async (page: number) => {
+      const response = await fetch(
+        `${baseUrl}/api/v1/public/products?page=${page}&pageSize=${pageSize}&sortBy=createdAt&sortOrder=desc`,
+        { headers: { accept: "application/json" } },
+      );
+      if (!response.ok) return { data: [], total: 0 };
+      return (await response.json()) as {
+        data?: Array<{ slug?: string }>;
+        total?: number;
+      };
+    };
+    const firstPage = await fetchPage(1);
+    const totalPages = Math.min(
+      maxPages,
+      Math.max(1, Math.ceil((firstPage.total ?? 0) / pageSize)),
     );
-    if (response.ok) {
-      const payload = (await response.json()) as { data?: Array<{ slug?: string }> };
-      for (const product of payload.data ?? []) {
-        if (product.slug)
-          productUrls.push(`https://lamaisondesmontres.com/montres/${product.slug}`);
-      }
+    const remainingPages = await Promise.all(
+      Array.from({ length: totalPages - 1 }, (_, index) => fetchPage(index + 2)),
+    );
+    for (const product of [firstPage, ...remainingPages].flatMap((page) => page.data ?? [])) {
+      if (product.slug)
+        productUrls.push(
+          `https://lamaisondesmontres.com/produits/${encodeURIComponent(product.slug)}`,
+        );
     }
   } catch {
     // Keep the sitemap useful for crawlers even if the catalogue API is briefly unavailable.
@@ -270,8 +285,7 @@ export default {
       // Make Worker bindings available to server functions executed by
       // TanStack Start during SSR (catalog-api reads this global).
       if (env && typeof env === "object") {
-        (globalThis as typeof globalThis & { __env__?: RuntimeEnv }).__env__ =
-          env as RuntimeEnv;
+        (globalThis as typeof globalThis & { __env__?: RuntimeEnv }).__env__ = env as RuntimeEnv;
       }
       const proxiedApiResponse = await proxyPublicApi(request, env);
       if (proxiedApiResponse) return proxiedApiResponse;

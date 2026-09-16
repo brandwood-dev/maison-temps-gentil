@@ -1,4 +1,4 @@
-import type { Product, ProductCategory } from "@/types/product";
+import type { Product, ProductCategory, ProductCategoryRef } from "@/types/product";
 
 /**
  * Pure product resolution helpers — no side effects, no data mutation.
@@ -31,8 +31,9 @@ export function getRelatedProducts(
   limit = 4,
 ): Product[] {
   const pool = products.filter((p) => p.id !== currentProduct.id && p.availability !== "hidden");
-  const sameCategory = pool.filter((p) => p.category === currentProduct.category);
-  const others = pool.filter((p) => p.category !== currentProduct.category);
+  const currentCategoryKey = getProductCategoryKey(currentProduct);
+  const sameCategory = pool.filter((p) => getProductCategoryKey(p) === currentCategoryKey);
+  const others = pool.filter((p) => getProductCategoryKey(p) !== currentCategoryKey);
 
   const result: Product[] = [];
   const seen = new Set<string>();
@@ -43,6 +44,34 @@ export function getRelatedProducts(
     if (result.length >= limit) break;
   }
   return result;
+}
+
+/** Return the API category metadata when available, with legacy compatibility. */
+export function getProductCategory(product: Product): ProductCategoryRef | undefined {
+  return product.primaryCategory ?? product.categories?.[0];
+}
+
+/** Stable key used to group related products without collapsing perfumes into watches. */
+export function getProductCategoryKey(product: Product): string {
+  return getProductCategory(product)?.id ?? getProductCategory(product)?.slug ?? product.category;
+}
+
+/** Display name for the real product category, with a safe legacy fallback. */
+export function getProductCategoryLabel(product: Product): string {
+  return getProductCategory(product)?.name ?? getCategoryLabel(product.category);
+}
+
+/** Category landing page for a product. Dynamic categories use the existing generic route. */
+export function getProductCategoryRoute(product: Product): string {
+  const category = getProductCategory(product);
+  return category?.slug
+    ? `/categories/${encodeURIComponent(category.slug)}`
+    : getCategoryRoute(product.category);
+}
+
+/** Canonical product URL shared by every card, search result and cart link. */
+export function getProductPath(product: Pick<Product, "slug">): string {
+  return `/produits/${encodeURIComponent(product.slug)}`;
 }
 
 /** Map internal category values → real French catalog routes. */
@@ -97,7 +126,7 @@ export function formatSpecifications(product: Product): Specification[] {
 
   push("brand", "Marque", product.brand);
   push("reference", "Référence", product.reference);
-  push("category", "Catégorie", getCategoryLabel(product.category));
+  push("category", "Catégorie", getProductCategoryLabel(product));
   for (const attribute of product.attributes ?? []) {
     const value = attribute.values.map((item) => item.label).join(", ");
     push(`attribute:${attribute.id}`, attribute.label, value);

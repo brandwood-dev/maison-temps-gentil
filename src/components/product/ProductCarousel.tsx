@@ -2,6 +2,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { Product } from "@/types/product";
+import { getProductPath } from "@/lib/products";
 import { cn } from "@/lib/utils";
 import { ProductCard } from "./ProductCard";
 
@@ -84,7 +85,7 @@ export function ProductCarousel({ products, className, onAddToCart }: Props) {
           >
             <ProductCard
               product={product}
-              href={`/montres/${product.slug}`}
+              href={getProductPath(product)}
               onAddToCart={onAddToCart}
               imagePriority={index === 0}
               imageSizes="(max-width: 640px) 85vw, (max-width: 1024px) 48vw, 25vw"

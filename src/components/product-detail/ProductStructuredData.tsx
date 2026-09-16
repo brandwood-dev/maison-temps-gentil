@@ -1,6 +1,6 @@
 import type { Product } from "@/types/product";
 import { isPromotionActive } from "@/lib/product-pricing";
-import { formatSchemaPriceTND, getCategoryLabel } from "@/lib/products";
+import { formatSchemaPriceTND, getProductCategoryLabel } from "@/lib/products";
 import { useNow } from "@/lib/now-store";
 
 type Props = {
@@ -41,7 +41,7 @@ export function ProductStructuredData({ product, url }: Props) {
     name: product.name,
     sku: product.reference,
     mpn: product.reference,
-    category: getCategoryLabel(product.category),
+    category: getProductCategoryLabel(product),
     brand: { "@type": "Brand", name: product.brand },
     description: product.shortDescription || undefined,
     image: images.length > 0 ? images : undefined,

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Search } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useCatalogProducts } from "@/lib/catalog-products";
+import { getProductPath } from "@/lib/products";
 import type { Product } from "@/types/product";
 
 type Props = { open: boolean; onClose: () => void; restoreFocus: () => void };
@@ -107,7 +108,7 @@ function Suggestion({ product, onSelect }: { product: Product; onSelect: () => v
   return (
     <li role="option">
       <a
-        href={`/montres/${encodeURIComponent(product.slug)}`}
+        href={getProductPath(product)}
         onClick={onSelect}
         className="flex items-center gap-3 rounded-[var(--radius-md)] border border-transparent px-2 py-2 text-left transition-colors hover:border-[color:var(--color-border)] hover:bg-[color:var(--color-surface-cream)] focus-visible:border-[color:var(--color-gold)] focus-visible:outline-none"
       >

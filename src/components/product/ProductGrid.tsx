@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import type { Product } from "@/types/product";
+import { getProductPath } from "@/lib/products";
 import { ProductCard } from "./ProductCard";
 
 type Props = {
@@ -9,14 +10,14 @@ type Props = {
   /**
    * Override the default per-product link. Return `null` or `undefined` to
    * render the card without a link. When omitted, cards link to
-   * `/montres/{slug}` (the product detail page).
+   * `/produits/{slug}` (the generic product detail page).
    */
   getHref?: (product: Product) => string | null | undefined;
   /** Use the wider three-column layout for catalog pages with filters. */
   density?: "default" | "catalog";
 };
 
-const defaultHref = (p: Product) => `/montres/${p.slug}`;
+const defaultHref = (p: Product) => getProductPath(p);
 
 export function ProductGrid({
   products,

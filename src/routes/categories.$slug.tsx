@@ -44,11 +44,7 @@ function CategoryPage() {
       basePath={`/categories/${encodeURIComponent(category.slug)}`}
       title={category.name}
       intro={category.description}
-      crumbs={[
-        { label: "Accueil", href: "/" },
-        { label: "Montres", href: "/montres" },
-        { label: category.name },
-      ]}
+      crumbs={[{ label: "Accueil", href: "/" }, { label: category.name }]}
       products={products}
       query={query}
       categoryId={category.id}

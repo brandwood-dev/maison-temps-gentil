@@ -30,6 +30,7 @@ import { Route as ConditionsGeneralesVenteRouteImport } from './routes/condition
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MontresIndexRouteImport } from './routes/montres.index'
 import { Route as CommandeIndexRouteImport } from './routes/commande.index'
+import { Route as ProduitsSlugRouteImport } from './routes/produits.$slug'
 import { Route as MontresSlugRouteImport } from './routes/montres.$slug'
 import { Route as CommandeConfirmationRouteImport } from './routes/commande.confirmation'
 import { Route as CollectionsCoffretsCadeauxRouteImport } from './routes/collections.coffrets-cadeaux'
@@ -142,6 +143,11 @@ const CommandeIndexRoute = CommandeIndexRouteImport.update({
   path: '/commande/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProduitsSlugRoute = ProduitsSlugRouteImport.update({
+  id: '/produits/$slug',
+  path: '/produits/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MontresSlugRoute = MontresSlugRouteImport.update({
   id: '/montres/$slug',
   path: '/montres/$slug',
@@ -188,6 +194,7 @@ export interface FileRoutesByFullPath {
   '/collections/coffrets-cadeaux': typeof CollectionsCoffretsCadeauxRoute
   '/commande/confirmation': typeof CommandeConfirmationRoute
   '/montres/$slug': typeof MontresSlugRoute
+  '/produits/$slug': typeof ProduitsSlugRoute
   '/commande/': typeof CommandeIndexRoute
   '/montres/': typeof MontresIndexRoute
 }
@@ -215,6 +222,7 @@ export interface FileRoutesByTo {
   '/collections/coffrets-cadeaux': typeof CollectionsCoffretsCadeauxRoute
   '/commande/confirmation': typeof CommandeConfirmationRoute
   '/montres/$slug': typeof MontresSlugRoute
+  '/produits/$slug': typeof ProduitsSlugRoute
   '/commande': typeof CommandeIndexRoute
   '/montres': typeof MontresIndexRoute
 }
@@ -243,6 +251,7 @@ export interface FileRoutesById {
   '/collections/coffrets-cadeaux': typeof CollectionsCoffretsCadeauxRoute
   '/commande/confirmation': typeof CommandeConfirmationRoute
   '/montres/$slug': typeof MontresSlugRoute
+  '/produits/$slug': typeof ProduitsSlugRoute
   '/commande/': typeof CommandeIndexRoute
   '/montres/': typeof MontresIndexRoute
 }
@@ -272,6 +281,7 @@ export interface FileRouteTypes {
     | '/collections/coffrets-cadeaux'
     | '/commande/confirmation'
     | '/montres/$slug'
+    | '/produits/$slug'
     | '/commande/'
     | '/montres/'
   fileRoutesByTo: FileRoutesByTo
@@ -299,6 +309,7 @@ export interface FileRouteTypes {
     | '/collections/coffrets-cadeaux'
     | '/commande/confirmation'
     | '/montres/$slug'
+    | '/produits/$slug'
     | '/commande'
     | '/montres'
   id:
@@ -326,6 +337,7 @@ export interface FileRouteTypes {
     | '/collections/coffrets-cadeaux'
     | '/commande/confirmation'
     | '/montres/$slug'
+    | '/produits/$slug'
     | '/commande/'
     | '/montres/'
   fileRoutesById: FileRoutesById
@@ -354,6 +366,7 @@ export interface RootRouteChildren {
   CollectionsCoffretsCadeauxRoute: typeof CollectionsCoffretsCadeauxRoute
   CommandeConfirmationRoute: typeof CommandeConfirmationRoute
   MontresSlugRoute: typeof MontresSlugRoute
+  ProduitsSlugRoute: typeof ProduitsSlugRoute
   CommandeIndexRoute: typeof CommandeIndexRoute
   MontresIndexRoute: typeof MontresIndexRoute
 }
@@ -507,6 +520,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CommandeIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/produits/$slug': {
+      id: '/produits/$slug'
+      path: '/produits/$slug'
+      fullPath: '/produits/$slug'
+      preLoaderRoute: typeof ProduitsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/montres/$slug': {
       id: '/montres/$slug'
       path: '/montres/$slug'
@@ -562,6 +582,7 @@ const rootRouteChildren: RootRouteChildren = {
   CollectionsCoffretsCadeauxRoute: CollectionsCoffretsCadeauxRoute,
   CommandeConfirmationRoute: CommandeConfirmationRoute,
   MontresSlugRoute: MontresSlugRoute,
+  ProduitsSlugRoute: ProduitsSlugRoute,
   CommandeIndexRoute: CommandeIndexRoute,
   MontresIndexRoute: MontresIndexRoute,
 }
