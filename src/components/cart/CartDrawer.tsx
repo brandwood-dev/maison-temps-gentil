@@ -20,14 +20,18 @@ export function CartDrawer() {
   const lines = items
     .map((item) => ({
       productId: item.productId,
+      ...(item.variantId ? { variantId: item.variantId } : {}),
       quantity: item.quantity,
       product:
         (products.find(
           (product) => product.id === item.productId && product.availability === "available",
         ) as Product | undefined) ?? null,
     }))
-    .filter((line): line is { productId: string; quantity: number; product: Product } =>
-      Boolean(line.product),
+    .filter(
+      (
+        line,
+      ): line is { productId: string; variantId?: string; quantity: number; product: Product } =>
+        Boolean(line.product),
     );
 
   const orderedLines = focusProductId
@@ -38,7 +42,12 @@ export function CartDrawer() {
     : lines;
   const subtotalMillimes = orderedLines
     .filter((line) => line.product.availability === "available")
-    .reduce((sum, line) => sum + getCurrentPriceMillimes(line.product, now) * line.quantity, 0);
+    .reduce((sum, line) => {
+      const variant = line.variantId
+        ? line.product.variants?.find((item) => item.id === line.variantId)
+        : undefined;
+      return sum + (variant?.price ?? getCurrentPriceMillimes(line.product, now)) * line.quantity;
+    }, 0);
   const totalQuantity = orderedLines.reduce((sum, line) => sum + line.quantity, 0);
   const isEmpty = orderedLines.length === 0;
 
@@ -82,14 +91,17 @@ export function CartDrawer() {
             <div className="flex-1 overflow-y-auto px-4 py-4">
               <ul className="flex list-none flex-col gap-3">
                 {orderedLines.map((line) => (
-                  <li key={line.productId}>
+                  <li key={`${line.productId}:${line.variantId ?? ""}`}>
                     <CartLineItem
                       product={line.product}
+                      variantId={line.variantId}
                       quantity={line.quantity}
                       now={now}
                       highlighted={line.productId === focusProductId}
-                      onRemove={() => removeItem(line.productId)}
-                      onQuantityChange={(quantity) => setQuantity(line.productId, quantity)}
+                      onRemove={() => removeItem(line.productId, line.variantId)}
+                      onQuantityChange={(quantity) =>
+                        setQuantity(line.productId, quantity, line.variantId)
+                      }
                       onNavigate={closeDrawer}
                     />
                   </li>

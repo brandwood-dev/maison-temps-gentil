@@ -6,11 +6,12 @@
  */
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 
-const STORAGE_KEY = "lmm:cart:v1";
-const STORAGE_VERSION = 1 as const;
+const STORAGE_KEY = "lmm:cart:v2";
+const STORAGE_VERSION = 2 as const;
 
 export type CartItem = {
   productId: string;
+  variantId?: string;
   quantity: number;
 };
 
@@ -18,6 +19,7 @@ export type CartItem = {
 export type CartProductRef = {
   id: string;
   availability: "available" | "unavailable" | "hidden";
+  variants?: { id: string; available: boolean }[];
 };
 
 export type CartStorage = Pick<Storage, "getItem" | "setItem">;
@@ -64,13 +66,15 @@ export function sanitizeCartItems(raw: unknown): CartItem[] {
   for (const value of raw) {
     if (!value || typeof value !== "object") continue;
     const productId = normalizeProductId((value as Partial<CartItem>).productId);
+    const variantId = normalizeProductId((value as Partial<CartItem>).variantId);
     const quantity = normalizeQuantity((value as Partial<CartItem>).quantity);
     if (!productId || quantity === null) continue;
 
-    const existingIndex = indexByProductId.get(productId);
+    const key = `${productId}:${variantId ?? ""}`;
+    const existingIndex = indexByProductId.get(key);
     if (existingIndex === undefined) {
-      indexByProductId.set(productId, items.length);
-      items.push({ productId, quantity });
+      indexByProductId.set(key, items.length);
+      items.push({ productId, ...(variantId ? { variantId } : {}), quantity });
       continue;
     }
 
@@ -148,18 +152,24 @@ export function addCartItem(
   current: CartItem[],
   productIdValue: unknown,
   quantityValue: unknown = 1,
+  variantIdValue?: unknown,
 ): CartItem[] {
   const productId = normalizeProductId(productIdValue);
+  const variantId = normalizeProductId(variantIdValue);
   const quantity = normalizeQuantity(quantityValue);
   if (!productId || quantity === null) return current;
 
-  const existing = current.find((item) => item.productId === productId);
-  if (!existing) return [...current, { productId, quantity }];
+  const existing = current.find(
+    (item) => item.productId === productId && item.variantId === variantId,
+  );
+  if (!existing) return [...current, { productId, ...(variantId ? { variantId } : {}), quantity }];
 
   const merged = mergeQuantities(existing.quantity, quantity);
   if (merged === null) return current;
   return current.map((item) =>
-    item.productId === productId ? { ...item, quantity: merged } : item,
+    item.productId === productId && item.variantId === variantId
+      ? { ...item, quantity: merged }
+      : item,
   );
 }
 
@@ -167,13 +177,21 @@ export function setCartItemQuantity(
   current: CartItem[],
   productIdValue: unknown,
   quantityValue: unknown,
+  variantIdValue?: unknown,
 ): CartItem[] {
   const productId = normalizeProductId(productIdValue);
+  const variantId = normalizeProductId(variantIdValue);
   const quantity = normalizeQuantity(quantityValue);
-  if (!productId || quantity === null || !current.some((item) => item.productId === productId)) {
+  if (
+    !productId ||
+    quantity === null ||
+    !current.some((item) => item.productId === productId && item.variantId === variantId)
+  ) {
     return current;
   }
-  return current.map((item) => (item.productId === productId ? { ...item, quantity } : item));
+  return current.map((item) =>
+    item.productId === productId && item.variantId === variantId ? { ...item, quantity } : item,
+  );
 }
 
 export function removeCartItem(current: CartItem[], productIdValue: unknown): CartItem[] {
@@ -182,6 +200,21 @@ export function removeCartItem(current: CartItem[], productIdValue: unknown): Ca
     return current;
   }
   return current.filter((item) => item.productId !== productId);
+}
+
+export function removeCartLine(
+  current: CartItem[],
+  productIdValue: unknown,
+  variantIdValue?: unknown,
+): CartItem[] {
+  const productId = normalizeProductId(productIdValue);
+  const variantId = normalizeProductId(variantIdValue);
+  if (
+    !productId ||
+    !current.some((item) => item.productId === productId && item.variantId === variantId)
+  )
+    return current;
+  return current.filter((item) => !(item.productId === productId && item.variantId === variantId));
 }
 
 /**
@@ -193,10 +226,16 @@ export function reconcileCartItems(
   current: readonly CartItem[],
   products: readonly CartProductRef[],
 ): CartItem[] {
-  const availableProductIds = new Set(
-    products.filter((product) => product.availability === "available").map((product) => product.id),
-  );
-  const next = current.filter((item) => availableProductIds.has(item.productId));
+  const productsById = new Map(products.map((product) => [product.id, product]));
+  const next = current.filter((item) => {
+    const product = productsById.get(item.productId);
+    if (!product || product.availability !== "available") return false;
+    if (!item.variantId) return true;
+    return (
+      product.variants?.some((variant) => variant.id === item.variantId && variant.available) ??
+      false
+    );
+  });
   return next.length === current.length ? [...current] : next;
 }
 
@@ -211,13 +250,15 @@ export function getCartTotalQuantity(
   current: readonly CartItem[],
   products: readonly CartProductRef[],
 ): number {
-  const availableProductIds = new Set(
-    products.filter((product) => product.availability === "available").map((product) => product.id),
-  );
-  return current.reduce(
-    (sum, item) => (availableProductIds.has(item.productId) ? sum + item.quantity : sum),
-    0,
-  );
+  const productsById = new Map(products.map((product) => [product.id, product]));
+  return current.reduce((sum, item) => {
+    const product = productsById.get(item.productId);
+    const available =
+      product?.availability === "available" &&
+      (!item.variantId ||
+        product.variants?.some((variant) => variant.id === item.variantId && variant.available));
+    return available ? sum + item.quantity : sum;
+  }, 0);
 }
 
 function getBrowserStorage(): CartStorage | null {
@@ -276,21 +317,21 @@ function setItems(next: CartItem[]) {
   emit();
 }
 
-export function addItem(productId: string, quantity = 1) {
-  const next = addCartItem(items, productId, quantity);
+export function addItem(productId: string, quantity = 1, variantId?: string) {
+  const next = addCartItem(items, productId, quantity, variantId);
   if (next !== items) {
     setItems(next);
     openCartDrawer(productId);
   }
 }
 
-export function setQuantity(productId: string, quantity: number) {
-  const next = setCartItemQuantity(items, productId, quantity);
+export function setQuantity(productId: string, quantity: number, variantId?: string) {
+  const next = setCartItemQuantity(items, productId, quantity, variantId);
   if (next !== items) setItems(next);
 }
 
-export function removeItem(productId: string) {
-  const next = removeCartItem(items, productId);
+export function removeItem(productId: string, variantId?: string) {
+  const next = removeCartLine(items, productId, variantId);
   if (next !== items) setItems(next);
 }
 
@@ -310,12 +351,20 @@ export function useCart() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   const isHydrated = mounted && (current !== EMPTY || hydrated);
-  const add = useCallback((productId: string, quantity = 1) => addItem(productId, quantity), []);
-  const set = useCallback(
-    (productId: string, quantity: number) => setQuantity(productId, quantity),
+  const add = useCallback(
+    (productId: string, quantity = 1, variantId?: string) =>
+      addItem(productId, quantity, variantId),
     [],
   );
-  const remove = useCallback((productId: string) => removeItem(productId), []);
+  const set = useCallback(
+    (productId: string, quantity: number, variantId?: string) =>
+      setQuantity(productId, quantity, variantId),
+    [],
+  );
+  const remove = useCallback(
+    (productId: string, variantId?: string) => removeItem(productId, variantId),
+    [],
+  );
   const clear = useCallback(() => clearCart(), []);
   return {
     items: current,

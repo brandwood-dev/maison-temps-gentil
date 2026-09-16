@@ -7,6 +7,8 @@ import { isTunisiaGovernorate, normalizeTunisiaPhone } from "@/lib/tunisia";
 
 export type CheckoutLine = {
   productId: string;
+  variantId?: string;
+  variantLabel?: string;
   quantity: number;
   product: Product;
   unitMillimes: number;
@@ -49,14 +51,26 @@ export function computeCheckoutTotals(
   for (const it of items) {
     const product = products.find((p) => p.id === it.productId && p.availability === "available");
     if (!product) continue;
-    const unit = getCurrentPriceMillimes(product, now);
+    const variant = it.variantId
+      ? product.variants?.find((item) => item.id === it.variantId)
+      : undefined;
+    if (
+      it.variantId &&
+      (!variant || !(variant.available ?? (variant.active !== false && variant.stock > 0)))
+    ) {
+      continue;
+    }
+    const unit = variant ? variant.price : getCurrentPriceMillimes(product, now);
     lines.push({
       productId: it.productId,
+      ...(variant ? { variantId: variant.id, variantLabel: variant.label } : {}),
       quantity: it.quantity,
       product,
       unitMillimes: unit,
       lineMillimes: unit * it.quantity,
-      promotionActive: isPromotionActive(product.promotion, now),
+      promotionActive:
+        isPromotionActive(product.promotion, now) ||
+        Boolean(variant?.oldPrice && variant.oldPrice > variant.price),
     });
   }
   const subtotal = lines.reduce((s, l) => s + l.lineMillimes, 0);
@@ -121,7 +135,7 @@ export function validateShipping(input: ShippingInput): ShippingErrors {
 
 export type OrderSubmission = {
   idempotencyKey: string;
-  items: { productId: string; quantity: number }[];
+  items: { productId: string; variantId?: string; quantity: number }[];
   shipping: {
     firstName: string;
     lastName: string;
@@ -138,6 +152,8 @@ export type OrderSubmission = {
 
 export type OrderConfirmationItem = {
   productId: string;
+  variantId?: string;
+  variantLabel?: string;
   name: string;
   brand: string;
   reference: string;
@@ -231,6 +247,8 @@ export async function submitOrderMock(
       const img = l.product.images[0] ?? null;
       return {
         productId: l.productId,
+        ...(l.variantId ? { variantId: l.variantId } : {}),
+        ...(l.variantLabel ? { variantLabel: l.variantLabel } : {}),
         name: l.product.name,
         brand: l.product.brand,
         reference: l.product.reference,
@@ -264,7 +282,11 @@ export function buildOrderSubmission(
   if (!phone) return null;
   return {
     idempotencyKey,
-    items: items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
+    items: items.map((i) => ({
+      productId: i.productId,
+      ...(i.variantId ? { variantId: i.variantId } : {}),
+      quantity: i.quantity,
+    })),
     shipping: {
       firstName: input.firstName.trim(),
       lastName: input.lastName.trim(),

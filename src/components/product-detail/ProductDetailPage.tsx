@@ -38,8 +38,8 @@ export function ProductDetailPage({ product, allProducts, canonicalUrl }: Props)
     trackViewContent(product);
   }, [product]);
 
-  const handleAddToCart = (p: Product, quantity: number) => {
-    addItem(p.id, quantity);
+  const handleAddToCart = (p: Product, quantity: number, variantId?: string) => {
+    addItem(p.id, quantity, variantId);
     trackAddToCart(p, quantity);
   };
 

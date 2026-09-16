@@ -28,6 +28,7 @@ export const Route = createFileRoute("/panier")({
 
 type LineData = {
   productId: string;
+  variantId?: string;
   quantity: number;
   product: Product | null;
 };
@@ -40,13 +41,14 @@ function CartPage() {
 
   const lines: LineData[] = items.map((it) => ({
     productId: it.productId,
+    ...(it.variantId ? { variantId: it.variantId } : {}),
     quantity: it.quantity,
     product: products.find((p) => p.id === it.productId && p.availability !== "hidden") ?? null,
   }));
 
   const purchasableLines = lines.filter((l) => l.product && l.product.availability === "available");
   const subtotalMillimes = purchasableLines.reduce(
-    (sum, l) => sum + getCurrentPriceMillimes(l.product!, now) * l.quantity,
+    (sum, l) => sum + getLinePrice(l) * l.quantity,
     0,
   );
 
@@ -67,12 +69,12 @@ function CartPage() {
           <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-10">
             <ul className="flex list-none flex-col gap-4">
               {lines.map((line) => (
-                <li key={line.productId}>
+                <li key={`${line.productId}:${line.variantId ?? ""}`}>
                   <CartLine
                     line={line}
                     now={now}
-                    onRemove={() => removeItem(line.productId)}
-                    onQuantityChange={(q) => setQuantity(line.productId, q)}
+                    onRemove={() => removeItem(line.productId, line.variantId)}
+                    onQuantityChange={(q) => setQuantity(line.productId, q, line.variantId)}
                   />
                 </li>
               ))}
@@ -140,8 +142,11 @@ function CartLine({
   }
 
   const image = product.images.find((i) => i.position === 1) ?? product.images[0];
-  const promoActive = isPromotionActive(product.promotion, now);
-  const unitMillimes = getCurrentPriceMillimes(product, now);
+  const variant = line.variantId
+    ? product.variants?.find((item) => item.id === line.variantId)
+    : undefined;
+  const promoActive = !variant && isPromotionActive(product.promotion, now);
+  const unitMillimes = variant?.price ?? getCurrentPriceMillimes(product, now);
   const lineTotalMillimes = unitMillimes * quantity;
   const unavailable = product.availability === "unavailable";
 
@@ -193,6 +198,11 @@ function CartLine({
             <p className="mt-1 text-xs text-[color:var(--color-muted-foreground)]">
               Réf.&nbsp;: {product.reference}
             </p>
+            {variant ? (
+              <p className="mt-1 text-xs font-medium text-[color:var(--color-muted-foreground)]">
+                Contenance : {variant.label}
+              </p>
+            ) : null}
             {unavailable ? (
               <p className="mt-1 text-xs font-medium text-[color:var(--color-muted-foreground)]">
                 Actuellement indisponible
@@ -264,6 +274,14 @@ function CartLine({
       </div>
     </article>
   );
+}
+
+function getLinePrice(line: LineData): number {
+  if (!line.product) return 0;
+  const variant = line.variantId
+    ? line.product.variants?.find((item) => item.id === line.variantId)
+    : undefined;
+  return variant?.price ?? getCurrentPriceMillimes(line.product);
 }
 
 function Summary({ subtotalMillimes }: { subtotalMillimes: number }) {

@@ -148,6 +148,8 @@ export type PublicOrderTracking = {
   shippingLabel: string;
   items: Array<{
     productId: string;
+    variantId?: string;
+    variantLabel?: string;
     name: string;
     brand: string;
     reference: string;

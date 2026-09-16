@@ -49,6 +49,17 @@ export type ProductPromotion = {
   endsAt: string;
 };
 
+export type ProductVariant = {
+  id: string;
+  label: string;
+  price: number;
+  oldPrice?: number;
+  stock: number;
+  active: boolean;
+  available: boolean;
+  order: number;
+};
+
 export type ProductDialColor = {
   label: string;
   hex: string | null;
@@ -67,6 +78,8 @@ export type Product = {
   promotion: ProductPromotion | null;
   availability: ProductAvailability;
   images: ProductImage[];
+  /** Optional sellable variants (for example perfume bottle sizes). */
+  variants?: ProductVariant[];
   /** Dynamic attributes configured in the Admin catalogue. */
   attributes?: ProductAttribute[];
   shortDescription: string;

@@ -15,7 +15,7 @@ type Props = {
    * Cart hook-in. Absent on the public site until the cart is wired.
    * Contract kept stable for the backend integration.
    */
-  onAddToCart?: (product: Product, quantity: number) => void;
+  onAddToCart?: (product: Product, quantity: number, variantId?: string) => void;
 };
 
 /**
@@ -33,8 +33,30 @@ export function ProductPurchasePanel({ product, onAddToCart }: Props) {
   const { isFavorite, toggle, hydrated } = useFavorites();
 
   const [quantity, setQuantity] = useState<number>(1);
+  const variants = product.variants ?? [];
+  const [selectedVariantId, setSelectedVariantId] = useState<string | undefined>(
+    variants.find((variant) => variant.available)?.id ?? variants[0]?.id,
+  );
+  const selectedVariant = variants.find((variant) => variant.id === selectedVariantId);
+  const selectedPriceProduct = selectedVariant
+    ? {
+        ...product,
+        regularPriceMillimes: selectedVariant.price,
+        promotion: selectedVariant.oldPrice
+          ? {
+              regularPriceMillimes: selectedVariant.oldPrice,
+              salePriceMillimes: selectedVariant.price,
+              startsAt: null,
+              endsAt: new Date(Date.now() + 86400000 * 365).toISOString(),
+            }
+          : null,
+        availability: selectedVariant.available ? ("available" as const) : ("unavailable" as const),
+      }
+    : product;
 
-  const purchasable = product.availability === "available";
+  const purchasable = selectedVariant
+    ? selectedVariant.available
+    : product.availability === "available";
   const cartEnabled = Boolean(onAddToCart) && purchasable;
   const noCallback = !onAddToCart;
 
@@ -52,8 +74,32 @@ export function ProductPurchasePanel({ product, onAddToCart }: Props) {
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <ProductPrice product={product} mode="detailed" />
+        <ProductPrice product={selectedPriceProduct} mode="detailed" />
       </div>
+
+      {variants.length > 0 ? (
+        <div className="space-y-2">
+          <label
+            htmlFor={`variant-${product.id}`}
+            className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--color-muted-foreground)]"
+          >
+            Contenance
+          </label>
+          <select
+            id={`variant-${product.id}`}
+            value={selectedVariantId ?? ""}
+            onChange={(event) => setSelectedVariantId(event.target.value || undefined)}
+            className="h-12 w-full rounded-[var(--radius-md)] border border-[color:var(--color-border-strong)] bg-[color:var(--color-background)] px-3 text-sm text-[color:var(--color-foreground)] focus-visible:outline-2 focus-visible:outline-[color:var(--color-gold)]"
+          >
+            {variants.map((variant) => (
+              <option key={variant.id} value={variant.id} disabled={!variant.available}>
+                {variant.label} — {formatVariantPrice(variant.price)}
+                {!variant.available ? " (indisponible)" : ""}
+              </option>
+            ))}
+          </select>
+        </div>
+      ) : null}
 
       {promoActive && product.promotion ? (
         <div className="rounded-[var(--radius-md)] border border-[color:var(--color-border)] bg-[color:var(--color-surface-cream)] px-4 py-3">
@@ -108,7 +154,7 @@ export function ProductPurchasePanel({ product, onAddToCart }: Props) {
         <button
           type="button"
           onClick={() => {
-            if (cartEnabled && onAddToCart) onAddToCart(product, quantity);
+            if (cartEnabled && onAddToCart) onAddToCart(product, quantity, selectedVariant?.id);
           }}
           disabled={!cartEnabled}
           aria-disabled={!cartEnabled}
@@ -151,4 +197,8 @@ export function ProductPurchasePanel({ product, onAddToCart }: Props) {
       <ProductReassurance product={product} />
     </div>
   );
+}
+
+function formatVariantPrice(millimes: number): string {
+  return `${(millimes / 1000).toFixed(3)} DT`;
 }

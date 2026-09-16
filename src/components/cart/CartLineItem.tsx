@@ -7,6 +7,7 @@ import type { Product } from "@/types/product";
 
 type Props = {
   product: Product;
+  variantId?: string;
   quantity: number;
   now: Date;
   highlighted?: boolean;
@@ -17,6 +18,7 @@ type Props = {
 
 export function CartLineItem({
   product,
+  variantId,
   quantity,
   now,
   highlighted = false,
@@ -25,8 +27,9 @@ export function CartLineItem({
   onNavigate,
 }: Props) {
   const image = product.images.find((i) => i.position === 1) ?? product.images[0];
-  const promoActive = isPromotionActive(product.promotion, now);
-  const unitMillimes = getCurrentPriceMillimes(product, now);
+  const variant = variantId ? product.variants?.find((item) => item.id === variantId) : undefined;
+  const promoActive = !variant && isPromotionActive(product.promotion, now);
+  const unitMillimes = variant?.price ?? getCurrentPriceMillimes(product, now);
   const unavailable = product.availability === "unavailable";
 
   return (
@@ -83,6 +86,11 @@ export function CartLineItem({
                 </span>
               ) : null}
             </div>
+            {variant ? (
+              <p className="mt-1 text-[11px] text-[color:var(--color-muted-foreground)]">
+                Contenance : {variant.label}
+              </p>
+            ) : null}
             {unavailable ? (
               <p className="mt-1 text-[11px] font-medium text-[color:var(--color-muted-foreground)]">
                 Actuellement indisponible

@@ -83,7 +83,11 @@ function CheckoutPage() {
     checkoutTrackedRef.current = true;
     trackInitiateCheckout(
       totals.totalMillimes,
-      totals.lines.map((line) => ({ productId: line.productId, quantity: line.quantity })),
+      totals.lines.map((line) => ({
+        productId: line.productId,
+        ...(line.variantId ? { variantId: line.variantId } : {}),
+        quantity: line.quantity,
+      })),
     );
   }, [hydrated, totals.lines, totals.totalMillimes]);
 
@@ -101,7 +105,11 @@ function CheckoutPage() {
       setServerError(null);
       return;
     }
-    const validItems = totals.lines.map(({ productId, quantity }) => ({ productId, quantity }));
+    const validItems = totals.lines.map(({ productId, variantId, quantity }) => ({
+      productId,
+      ...(variantId ? { variantId } : {}),
+      quantity,
+    }));
     if (validItems.length !== items.length) {
       // Remove stale lines before the next attempt instead of sending them to
       // the API and showing a generic PRODUCT_UNAVAILABLE error.

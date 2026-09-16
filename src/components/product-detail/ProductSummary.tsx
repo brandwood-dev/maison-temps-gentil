@@ -7,7 +7,7 @@ import { ProductPurchasePanel } from "./ProductPurchasePanel";
 
 type Props = {
   product: Product;
-  onAddToCart?: (product: Product, quantity: number) => void;
+  onAddToCart?: (product: Product, quantity: number, variantId?: string) => void;
 };
 
 /**
