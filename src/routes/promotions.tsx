@@ -10,7 +10,22 @@ const DESC =
   "Découvrez toutes nos montres actuellement en promotion : offres à durée limitée sur notre sélection.";
 
 export const Route = createFileRoute("/promotions")({
-  validateSearch: (raw) => parseCatalogSearch(raw as Record<string, unknown>),
+  validateSearch: (raw) => {
+    const query = parseCatalogSearch(raw as Record<string, unknown>);
+    const attributes: Record<string, string[]> = query.attributes.genre
+      ? { genre: query.attributes.genre }
+      : {};
+    // Promotions intentionally expose only brand, genre and price filters.
+    // Drop hidden filter values as well, so a copied URL cannot silently apply
+    // a colour, attribute or merchandising filter that the page does not show.
+    return {
+      ...query,
+      dialColors: [],
+      attributes,
+      bestSellerOnly: false,
+      featuredOnly: false,
+    };
+  },
   loader: async () => ({ products: await getPublicPromotionProducts().catch(() => []) }),
   head: () => ({
     meta: [
@@ -39,6 +54,7 @@ function PromotionsPage() {
       products={products}
       query={query}
       forcePromotionOnly
+      filterVisibility={{ brands: true, dialColors: false, attributes: ["genre"], price: true }}
       emptyOverride={{
         title: "Aucune promotion en cours",
         description:

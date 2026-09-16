@@ -10,6 +10,16 @@ type Props = {
   onChange: (patch: Partial<CatalogQuery>) => void;
   /** Hide the "En promotion uniquement" toggle (e.g. on the /promotions page). */
   hidePromoFilter?: boolean;
+  /** Limit the filter groups shown for a particular catalogue surface. */
+  filterVisibility?: CatalogFilterVisibility;
+};
+
+export type CatalogFilterVisibility = {
+  brands?: boolean;
+  dialColors?: boolean;
+  /** When set, only attributes with one of these codes are rendered. */
+  attributes?: readonly string[];
+  price?: boolean;
 };
 
 export function CatalogFilters({
@@ -18,13 +28,19 @@ export function CatalogFilters({
   availableFilters,
   onChange,
   hidePromoFilter,
+  filterVisibility,
 }: Props) {
+  const showBrands = filterVisibility?.brands !== false;
+  const showDialColors = filterVisibility?.dialColors !== false;
+  const visibleAttributes = filterVisibility?.attributes;
+  const showPrice = filterVisibility?.price !== false;
+
   return (
     <div className="flex flex-col gap-6">
       {hidePromoFilter || (availableFilters.promotionCount === 0 && !query.promotionOnly) ? null : (
         <PromoFilter idPrefix={idPrefix} value={query.promotionOnly} onChange={onChange} />
       )}
-      {availableFilters.brands.length > 0 ? (
+      {showBrands && availableFilters.brands.length > 0 ? (
         <BrandsFilter
           idPrefix={idPrefix}
           selected={query.brands}
@@ -32,7 +48,7 @@ export function CatalogFilters({
           onChange={onChange}
         />
       ) : null}
-      {availableFilters.dialColors.length > 0 ? (
+      {showDialColors && availableFilters.dialColors.length > 0 ? (
         <ColorsFilter
           idPrefix={idPrefix}
           selected={query.dialColors}
@@ -40,17 +56,19 @@ export function CatalogFilters({
           onChange={onChange}
         />
       ) : null}
-      {availableFilters.attributes.map((attribute) => (
-        <AttributesFilter
-          key={attribute.id}
-          idPrefix={idPrefix}
-          attribute={attribute}
-          selected={query.attributes[attribute.code] ?? []}
-          allSelected={query.attributes}
-          onChange={onChange}
-        />
-      ))}
-      {availableFilters.priceRange ? (
+      {availableFilters.attributes
+        .filter((attribute) => !visibleAttributes || visibleAttributes.includes(attribute.code))
+        .map((attribute) => (
+          <AttributesFilter
+            key={attribute.id}
+            idPrefix={idPrefix}
+            attribute={attribute}
+            selected={query.attributes[attribute.code] ?? []}
+            allSelected={query.attributes}
+            onChange={onChange}
+          />
+        ))}
+      {showPrice && availableFilters.priceRange ? (
         <PriceFilter
           idPrefix={idPrefix}
           minMillimes={query.minPriceMillimes}

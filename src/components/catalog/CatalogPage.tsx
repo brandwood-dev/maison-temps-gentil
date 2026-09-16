@@ -16,7 +16,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { CatalogHeader, type Crumb } from "./CatalogHeader";
 import { CatalogToolbar } from "./CatalogToolbar";
-import { CatalogFilters } from "./CatalogFilters";
+import { CatalogFilters, type CatalogFilterVisibility } from "./CatalogFilters";
 import { CatalogMobileFilters } from "./CatalogMobileFilters";
 import { CatalogActiveFilters } from "./CatalogActiveFilters";
 import { CatalogPagination } from "./CatalogPagination";
@@ -40,6 +40,8 @@ type Props = {
   fixedCollection?: string;
   /** When true: force `promotionOnly` server-side, hide the promo filter/chip. */
   forcePromotionOnly?: boolean;
+  /** Optional per-surface filter allow-list, e.g. promotions only brands/genre/price. */
+  filterVisibility?: CatalogFilterVisibility;
   /** Custom empty state when no filters are active but the base scope is empty. */
   emptyOverride?: EmptyOverride;
 };
@@ -55,6 +57,7 @@ export function CatalogPage({
   fixedCategory,
   fixedCollection,
   forcePromotionOnly = false,
+  filterVisibility,
   emptyOverride,
 }: Props) {
   const navigate = useNavigate();
@@ -164,6 +167,7 @@ export function CatalogPage({
                   availableFilters={result.availableFilters}
                   onChange={applyPatch}
                   hidePromoFilter={forcePromotionOnly}
+                  filterVisibility={filterVisibility}
                 />
                 {filtersActive ? (
                   <button
@@ -248,6 +252,7 @@ export function CatalogPage({
         onChange={applyPatch}
         onReset={resetFilters}
         hidePromoFilter={forcePromotionOnly}
+        filterVisibility={filterVisibility}
       />
     </div>
   );

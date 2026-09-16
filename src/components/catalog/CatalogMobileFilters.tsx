@@ -1,6 +1,6 @@
 import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import type { CatalogQuery, CatalogResult } from "@/types/catalog";
-import { CatalogFilters } from "./CatalogFilters";
+import { CatalogFilters, type CatalogFilterVisibility } from "./CatalogFilters";
 
 type Props = {
   open: boolean;
@@ -11,6 +11,7 @@ type Props = {
   onChange: (patch: Partial<CatalogQuery>) => void;
   onReset: () => void;
   hidePromoFilter?: boolean;
+  filterVisibility?: CatalogFilterVisibility;
 };
 
 export function CatalogMobileFilters({
@@ -22,6 +23,7 @@ export function CatalogMobileFilters({
   onChange,
   onReset,
   hidePromoFilter,
+  filterVisibility,
 }: Props) {
   return (
     <Sheet open={open} onOpenChange={(v) => !v && onClose()}>
@@ -32,7 +34,7 @@ export function CatalogMobileFilters({
         <div className="border-b border-[color:var(--color-border)] px-5 py-4">
           <SheetTitle className="text-base font-semibold">Filtrer</SheetTitle>
           <SheetDescription className="sr-only">
-            Affiner les résultats par marque, couleur, prix et promotion.
+            Affiner les résultats avec les filtres disponibles.
           </SheetDescription>
         </div>
 
@@ -43,6 +45,7 @@ export function CatalogMobileFilters({
             availableFilters={availableFilters}
             onChange={onChange}
             hidePromoFilter={hidePromoFilter}
+            filterVisibility={filterVisibility}
           />
         </div>
 
