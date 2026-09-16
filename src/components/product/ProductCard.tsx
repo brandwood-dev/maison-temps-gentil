@@ -88,8 +88,15 @@ export function ProductCard({
   const mainFetchPriority: "high" | "auto" = imagePriority ? "high" : "auto";
 
   const Media = (
+    /*
+     * Product uploads do not share one aspect ratio (square, portrait and
+     * landscape assets are all valid). A square frame plus object-contain
+     * keeps the complete product visible while giving every card the same
+     * geometry. The previous 4/5 frame and p-4 made wide/square assets look
+     * undersized and inconsistent.
+     */
     <div
-      className="relative aspect-[4/5] w-full overflow-hidden bg-white"
+      className="relative aspect-square w-full overflow-hidden bg-white"
       onMouseEnter={() => setImgHover(true)}
       onMouseLeave={() => setImgHover(false)}
     >
@@ -114,7 +121,7 @@ export function ProductCard({
             }
           }}
           className={cn(
-            "absolute inset-0 h-full w-full object-contain p-4 transition-opacity duration-300",
+            "absolute inset-0 h-full w-full object-contain p-2 transition-opacity duration-300 sm:p-3",
             mainLoaded ? "opacity-100" : "opacity-0",
             imgHover && secondaryLoaded ? "md:opacity-0" : "",
           )}
@@ -139,7 +146,7 @@ export function ProductCard({
           fetchPriority="auto"
           decoding="async"
           className={cn(
-            "absolute inset-0 hidden h-full w-full object-contain p-4 opacity-0 transition-opacity duration-300 md:block",
+            "absolute inset-0 hidden h-full w-full object-contain p-2 opacity-0 transition-opacity duration-300 sm:p-3 md:block",
             imgHover && secondaryLoaded ? "opacity-100" : "",
           )}
           onLoad={() => setSecondaryLoaded(true)}

@@ -22,7 +22,10 @@ export function ProductGallery({ product }: Props) {
 
   return (
     <div className="flex flex-col gap-3 md:gap-4">
-      <div className="relative aspect-square w-full overflow-hidden rounded-[var(--radius-md)] border border-[color:var(--color-border)] bg-white md:aspect-[4/5]">
+      {/* Keep one square frame for every source ratio. object-contain shows the
+          complete product without cropping while the smaller padding prevents
+          square and landscape uploads from appearing miniature. */}
+      <div className="relative aspect-square w-full overflow-hidden rounded-[var(--radius-md)] border border-[color:var(--color-border)] bg-white">
         {active ? (
           <img
             key={active.id}
@@ -37,7 +40,7 @@ export function ProductGallery({ product }: Props) {
               event.currentTarget.removeAttribute("srcset");
               event.currentTarget.src = active.url;
             }}
-            className="absolute inset-0 h-full w-full object-contain p-6 md:p-10"
+            className="absolute inset-0 h-full w-full object-contain p-3 sm:p-4 md:p-6"
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center text-xs text-[color:var(--color-muted-foreground)]">
@@ -83,7 +86,7 @@ export function ProductGallery({ product }: Props) {
                     alt=""
                     loading="lazy"
                     decoding="async"
-                    className="h-full w-full object-contain p-1.5"
+                    className="h-full w-full object-contain p-0.5 sm:p-1"
                     onError={(event) => {
                       event.currentTarget.removeAttribute("srcset");
                       event.currentTarget.src = img.url;
