@@ -36,17 +36,20 @@ export function getRotatingHomeSelection(
   const categoryCounts = new Map<string, number>();
 
   // First pass favours one product per category/brand whenever the catalogue
-  // is large enough. The second pass fills the remaining slots with the same
-  // deterministic order while respecting reasonable repetition caps.
+  // is large enough. The second pass applies soft repetition caps for a
+  // balanced result. The final fallback deliberately drops those caps so the
+  // section still reaches eight cards whenever eight eligible products exist.
   const selectedIds = new Set<string>();
-  for (const strictPass of [true, false]) {
+  for (const pass of ["unique", "capped", "fallback"] as const) {
     for (const { product } of ranked) {
       if (selected.length >= limit) break;
       if (selectedIds.has(product.id)) continue;
       const brandCount = brandCounts.get(product.brand) ?? 0;
       const categoryCount = categoryCounts.get(product.category) ?? 0;
-      if (brandCount >= MAX_PER_BRAND || categoryCount >= MAX_PER_CATEGORY) continue;
-      if (strictPass && (brandCount > 0 || categoryCount > 0)) continue;
+      if (pass === "unique" && (brandCount > 0 || categoryCount > 0)) continue;
+      if (pass === "capped" && (brandCount >= MAX_PER_BRAND || categoryCount >= MAX_PER_CATEGORY)) {
+        continue;
+      }
 
       selected.push(product);
       selectedIds.add(product.id);

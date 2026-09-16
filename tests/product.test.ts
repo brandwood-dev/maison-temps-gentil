@@ -214,6 +214,19 @@ console.log("\n== daily homepage selection ==");
     new Set(today.map((product) => product.id)).size === today.length,
     "selection never repeats a product",
   );
+  const eightEligible = Array.from({ length: 8 }, (_, index) =>
+    make({
+      id: `fill-${index}`,
+      slug: `fill-${index}`,
+      brand: "BrandA",
+      category: index < 4 ? "men" : "women",
+      images: [{ id: `fill-${index}-image`, url: `/fill-${index}.jpg`, alt: "Fill", position: 1 }],
+    }),
+  );
+  assert(
+    getRotatingHomeSelection(eightEligible, "2026-09-16").length === 8,
+    "selection fills all eight slots when eight products are eligible",
+  );
   assert(JSON.stringify(today) !== JSON.stringify(nextDay), "rotation key changes the order");
   const tunisMidnight = getHomeRotationKey(Date.parse("2026-09-16T00:30:00Z"));
   assert(tunisMidnight === "2026-09-16", "rotation key uses Tunisia local date");
