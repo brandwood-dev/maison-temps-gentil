@@ -78,26 +78,53 @@ export function ProductPurchasePanel({ product, onAddToCart }: Props) {
       </div>
 
       {variants.length > 0 ? (
-        <div className="space-y-2">
-          <label
-            htmlFor={`variant-${product.id}`}
+        <div className="space-y-3">
+          <span
+            id={`variant-label-${product.id}`}
             className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--color-muted-foreground)]"
           >
             Contenance
-          </label>
-          <select
-            id={`variant-${product.id}`}
-            value={selectedVariantId ?? ""}
-            onChange={(event) => setSelectedVariantId(event.target.value || undefined)}
-            className="h-12 w-full rounded-[var(--radius-md)] border border-[color:var(--color-border-strong)] bg-[color:var(--color-background)] px-3 text-sm text-[color:var(--color-foreground)] focus-visible:outline-2 focus-visible:outline-[color:var(--color-gold)]"
+          </span>
+          <div
+            role="radiogroup"
+            aria-labelledby={`variant-label-${product.id}`}
+            className="flex flex-wrap gap-2"
           >
             {variants.map((variant) => (
-              <option key={variant.id} value={variant.id} disabled={!variant.available}>
-                {variant.label} — {formatVariantPrice(variant.price)}
-                {!variant.available ? " (indisponible)" : ""}
-              </option>
+              <button
+                key={variant.id}
+                type="button"
+                role="radio"
+                aria-checked={selectedVariantId === variant.id}
+                aria-label={`${variant.label} — ${formatVariantPrice(variant.price)}${!variant.available ? " — indisponible" : ""}`}
+                disabled={!variant.available}
+                onClick={() => setSelectedVariantId(variant.id)}
+                className={cn(
+                  "inline-flex min-h-11 min-w-[5.5rem] flex-1 items-center justify-center rounded-[var(--radius-md)] border px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--color-gold)] sm:flex-none",
+                  selectedVariantId === variant.id
+                    ? "border-[color:var(--color-foreground)] bg-[color:var(--color-foreground)] text-[color:var(--color-primary-foreground)]"
+                    : variant.available
+                      ? "border-[color:var(--color-border-strong)] bg-[color:var(--color-background)] text-[color:var(--color-foreground)] hover:bg-[color:var(--color-surface-cream)]"
+                      : "cursor-not-allowed border-[color:var(--color-border)] bg-[color:var(--color-surface-cream)] text-[color:var(--color-muted-foreground)] line-through opacity-70",
+                )}
+              >
+                <span className="flex flex-col items-center gap-0.5 leading-tight">
+                  <span>{variant.label}</span>
+                  <span
+                    className={cn(
+                      "text-xs font-normal",
+                      selectedVariantId === variant.id
+                        ? "text-[color:var(--color-primary-foreground)]/80"
+                        : "text-[color:var(--color-muted-foreground)]",
+                    )}
+                  >
+                    {formatVariantPrice(variant.price)}
+                    {!variant.available ? " · Épuisé" : ""}
+                  </span>
+                </span>
+              </button>
             ))}
-          </select>
+          </div>
         </div>
       ) : null}
 
