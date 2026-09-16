@@ -13,9 +13,9 @@ type Props = {
 };
 
 function resultsLabel(total: number): string {
-  if (total <= 0) return "0 montre";
-  if (total === 1) return "1 montre";
-  return `${total} montres`;
+  if (total <= 0) return "0 produit";
+  if (total === 1) return "1 produit";
+  return `${total} produits`;
 }
 
 export function CatalogHeader({ crumbs, title, intro, totalItems, imageSrc, imageSrcSet }: Props) {

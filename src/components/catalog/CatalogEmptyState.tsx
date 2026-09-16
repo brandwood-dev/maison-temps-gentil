@@ -17,13 +17,13 @@ export function CatalogEmptyState({ variant }: { variant: Variant }) {
           aria-hidden
         />
         <p className="max-w-md text-sm text-[color:var(--color-foreground)]">
-          Aucune montre disponible dans cette catégorie pour le moment.
+          Aucun produit disponible dans cette catégorie pour le moment.
         </p>
         <a
           href={variant.browseAllHref ?? "/montres"}
           className="inline-flex h-11 items-center rounded-[var(--radius-md)] border border-[color:var(--color-border-strong)] bg-[color:var(--color-background)] px-4 text-sm font-semibold text-[color:var(--color-foreground)] hover:bg-[color:var(--color-background)] hover:underline"
         >
-          Découvrir toutes les montres
+          Découvrir tous les produits
         </a>
       </div>
     );

@@ -206,7 +206,7 @@ export function CatalogPage({
                         to="/montres"
                         className="inline-flex h-11 items-center rounded-[var(--radius-md)] bg-[color:var(--color-foreground)] px-4 text-sm font-semibold text-[color:var(--color-primary-foreground)] hover:bg-[#2a2928]"
                       >
-                        Voir toutes les montres
+                        Voir tous les produits
                       </Link>
                     </div>
                   </div>
