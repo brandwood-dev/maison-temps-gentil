@@ -38,15 +38,18 @@ export function getRotatingHomeSelection(
   // First pass favours one product per category/brand whenever the catalogue
   // is large enough. The second pass fills the remaining slots with the same
   // deterministic order while respecting reasonable repetition caps.
+  const selectedIds = new Set<string>();
   for (const strictPass of [true, false]) {
     for (const { product } of ranked) {
       if (selected.length >= limit) break;
+      if (selectedIds.has(product.id)) continue;
       const brandCount = brandCounts.get(product.brand) ?? 0;
       const categoryCount = categoryCounts.get(product.category) ?? 0;
       if (brandCount >= MAX_PER_BRAND || categoryCount >= MAX_PER_CATEGORY) continue;
       if (strictPass && (brandCount > 0 || categoryCount > 0)) continue;
 
       selected.push(product);
+      selectedIds.add(product.id);
       brandCounts.set(product.brand, brandCount + 1);
       categoryCounts.set(product.category, categoryCount + 1);
     }

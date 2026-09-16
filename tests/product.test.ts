@@ -210,6 +210,10 @@ console.log("\n== daily homepage selection ==");
     new Set(today.map((product) => product.brand)).size >= 3,
     "selection favours brand diversity",
   );
+  assert(
+    new Set(today.map((product) => product.id)).size === today.length,
+    "selection never repeats a product",
+  );
   assert(JSON.stringify(today) !== JSON.stringify(nextDay), "rotation key changes the order");
   const tunisMidnight = getHomeRotationKey(Date.parse("2026-09-16T00:30:00Z"));
   assert(tunisMidnight === "2026-09-16", "rotation key uses Tunisia local date");
