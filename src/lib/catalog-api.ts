@@ -178,6 +178,13 @@ const PUBLIC_API_TIMEOUT_MS = 35_000;
 const PUBLIC_CACHE_TTL_MS = 60_000;
 /** Hard upper bound for one public catalogue response. */
 export const PUBLIC_PRODUCT_PAGE_SIZE = 48;
+/**
+ * The API deliberately caps each response at 48 products.  The storefront
+ * keeps a bounded in-memory catalogue for client-side filtering, so fetch the
+ * remaining pages as well instead of silently dropping older products (which
+ * made brand counts inaccurate once the catalogue exceeded the first page).
+ */
+const PUBLIC_PRODUCT_MAX_PAGES = 16;
 
 type RuntimeEnv = {
   PUBLIC_API_URL?: string;
@@ -268,10 +275,19 @@ async function apiRequest<T>(path: string, options: { allowNotFound?: boolean } 
 }
 
 export const getPublicProducts = createServerFn({ method: "GET" }).handler(async () => {
-  const page = await apiRequest<ProductPage>(
-    `/api/v1/public/products?page=1&pageSize=${PUBLIC_PRODUCT_PAGE_SIZE}&sortBy=createdAt&sortOrder=desc`,
+  const pagePath = (page: number) =>
+    `/api/v1/public/products?page=${page}&pageSize=${PUBLIC_PRODUCT_PAGE_SIZE}&sortBy=createdAt&sortOrder=desc`;
+  const firstPage = await apiRequest<ProductPage>(pagePath(1));
+  const totalPages = Math.max(1, Math.ceil(firstPage.total / PUBLIC_PRODUCT_PAGE_SIZE));
+  const pagesToFetch = Math.min(totalPages, PUBLIC_PRODUCT_MAX_PAGES);
+  if (pagesToFetch === 1) return firstPage.data;
+
+  const remainingPages = await Promise.all(
+    Array.from({ length: pagesToFetch - 1 }, (_, index) =>
+      apiRequest<ProductPage>(pagePath(index + 2)),
+    ),
   );
-  return page.data;
+  return [firstPage, ...remainingPages].flatMap((page) => page.data);
 });
 
 /**
