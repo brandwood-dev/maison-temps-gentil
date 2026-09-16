@@ -31,6 +31,20 @@ export function getCurrentPriceMillimes(product: Product, now: Date = new Date()
   return product.regularPriceMillimes;
 }
 
+/**
+ * Returns the lowest sellable variant price for compact product cards.
+ * Unavailable variants are excluded so the displayed starting price can be
+ * purchased immediately. Null means that no sellable variant is available.
+ */
+export function getVariantStartingPriceMillimes(product: Product): number | null {
+  const prices = (product.variants ?? [])
+    .filter((variant) => variant.active && variant.available)
+    .map((variant) => variant.price)
+    .filter((price) => Number.isFinite(price) && price >= 0);
+
+  return prices.length > 0 ? Math.min(...prices) : null;
+}
+
 export function getSavingsMillimes(product: Product, now: Date = new Date()): number {
   if (!isPromotionActive(product.promotion, now)) return 0;
   return product.promotion!.regularPriceMillimes - product.promotion!.salePriceMillimes;

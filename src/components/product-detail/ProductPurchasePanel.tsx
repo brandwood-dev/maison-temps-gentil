@@ -108,20 +108,7 @@ export function ProductPurchasePanel({ product, onAddToCart }: Props) {
                       : "cursor-not-allowed border-[color:var(--color-border)] bg-[color:var(--color-surface-cream)] text-[color:var(--color-muted-foreground)] line-through opacity-70",
                 )}
               >
-                <span className="flex flex-col items-center gap-0.5 leading-tight">
-                  <span>{variant.label}</span>
-                  <span
-                    className={cn(
-                      "text-xs font-normal",
-                      selectedVariantId === variant.id
-                        ? "text-[color:var(--color-primary-foreground)]/80"
-                        : "text-[color:var(--color-muted-foreground)]",
-                    )}
-                  >
-                    {formatVariantPrice(variant.price)}
-                    {!variant.available ? " · Épuisé" : ""}
-                  </span>
-                </span>
+                <span>{variant.label}</span>
               </button>
             ))}
           </div>

@@ -267,7 +267,7 @@ export function ProductCard({
         </div>
 
         <div className="mt-2 flex min-h-[2.25rem] items-center">
-          <ProductPrice product={product} mode="compact" />
+          <ProductPrice product={product} mode="compact" showVariantFrom />
         </div>
 
         <div className="mt-1 flex min-h-[1.25rem] items-center">

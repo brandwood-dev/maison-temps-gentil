@@ -4,6 +4,7 @@ import {
   formatPriceTND,
   getDiscountPercent,
   getSavingsMillimes,
+  getVariantStartingPriceMillimes,
   isPromotionActive,
 } from "@/lib/product-pricing";
 import { useNow } from "@/lib/now-store";
@@ -11,6 +12,8 @@ import { useNow } from "@/lib/now-store";
 type Props = {
   product: Product;
   mode?: "compact" | "detailed";
+  /** Show a single starting price when the product has multiple variants. */
+  showVariantFrom?: boolean;
   className?: string;
 };
 
@@ -20,11 +23,31 @@ type Props = {
  * the HTML is consistent and expired promos never appear in the SSR output.
  * After hydration, the ticker re-evaluates on every second.
  */
-export function ProductPrice({ product, mode = "compact", className }: Props) {
+export function ProductPrice({
+  product,
+  mode = "compact",
+  showVariantFrom = false,
+  className,
+}: Props) {
   const nowTs = useNow();
   const promo = product.promotion;
   const evalDate = new Date(nowTs);
   const active = isPromotionActive(promo, evalDate);
+
+  const variantCount = product.variants?.filter((variant) => variant.active).length ?? 0;
+  const variantStartingPrice =
+    showVariantFrom && variantCount > 1 ? getVariantStartingPriceMillimes(product) : null;
+
+  if (variantStartingPrice !== null) {
+    return (
+      <p className={cn("text-base font-bold text-[color:var(--color-foreground)]", className)}>
+        <span className="mr-1 text-xs font-medium text-[color:var(--color-muted-foreground)]">
+          À partir de
+        </span>
+        {formatPriceTND(variantStartingPrice)}
+      </p>
+    );
+  }
 
   if (!active || !promo) {
     return (
