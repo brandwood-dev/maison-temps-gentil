@@ -280,6 +280,7 @@ export function trackPurchase(order: OrderConfirmation): void {
       num_items: order.totals.itemCount,
       value: order.totals.totalMillimes / 1000,
       currency: "TND",
+      order_id: order.reference,
     },
     order.reference,
   );
