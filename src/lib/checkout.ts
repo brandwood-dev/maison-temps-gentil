@@ -148,6 +148,9 @@ export type OrderSubmission = {
     note: string | null;
   };
   paymentMethod: "cod";
+  /** Meta browser identifiers used to attribute server-side purchases. */
+  fbp?: string;
+  fbc?: string;
 };
 
 export type OrderConfirmationItem = {
@@ -271,7 +274,8 @@ export async function submitOrderMock(
 
 /**
  * Construit un OrderSubmission à partir d'un input validé.
- * ⚠️ N'envoie que les identifiants + coordonnées de livraison.
+ * ⚠️ N'envoie que les identifiants, coordonnées de livraison et identifiants
+ * publicitaires first-party nécessaires à l'attribution Meta.
  */
 export function buildOrderSubmission(
   items: CartItem[],
@@ -280,6 +284,13 @@ export function buildOrderSubmission(
 ): OrderSubmission | null {
   const phone = normalizeTunisiaPhone(input.phone);
   if (!phone) return null;
+
+  // The checkout is built in the browser, while the order API is called by a
+  // server function. Forwarding these first-party identifiers explicitly is
+  // therefore required for the server Purchase event to be attributable to a
+  // Meta ad click. Values are bounded to prevent forwarding malformed data.
+  const fbp = readMetaCookie("_fbp");
+  const fbc = readMetaCookie("_fbc") ?? deriveFbcFromFbclid();
   return {
     idempotencyKey,
     items: items.map((i) => ({
@@ -299,7 +310,35 @@ export function buildOrderSubmission(
       note: input.note.trim() || null,
     },
     paymentMethod: "cod",
+    ...(fbp ? { fbp } : {}),
+    ...(fbc ? { fbc } : {}),
   };
+}
+
+function readMetaCookie(name: "_fbp" | "_fbc"): string | undefined {
+  if (typeof document === "undefined") return undefined;
+  const prefix = `${name}=`;
+  const raw = document.cookie
+    .split(";")
+    .map((part) => part.trim())
+    .find((part) => part.startsWith(prefix))
+    ?.slice(prefix.length);
+  if (!raw) return undefined;
+  let value = raw;
+  try {
+    value = decodeURIComponent(raw);
+  } catch {
+    // Keep the raw cookie value when it is not URI encoded.
+  }
+  const trimmed = value.trim();
+  return trimmed.length > 0 && trimmed.length <= 255 ? trimmed : undefined;
+}
+
+function deriveFbcFromFbclid(): string | undefined {
+  if (typeof window === "undefined") return undefined;
+  const fbclid = new URLSearchParams(window.location.search).get("fbclid")?.trim();
+  if (!fbclid || fbclid.length > 200) return undefined;
+  return `fb.1.${Math.floor(Date.now() / 1_000)}.${fbclid}`;
 }
 
 /* ---------- Persistance éphémère de la confirmation ---------- */

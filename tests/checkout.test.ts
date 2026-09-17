@@ -218,6 +218,57 @@ async function run() {
     });
     assert(s === null, "buildOrderSubmission refuse téléphone invalide");
   }
+  {
+    const globals = globalThis as Record<string, unknown>;
+    const previousDocument = globals.document;
+    const previousWindow = globals.window;
+    Object.defineProperty(globalThis, "document", {
+      configurable: true,
+      value: { cookie: "_fbp=fb.1.123.browser; _fbc=fb.1.123.click" },
+    });
+    Object.defineProperty(globalThis, "window", {
+      configurable: true,
+      value: { location: { search: "" } },
+    });
+    try {
+      const attributed = buildOrderSubmission(
+        [{ productId: productA.id, quantity: 1 }],
+        validInput,
+      )!;
+      assert(attributed.fbp === "fb.1.123.browser", "fbp du cookie transmis à la commande");
+      assert(attributed.fbc === "fb.1.123.click", "fbc du cookie transmis à la commande");
+    } finally {
+      if (previousDocument === undefined) delete globals.document;
+      else globals.document = previousDocument;
+      if (previousWindow === undefined) delete globals.window;
+      else globals.window = previousWindow;
+    }
+  }
+  {
+    const globals = globalThis as Record<string, unknown>;
+    const previousDocument = globals.document;
+    const previousWindow = globals.window;
+    Object.defineProperty(globalThis, "document", { configurable: true, value: { cookie: "" } });
+    Object.defineProperty(globalThis, "window", {
+      configurable: true,
+      value: { location: { search: "?fbclid=click-from-ad" } },
+    });
+    try {
+      const attributed = buildOrderSubmission(
+        [{ productId: productA.id, quantity: 1 }],
+        validInput,
+      )!;
+      assert(
+        attributed.fbc?.startsWith("fb.1.") && attributed.fbc.endsWith(".click-from-ad"),
+        "fbclid de la landing persisté comme fbc de secours",
+      );
+    } finally {
+      if (previousDocument === undefined) delete globals.document;
+      else globals.document = previousDocument;
+      if (previousWindow === undefined) delete globals.window;
+      else globals.window = previousWindow;
+    }
+  }
 
   console.log(`\nTotal: ${passed} passed, ${failed} failed`);
   if (failed > 0) process.exit(1);

@@ -56,6 +56,8 @@ function getFbq(): FbqFunction | null {
 export function initMetaPixel(): void {
   if (typeof window === "undefined" || typeof document === "undefined") return;
 
+  persistFbcFromFbclid();
+
   const fbq = getFbq();
   if (!fbq) return;
 
@@ -71,6 +73,22 @@ export function initMetaPixel(): void {
     script.src = "https://connect.facebook.net/en_US/fbevents.js";
     document.head.appendChild(script);
   }
+}
+
+/**
+ * Meta normally creates `_fbc` itself after a click-id is present in the URL.
+ * Persisting the value first-party makes attribution resilient when the user
+ * navigates before the Pixel script has finished loading or when consent/CDN
+ * timing delays the cookie write.
+ */
+function persistFbcFromFbclid(): void {
+  if (typeof window === "undefined" || typeof document === "undefined") return;
+  if (readCookie("_fbc")) return;
+  const fbclid = new URLSearchParams(window.location.search).get("fbclid")?.trim();
+  if (!fbclid || fbclid.length > 200) return;
+  document.cookie = `_fbc=${encodeURIComponent(
+    `fb.1.${Math.floor(Date.now() / 1_000)}.${fbclid}`,
+  )}; Max-Age=7776000; Path=/; SameSite=Lax`;
 }
 
 function track(eventName: string, params: Record<string, unknown> = {}, eventId?: string): void {
