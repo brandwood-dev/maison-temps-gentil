@@ -85,6 +85,7 @@ function CheckoutPage() {
       totals.totalMillimes,
       totals.lines.map((line) => ({
         productId: line.productId,
+        catalogId: line.product.id,
         ...(line.variantId ? { variantId: line.variantId } : {}),
         quantity: line.quantity,
       })),
