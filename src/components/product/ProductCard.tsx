@@ -36,8 +36,10 @@ export function ProductCard({
   const [imgHover, setImgHover] = useState(false);
   const [mainLoaded, setMainLoaded] = useState(false);
   const [mainError, setMainError] = useState(false);
+  const [cardMainFailed, setCardMainFailed] = useState(false);
   const [optimizedMainFailed, setOptimizedMainFailed] = useState(false);
   const [secondaryLoaded, setSecondaryLoaded] = useState(false);
+  const [cardSecondaryFailed, setCardSecondaryFailed] = useState(false);
   const [optimizedSecondaryFailed, setOptimizedSecondaryFailed] = useState(false);
   const mainImageRef = useRef<HTMLImageElement>(null);
   const secondaryImageRef = useRef<HTMLImageElement>(null);
@@ -48,20 +50,22 @@ export function ProductCard({
   useEffect(() => {
     setMainLoaded(false);
     setMainError(false);
+    setCardMainFailed(false);
     setOptimizedMainFailed(false);
     const image = mainImageRef.current;
     if (!image || !primary?.url || !image.complete) return;
     if (image.naturalWidth > 0) setMainLoaded(true);
     else setMainError(true);
-  }, [primary?.optimizedUrl, primary?.url]);
+  }, [primary?.cardUrl, primary?.optimizedUrl, primary?.url]);
 
   useEffect(() => {
     setSecondaryLoaded(false);
+    setCardSecondaryFailed(false);
     setOptimizedSecondaryFailed(false);
     const image = secondaryImageRef.current;
     if (!image || !secondary?.url || !image.complete) return;
     setSecondaryLoaded(image.naturalWidth > 0);
-  }, [secondary?.optimizedUrl, secondary?.url]);
+  }, [secondary?.cardUrl, secondary?.optimizedUrl, secondary?.url]);
 
   // Shared per-request clock: SSR and first client render agree on `nowTs`,
   // so `promoActive` matches the HTML sent by the server. After hydration the
@@ -89,24 +93,38 @@ export function ProductCard({
 
   const Media = (
     /*
-     * Product uploads do not share one aspect ratio (square, portrait and
-     * landscape assets are all valid). A square frame plus object-contain
-     * keeps the complete product visible while giving every card the same
-     * geometry. The previous 4/5 frame and p-4 made wide/square assets look
-     * undersized and inconsistent.
+     * Cards use a canonical 4/5 frame. The API supplies a dedicated 4/5
+     * cover derivative so portrait packshots fill the card without making
+     * the original/detail image crop. Legacy or external URLs fall back to
+     * the existing responsive image, which remains fully backwards compatible.
      */
     <div
-      className="relative aspect-square w-full overflow-hidden bg-white"
+      className="relative aspect-[4/5] w-full overflow-hidden bg-white"
       onMouseEnter={() => setImgHover(true)}
       onMouseLeave={() => setImgHover(false)}
     >
       {primary && !mainError ? (
         <img
           ref={mainImageRef}
-          src={optimizedMainFailed ? primary.url : (primary.optimizedUrl ?? primary.url)}
-          srcSet={optimizedMainFailed ? undefined : primary.srcSet}
+          src={
+            cardMainFailed
+              ? optimizedMainFailed
+                ? primary.url
+                : (primary.optimizedUrl ?? primary.url)
+              : (primary.cardUrl ?? primary.optimizedUrl ?? primary.url)
+          }
+          srcSet={
+            cardMainFailed
+              ? optimizedMainFailed
+                ? undefined
+                : primary.srcSet
+              : (primary.cardSrcSet ?? primary.srcSet)
+          }
           sizes={
-            imageSizes ?? primary.sizes ?? "(max-width: 480px) 85vw, (max-width: 1024px) 48vw, 25vw"
+            imageSizes ??
+            primary.cardSizes ??
+            primary.sizes ??
+            "(max-width: 480px) 85vw, (max-width: 1024px) 48vw, 25vw"
           }
           alt={primary.alt}
           loading={mainLoading}
@@ -114,7 +132,9 @@ export function ProductCard({
           decoding="async"
           onLoad={() => setMainLoaded(true)}
           onError={() => {
-            if (primary.optimizedUrl && !optimizedMainFailed) {
+            if (primary.cardUrl && !cardMainFailed) {
+              setCardMainFailed(true);
+            } else if (primary.optimizedUrl && !optimizedMainFailed) {
               setOptimizedMainFailed(true);
             } else {
               setMainError(true);
@@ -134,10 +154,23 @@ export function ProductCard({
       {secondary ? (
         <img
           ref={secondaryImageRef}
-          src={optimizedSecondaryFailed ? secondary.url : (secondary.optimizedUrl ?? secondary.url)}
-          srcSet={optimizedSecondaryFailed ? undefined : secondary.srcSet}
+          src={
+            cardSecondaryFailed
+              ? optimizedSecondaryFailed
+                ? secondary.url
+                : (secondary.optimizedUrl ?? secondary.url)
+              : (secondary.cardUrl ?? secondary.optimizedUrl ?? secondary.url)
+          }
+          srcSet={
+            cardSecondaryFailed
+              ? optimizedSecondaryFailed
+                ? undefined
+                : secondary.srcSet
+              : (secondary.cardSrcSet ?? secondary.srcSet)
+          }
           sizes={
             imageSizes ??
+            secondary.cardSizes ??
             secondary.sizes ??
             "(max-width: 480px) 85vw, (max-width: 1024px) 48vw, 25vw"
           }
@@ -151,7 +184,9 @@ export function ProductCard({
           )}
           onLoad={() => setSecondaryLoaded(true)}
           onError={() => {
-            if (secondary.optimizedUrl && !optimizedSecondaryFailed) {
+            if (secondary.cardUrl && !cardSecondaryFailed) {
+              setCardSecondaryFailed(true);
+            } else if (secondary.optimizedUrl && !optimizedSecondaryFailed) {
               setOptimizedSecondaryFailed(true);
               return;
             }

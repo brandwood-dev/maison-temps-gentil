@@ -80,9 +80,9 @@ export function ProductGallery({ product }: Props) {
                   )}
                 >
                   <img
-                    src={img.optimizedUrl ?? img.url}
-                    srcSet={img.srcSet}
-                    sizes="80px"
+                    src={img.thumbnailUrl ?? img.optimizedUrl ?? img.url}
+                    srcSet={img.thumbnailSrcSet ?? img.srcSet}
+                    sizes={img.thumbnailSizes ?? "80px"}
                     alt=""
                     loading="lazy"
                     decoding="async"

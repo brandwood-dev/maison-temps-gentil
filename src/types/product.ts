@@ -32,6 +32,14 @@ export type ProductImage = {
   optimizedUrl?: string;
   srcSet?: string;
   sizes?: string;
+  /** Canonical 4/5 crop used by catalogue cards. */
+  cardUrl?: string;
+  cardSrcSet?: string;
+  cardSizes?: string;
+  /** Square crop used by product-gallery thumbnails. */
+  thumbnailUrl?: string;
+  thumbnailSrcSet?: string;
+  thumbnailSizes?: string;
 };
 
 export type ProductAttributeValue = {
