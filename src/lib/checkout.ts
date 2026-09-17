@@ -338,7 +338,7 @@ function deriveFbcFromFbclid(): string | undefined {
   if (typeof window === "undefined") return undefined;
   const fbclid = new URLSearchParams(window.location.search).get("fbclid")?.trim();
   if (!fbclid || fbclid.length > 200) return undefined;
-  return `fb.1.${Math.floor(Date.now() / 1_000)}.${fbclid}`;
+  return `fb.1.${Date.now()}.${fbclid}`;
 }
 
 /* ---------- Persistance éphémère de la confirmation ---------- */

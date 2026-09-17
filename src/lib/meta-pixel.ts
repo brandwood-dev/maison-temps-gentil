@@ -87,7 +87,7 @@ function persistFbcFromFbclid(): void {
   const fbclid = new URLSearchParams(window.location.search).get("fbclid")?.trim();
   if (!fbclid || fbclid.length > 200) return;
   document.cookie = `_fbc=${encodeURIComponent(
-    `fb.1.${Math.floor(Date.now() / 1_000)}.${fbclid}`,
+    `fb.1.${Date.now()}.${fbclid}`,
   )}; Max-Age=7776000; Path=/; SameSite=Lax`;
 }
 
