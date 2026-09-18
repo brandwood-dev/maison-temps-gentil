@@ -2,9 +2,13 @@ import { Link } from "@tanstack/react-router";
 
 import { catalogQueryToSearch } from "@/lib/catalog";
 import type { BrandSummary } from "@/lib/brands";
+import {
+  STOREFRONT_BOUTIQUE_ENABLED,
+  STOREFRONT_WATCHES_ENABLED,
+} from "@/lib/storefront-visibility";
 
 function countLabel(n: number): string {
-  return n <= 1 ? "1 modèle" : `${n} modèles`;
+  return n <= 1 ? "1 produit" : `${n} produits`;
 }
 
 export function BrandCard({
@@ -14,13 +18,8 @@ export function BrandCard({
   brand: BrandSummary;
   priority?: boolean;
 }) {
-  return (
-    <Link
-      to="/montres"
-      search={catalogQueryToSearch({ brands: [brand.name] })}
-      aria-label={`Voir les montres ${brand.name}`}
-      className="group relative block aspect-square overflow-hidden rounded-[var(--radius-lg)] border border-[color:var(--color-border)] bg-[color:var(--color-surface-cream)]"
-    >
+  const card = (
+    <div className="group relative block aspect-square overflow-hidden rounded-[var(--radius-lg)] border border-[color:var(--color-border)] bg-[color:var(--color-surface-cream)]">
       <img
         src={brand.imageUrl}
         alt={brand.imageAlt}
@@ -42,6 +41,22 @@ export function BrandCard({
           {countLabel(brand.productCount)}
         </span>
       </div>
+    </div>
+  );
+
+  // The all-products boutique can be temporarily hidden, but brand cards
+  // must remain actionable while the watch catalogue is visible.
+  if (!STOREFRONT_BOUTIQUE_ENABLED && !STOREFRONT_WATCHES_ENABLED) return card;
+
+  const catalogPath = STOREFRONT_BOUTIQUE_ENABLED ? "/boutique" : "/montres";
+  return (
+    <Link
+      to={catalogPath}
+      search={catalogQueryToSearch({ brands: [brand.name] })}
+      aria-label={`Voir les produits ${brand.name}`}
+      className="block"
+    >
+      {card}
     </Link>
   );
 }
